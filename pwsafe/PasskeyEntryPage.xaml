@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="pwsafe.PasskeyEntryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:pwsafe"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid VerticalAlignment="Center" MaxWidth="400">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel>
+                <TextBlock Text="Open Password Database" Margin="0,0,0,7" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="txtDBPath" Margin="0,0,2,0" />
+                    <Button x:Name="btnOpenFile" Grid.Column="1" Content="..." Margin="0" Padding="0" Width="30" VerticalAlignment="Stretch" Click="btnOpenFile_Click" />
+                </Grid>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Margin="0,20,0,0">
+                <TextBlock Text="Safe Combination" Margin="0,0,0,7" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="txtPassphrase" Margin="0,0,2,0" />
+                    <Button x:Name="btnOk" Grid.Column="1" Content="&#xE111;" FontFamily="{ThemeResource SymbolThemeFontFamily}" FontWeight="Normal" Margin="0" Padding="0" Width="30" VerticalAlignment="Stretch" Click="btnOk_Click" />
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
