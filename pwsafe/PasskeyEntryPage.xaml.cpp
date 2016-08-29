@@ -61,6 +61,7 @@ void pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windo
 	{
 		if (file)
 		{
+			Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList->Add(file);
 			m_filespec = file->Path->Data();
 			m_core.SetCurFile(m_filespec);
 			txtDBPath->Text = file->Path;
@@ -74,10 +75,6 @@ void pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windo
 
 void pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	String ^ s = ref new String(L"\\test.psafe3");
-	String ^ s2 = String::Concat(ApplicationData::Current->LocalFolder->Path, s);
-	m_filespec = s2->Data();
-	
 	m_passkey.clear();
 	m_passkey.append(txtPassphrase->Password->Data());
 
