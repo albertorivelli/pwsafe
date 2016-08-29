@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="pwsafe_TemporaryKey.pfx" />
-    <None Include="test.psafe3" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
