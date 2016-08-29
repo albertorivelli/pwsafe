@@ -6,6 +6,18 @@
 #pragma once
 
 #include "PasskeyEntryPage.g.h"
+#include <pplawait.h>
+
+using namespace pwsafe;
+
+using namespace concurrency;
+using namespace Platform;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Pickers;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::UI::Xaml::Interop;
+using namespace Windows::UI::Xaml::Navigation;
 
 namespace pwsafe
 {
@@ -18,16 +30,14 @@ namespace pwsafe
 	public:
 		PasskeyEntryPage();
 	protected:
-		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 
 	private:
 		StringX m_filespec;
 		StringX m_passkey;
-		void btnNew_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void ProcessPhrase();
-		int CheckPasskey(const StringX &filename, const StringX &passkey, PWScore *pcore = NULL);
+		task<void> btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		task<void> btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		task<void> ProcessPhrase();
+		task<int> CheckPasskey(const StringX &filename, const StringX &passkey, PWScore *pcore = NULL);
 
 	};
 }

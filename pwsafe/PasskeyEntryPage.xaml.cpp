@@ -8,45 +8,12 @@
 #include "PasskeyEntryPage.xaml.h"
 #include "MainPage.xaml.h"
 
-using namespace pwsafe;
-
-using namespace concurrency;
-using namespace Platform;
-using namespace Windows::Storage;
-using namespace Windows::Storage::Pickers;
-using namespace Windows::UI::Xaml;
-using namespace Windows::UI::Xaml::Controls;
-using namespace Windows::UI::Xaml::Interop;
-using namespace Windows::UI::Xaml::Navigation;
-
 PasskeyEntryPage::PasskeyEntryPage()
 {
 	InitializeComponent();
 }
 
-void PasskeyEntryPage::OnNavigatedTo(NavigationEventArgs^ e)
-{
-	
-}
-
-void pwsafe::PasskeyEntryPage::btnNew_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	create_task(ApplicationData::Current->LocalFolder->CreateFileAsync(ref new String(L"test.psafe3"), CreationCollisionOption::ReplaceExisting))
-		.then([this](task<StorageFile^> task)
-	{
-		try
-		{
-			StorageFile^ file = task.get();
-		}
-		catch (Exception^ e)
-		{
-			// I/O errors are reported as exceptions.
-		}
-	});
-}
-
-
-void pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+task<void> pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	// Clear previous returned file name, if it exists, between iterations of this scenario
 	txtDBPath->Text = "";
@@ -57,23 +24,22 @@ void pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windo
 	openPicker->FileTypeFilter->Append(".psafe");
 	openPicker->FileTypeFilter->Append(".psafe3");
 
-	create_task(openPicker->PickSingleFileAsync()).then([this](StorageFile^ file)
+	auto file = co_await openPicker->PickSingleFileAsync();
+
+	if (file)
 	{
-		if (file)
-		{
-			Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList->Add(file);
-			m_filespec = file->Path->Data();
-			m_core.SetCurFile(m_filespec);
-			txtDBPath->Text = file->Path;
-		}
-		else
-		{
-			txtDBPath->Text = "";
-		}
-	});
+		Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList->Add(file);
+		m_filespec = file->Path->Data();
+		m_core.SetCurFile(m_filespec);
+		txtDBPath->Text = file->Path;
+	}
+	else
+	{
+		txtDBPath->Text = "";
+	}
 }
 
-void pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+task<void> pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	m_passkey.clear();
 	m_passkey.append(txtPassphrase->Password->Data());
@@ -97,7 +63,7 @@ void pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI
 		return;
 	}*/
 
-	ProcessPhrase();
+	co_await ProcessPhrase();
 
 	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
 
@@ -107,16 +73,17 @@ void pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI
 	}
 }
 
-int PasskeyEntryPage::CheckPasskey(const StringX &filename, const StringX &passkey, PWScore *pcore)
+task<int> PasskeyEntryPage::CheckPasskey(const StringX &filename, const StringX &passkey, PWScore *pcore)
 {
 	// To ensure values in current core are not overwritten when checking the passkey
-	if (pcore == NULL) return m_core.CheckPasskey(filename, passkey);
-	else return pcore->CheckPasskey(filename, passkey);
+	if (pcore == NULL) return co_await m_core.CheckPasskey(filename, passkey);
+	else return co_await pcore->CheckPasskey(filename, passkey);
 }
 
-void PasskeyEntryPage::ProcessPhrase()
+task<void> PasskeyEntryPage::ProcessPhrase()
 {
-	switch (CheckPasskey(m_filespec, m_passkey))
+	auto ret = co_await CheckPasskey(m_filespec, m_passkey);
+	switch (ret)
 	{
 	case PWScore::SUCCESS:
 		// OnOK clears the passkey, so we save it

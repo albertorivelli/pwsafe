@@ -13,8 +13,7 @@
 #include <vector>
 
 #include <collection.h>
-#include <ppltasks.h>
-
+#include <pplawait.h>
 
 using namespace concurrency;
 using namespace Platform;

@@ -11,7 +11,7 @@
 //#include "PWSfileV4.h"
 //#include "SysInfo.h"
 //#include "core.h"
-#include "os/file.h"
+//#include "os/file.h"
 
 #include "sha1.h" // for simple encrypt/decrypt
 #include "PWSrand.h"
@@ -188,7 +188,7 @@ size_t PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,
   return retval;
 }
 
-int PWSfile::CheckPasskey(const StringX &filename,
+task<int> PWSfile::CheckPasskey(const StringX &filename,
                           const StringX &passkey, VERSION &version)
 {
   /**
@@ -202,7 +202,7 @@ int PWSfile::CheckPasskey(const StringX &filename,
 
   int status;
   version = UNKNOWN_VERSION;
-  status = PWSfileV3::CheckPasskey(filename, passkey);
+  status = co_await PWSfileV3::CheckPasskey(filename, passkey);
   if (status == SUCCESS) {
     version = V30;
   } /*else {*/

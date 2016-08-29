@@ -26,6 +26,7 @@
 #include "sha256.h"
 
 #include "coredefs.h"
+#include "os/file.h"
 
 // HASH_ITERATIONS is used by the key stretching algorithm.
 // MIN_HASH_ITERATIONS is a lower limit - anything lower than this
@@ -101,7 +102,7 @@ public:
                               Asker *pAsker = NULL, Reporter *pReporter = NULL);
 
   static VERSION ReadVersion(const StringX &filename, const StringX &passkey);
-  static int CheckPasskey(const StringX &filename,
+  static task<int> CheckPasskey(const StringX &filename,
                           const StringX &passkey, VERSION &version);
 
   // Following for 'legacy' use of pwsafe as file encryptor/decryptor

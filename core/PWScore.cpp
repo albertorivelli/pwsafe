@@ -849,12 +849,12 @@ void PWScore::ProcessReadEntry(CItemData &ci_temp,
 	m_pwlist.insert(std::make_pair(ci_temp.GetUUID(), ci_temp));
 }
 
-int PWScore::CheckPasskey(const StringX &filename, const StringX &passkey)
+task<int> PWScore::CheckPasskey(const StringX &filename, const StringX &passkey)
 {
 	int status;
 
 	if (!filename.empty())
-		status = PWSfile::CheckPasskey(filename, passkey, m_ReadFileVersion);
+		status = co_await PWSfile::CheckPasskey(filename, passkey, m_ReadFileVersion);
 	else { // can happen if tries to export b4 save
 		size_t t_passkey_len = passkey.length();
 		if (t_passkey_len != m_passkey_len) // trivial test

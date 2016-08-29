@@ -412,35 +412,29 @@ bool pws_os::FileExists(const stringT &filename)
 task<StorageFile^> pws_os::FOpen(const stringT &filename, const TCHAR *mode)
 {
 	String ^ s = ref new String(filename.c_str());
+	StorageFile^ file = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(s);
 
-	return create_task(Windows::Storage::StorageFile::GetFileFromPathAsync(s)).then([](StorageFile^ f)
+	try
 	{
-		StorageFile^ file = nullptr;
-
-		try
+		FileAccessMode m = FileAccessMode::Read;
+		/*switch (mode)
 		{
-			FileAccessMode m = FileAccessMode::Read;
-			/*switch (mode)
-			{
-			case 'r':
-				m = FileAccessMode::Read;
-				break;
-			case 'w':
-				m = FileAccessMode::ReadWrite;
-				break;
-			}*/
+		case 'r':
+		m = FileAccessMode::Read;
+		break;
+		case 'w':
+		m = FileAccessMode::ReadWrite;
+		break;
+		}*/
 
-			f->OpenAsync(m);
+		file->OpenAsync(m);
+	}
+	catch (Exception^ e)
+	{
+		file = nullptr;
+	}
 
-			file = f;
-		}
-		catch (Exception^ e)
-		{
-			file = nullptr;
-		}
-
-		return file;
-	});
+	return file;
 }
 
 //ulong64 pws_os::fileLength(std::FILE *fp) {

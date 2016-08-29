@@ -197,7 +197,7 @@ err:
   return retval;
 }
 
-int PWSfileV3::CheckPasskey(const StringX &filename,
+task<int> PWSfileV3::CheckPasskey(const StringX &filename,
                             const StringX &passkey, FILE *a_fd,
                             unsigned char *aPtag, uint32 *nITER)
 {
@@ -209,18 +209,7 @@ int PWSfileV3::CheckPasskey(const StringX &filename,
   SHA256 H;
 
   if (fd == nullptr) {
-	  create_task(pws_os::FOpen(filename.c_str(), _T("rb")))
-		  .then([](task<StorageFile^> task)
-	  {
-		  try
-		  {
-			  StorageFile^ file = task.get();
-		  }
-		  catch (Exception^ e)
-		  {
-			  // I/O errors are reported as exceptions.
-		  }
-	  });
+	  fd = co_await pws_os::FOpen(filename.c_str(), _T("rb"));
   }
   if (fd == nullptr)
     return CANT_OPEN_FILE;

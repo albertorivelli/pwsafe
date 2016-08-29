@@ -116,7 +116,7 @@ public:
 	bool IsReadOnly() const { return m_IsReadOnly; };
 
 	// Check/Change master passphrase
-	int CheckPasskey(const StringX &filename, const StringX &passkey);
+	task<int> CheckPasskey(const StringX &filename, const StringX &passkey);
 	//void ChangePasskey(const StringX &newPasskey);
 	void SetPassKey(const StringX &new_passkey);
 	StringX GetPassKey() const; // returns cleartext - USE WITH CARE

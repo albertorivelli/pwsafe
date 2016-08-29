@@ -21,7 +21,7 @@
 class PWSfileV3 : public PWSfile
 {
 public:
-  static int CheckPasskey(const StringX &filename,
+  static task<int> CheckPasskey(const StringX &filename,
                           const StringX &passkey,
                           FILE *a_fd = NULL,
                           unsigned char *aPtag = NULL, uint32 *nIter = NULL);
