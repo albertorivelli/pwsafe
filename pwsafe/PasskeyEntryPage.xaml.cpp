@@ -13,7 +13,12 @@ PasskeyEntryPage::PasskeyEntryPage()
 	InitializeComponent();
 }
 
-task<void> pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	PickfileAsync();
+}
+
+task<void> pwsafe::PasskeyEntryPage::PickfileAsync()
 {
 	// Clear previous returned file name, if it exists, between iterations of this scenario
 	txtDBPath->Text = "";
@@ -39,7 +44,12 @@ task<void> pwsafe::PasskeyEntryPage::btnOpenFile_Click(Platform::Object^ sender,
 	}
 }
 
-task<void> pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	OkHandler();
+}
+
+task<void> pwsafe::PasskeyEntryPage::OkHandler()
 {
 	m_passkey.clear();
 	m_passkey.append(txtPassphrase->Password->Data());
