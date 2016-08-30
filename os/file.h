@@ -18,6 +18,7 @@
 using namespace concurrency;
 using namespace Platform;
 using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
 using namespace Windows::Storage::Pickers;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;

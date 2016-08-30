@@ -204,7 +204,6 @@ task<int> PWSfileV3::CheckPasskey(const StringX &filename,
   //PWS_LOGIT;
 
   StorageFile ^ fd;
-  //FILE *fd = a_fd;
   int retval = SUCCESS;
   SHA256 H;
 
@@ -216,21 +215,27 @@ task<int> PWSfileV3::CheckPasskey(const StringX &filename,
 
   //retval = SanityCheck(fd);
   if (retval != SUCCESS)
-    goto err;
+    /*goto err*/;
 
+  IBuffer^ buffer = co_await FileIO::ReadBufferAsync(fd);
+  DataReader^ dataReader = DataReader::FromBuffer(buffer);
+  Array<unsigned char>^ skip =  ref new Array<unsigned char>(sizeof(V3TAG));
+  dataReader->ReadBytes(skip);
   //fseek(fd, sizeof(V3TAG), SEEK_SET); // skip over tag
-  unsigned char salt[PWSaltLength];
+  Array<unsigned char>^ salt = ref new Array<unsigned char>(PWSaltLength);
+  dataReader->ReadBytes(salt);
   //fread(salt, 1, sizeof(salt), fd);
 
-  unsigned char Nb[sizeof(uint32)];
+  Array<unsigned char>^ Nb = ref new Array<unsigned char>(sizeof(uint32));
+  dataReader->ReadBytes(Nb);
   //fread(Nb, 1, sizeof(Nb), fd);
   { // block to shut up compiler warning w.r.t. goto
-    const uint32 N = getInt32(Nb);
+	const uint32 N = getInt32(Nb->Data);
 
     //ASSERT(N >= MIN_HASH_ITERATIONS);
     if (N < MIN_HASH_ITERATIONS) {
       retval = FAILURE;
-      goto err;
+      //goto err;
     }
 
     if (nITER != NULL)
@@ -239,14 +244,16 @@ task<int> PWSfileV3::CheckPasskey(const StringX &filename,
     if (aPtag == NULL)
       aPtag = Ptag;
 
-    StretchKey(salt, sizeof(salt), passkey, N, aPtag);
+    StretchKey(salt->Data, sizeof(salt), passkey, N, aPtag);
   }
   unsigned char HPtag[SHA256::HASHLEN];
   H.Update(aPtag, SHA256::HASHLEN);
   H.Final(HPtag);
-  unsigned char readHPtag[SHA256::HASHLEN];
-  //fread(readHPtag, 1, sizeof(readHPtag), fd);
-  if (memcmp(readHPtag, HPtag, sizeof(readHPtag)) != 0) {
+  Array<unsigned char>^ readHPtag = ref new Array<unsigned char>(SHA256::HASHLEN);
+  dataReader->ReadBytes(readHPtag);
+  delete dataReader;
+
+  if (memcmp(readHPtag->Data, HPtag, sizeof(readHPtag)) != 0) {
     retval = WRONG_PASSWORD;
     goto err;
   }
