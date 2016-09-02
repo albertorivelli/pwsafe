@@ -244,7 +244,7 @@ task<int> PWSfileV3::CheckPasskey(const StringX &filename,
     if (aPtag == NULL)
       aPtag = Ptag;
 
-    StretchKey(salt->Data, sizeof(salt), passkey, N, aPtag);
+    StretchKey(salt->Data, salt->Length, passkey, N, aPtag);
   }
   unsigned char HPtag[SHA256::HASHLEN];
   H.Update(aPtag, SHA256::HASHLEN);
