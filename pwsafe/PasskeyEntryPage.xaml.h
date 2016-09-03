@@ -38,8 +38,6 @@ namespace pwsafe
 		task<void> PickfileAsync();
 		void btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		task<void> OkHandler();
-		task<void> ProcessPhrase();
-		task<int> CheckPasskey(const StringX &filename, const StringX &passkey, PWScore *pcore = NULL);
 
 	};
 }

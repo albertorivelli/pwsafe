@@ -73,26 +73,9 @@ task<void> pwsafe::PasskeyEntryPage::OkHandler()
 		return;
 	}*/
 
-	co_await ProcessPhrase();
-
 	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
 
-	if (rootFrame != nullptr)
-	{
-		rootFrame->Navigate(TypeName(MainPage::typeid), nullptr);
-	}
-}
-
-task<int> PasskeyEntryPage::CheckPasskey(const StringX &filename, const StringX &passkey, PWScore *pcore)
-{
-	// To ensure values in current core are not overwritten when checking the passkey
-	if (pcore == NULL) return co_await m_core.CheckPasskey(filename, passkey);
-	else return co_await pcore->CheckPasskey(filename, passkey);
-}
-
-task<void> PasskeyEntryPage::ProcessPhrase()
-{
-	auto ret = co_await CheckPasskey(m_filespec, m_passkey);
+	auto ret = co_await m_core.CheckPasskey(m_filespec, m_passkey);
 	switch (ret)
 	{
 	case PWScore::SUCCESS:
@@ -110,6 +93,11 @@ task<void> PasskeyEntryPage::ProcessPhrase()
 		//	}
 		//	CPWDialog::OnOK();
 		//	m_passkey = save_passkey;
+		if (rootFrame != nullptr)
+		{
+			rootFrame->Navigate(TypeName(MainPage::typeid), nullptr);
+		}
+
 		break;
 	case PWScore::WRONG_PASSWORD:
 		//	if (m_tries++ >= 2) { // too many tries
@@ -122,6 +110,7 @@ task<void> PasskeyEntryPage::ProcessPhrase()
 		//	}
 		//	m_pctlPasskey->SetSel(MAKEWORD(-1, 0));
 		//	m_pctlPasskey->SetFocus();
+		txtPassphrase->Background = ref new Windows::UI::Xaml::Media::SolidColorBrush(Windows::UI::Colors::LightPink);
 		break;
 	case PWScore::READ_FAIL:
 		//	gmb.AfxMessageBox(IDSC_FILE_UNREADABLE);
