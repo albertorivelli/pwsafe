@@ -21,13 +21,13 @@
 #include <errno.h>
 #include <limits>
 
-PWSfile *PWSfile::MakePWSfile(const StringX &a_filename, const StringX &passkey,
+task<PWSfile *> PWSfile::MakePWSfile(const StringX &a_filename, const StringX &passkey,
                               VERSION &version, RWmode mode, int &status,
                               Asker *pAsker, Reporter *pReporter)
 {
   PWSfile *retval = NULL;
-
-  if (mode == Read && !pws_os::FileExists(a_filename.c_str())) {
+  auto exist = co_await pws_os::FileExists(a_filename.c_str());
+  if (mode == Read && !exist) {
     status = CANT_OPEN_FILE;
     return NULL;
   }
@@ -99,7 +99,7 @@ PWSfile::VERSION PWSfile::ReadVersion(const StringX &filename, const StringX &pa
 }
 
 PWSfile::PWSfile(const StringX &filename, RWmode mode, VERSION v)
-  : m_filename(filename), m_passkey(_T("")), m_fd(NULL),
+  : m_filename(filename), m_passkey(_T("")), m_fd(),
   m_curversion(v), m_rw(mode), m_defusername(_T("")),
     m_fish(NULL), m_terminal(NULL), m_status(SUCCESS),
   m_nRecordsWithUnknownFields(0)
@@ -127,26 +127,26 @@ void PWSfile::HashRandom256(unsigned char *p256)
   salter.Final(p256);
 }
 
-void PWSfile::FOpen()
+task<void> PWSfile::FOpen()
 {
   //ASSERT(!m_filename.empty());
-  /*const TCHAR* m = (m_rw == Read) ? _T("rb") : _T("wb");
-  if (m_fd != NULL) {
-    fclose(m_fd);
-    m_fd = NULL;
-  }
-  m_fd = pws_os::FOpen(m_filename.c_str(), m);
-  m_fileLength = pws_os::fileLength(m_fd);*/
+  const TCHAR* m = (m_rw == Read) ? _T("rb") : _T("wb");
+  /*if (m_fd != nullptr) {
+    m_fd->Dispose();
+    m_fd = nullptr;
+  }*/
+  m_fd = co_await pws_os::FOpen(m_filename.c_str(), m);
+  m_fileLength = pws_os::fileLength(m_fd);
 }
 
 int PWSfile::Close()
 {
   delete m_fish;
   m_fish = NULL;
-  if (m_fd != NULL) {
-    fflush(m_fd);
-    fclose(m_fd);
-    m_fd = NULL;
+  if (m_fd != nullptr) {
+	//m_fd->FlushAsync();
+	//m_fd->Dispose();
+    m_fd = nullptr;
   }
   return SUCCESS;
 }
@@ -158,7 +158,7 @@ size_t PWSfile::WriteCBC(unsigned char type, const unsigned char *data,
   return _writecbc(m_fd, data, length, type, m_fish, m_IV);
 }
 
-size_t PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,
+task<size_t> PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,
                         size_t &length)
 {
   unsigned char *buffer = NULL;
@@ -166,7 +166,7 @@ size_t PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,
   size_t retval;
 
   //ASSERT(m_fish != NULL && m_IV != NULL);
-  retval = _readcbc(m_fd, buffer, buffer_len, type,
+  retval = co_await _readcbc(m_fd, buffer, buffer_len, type,
     m_fish, m_IV, m_terminal, m_fileLength);
 
   if (buffer_len > 0) {
@@ -197,8 +197,8 @@ task<int> PWSfile::CheckPasskey(const StringX &filename,
    * V4 can take a looong time if the iter value's too big.
    * XXX Need to address this later with a popup prompting the user.
    */
-  if (passkey.empty())
-    return WRONG_PASSWORD;
+	if (passkey.empty())
+		return WRONG_PASSWORD;
 
   int status;
   version = UNKNOWN_VERSION;

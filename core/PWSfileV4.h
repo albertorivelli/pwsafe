@@ -36,7 +36,7 @@ public:
   PWSfileV4(const StringX &filename, RWmode mode, VERSION version);
   ~PWSfileV4();
 
-  virtual int Open(const StringX &passkey);
+  virtual task<int> Open(const StringX &passkey);
   virtual int Close();
 
   virtual int WriteRecord(const CItemData &item);

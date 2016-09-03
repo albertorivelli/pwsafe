@@ -103,12 +103,12 @@ public:
 	StringX GetCurFile() const { return m_currfile; }
 	void SetCurFile(const StringX &file) { m_currfile = file; }
 
-	int ReadCurFile(const StringX &passkey, const bool bValidate = false,
+	task<int> ReadCurFile(const StringX &passkey, const bool bValidate = false,
 		const size_t iMAXCHARS = 0)
 	{
-		return ReadFile(m_currfile, passkey, bValidate, iMAXCHARS);
+		return co_await ReadFile(m_currfile, passkey, bValidate, iMAXCHARS);
 	}
-	int ReadFile(const StringX &filename, const StringX &passkey,
+	task<int> ReadFile(const StringX &filename, const StringX &passkey,
 		const bool bValidate = false, const size_t iMAXCHARS = 0);
 
 	// R/O file status

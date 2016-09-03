@@ -74,7 +74,7 @@ public:
 
   ~CItemData();
 
-  int Read(PWSfile *in);
+  task<int> Read(PWSfile *in);
   int Write(PWSfile *out) const;
   int Write(PWSfileV4 *out) const;
   int WriteCommon(PWSfile *out) const;

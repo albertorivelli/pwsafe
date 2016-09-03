@@ -95,7 +95,8 @@ task<void> pwsafe::PasskeyEntryPage::OkHandler()
 		//	m_passkey = save_passkey;
 		if (rootFrame != nullptr)
 		{
-			rootFrame->Navigate(TypeName(MainPage::typeid), nullptr);
+			String ^s = ref new String(m_passkey.data());
+			rootFrame->Navigate(TypeName(MainPage::typeid), s);
 		}
 
 		break;

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "MainPage.g.h"
+#include <pplawait.h>
 
 namespace pwsafe
 {
@@ -17,8 +18,10 @@ namespace pwsafe
 	public:
 		MainPage();
 
+	private:
+		task<void> NavigatedToHandler(String^ e);
+
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
-
 	};
 }

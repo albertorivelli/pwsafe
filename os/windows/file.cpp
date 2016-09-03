@@ -34,28 +34,18 @@
 
 const TCHAR pws_os::PathSeparator = _T('\\');
 
-bool pws_os::FileExists(const stringT &filename)
+task<bool> pws_os::FileExists(const stringT &filename)
 {
   struct _stat statbuf;
-  int status;
+  bool status = false;
 
   Platform::String^ s = ref new Platform::String(filename.c_str());
 
-  auto t = create_task(Windows::Storage::StorageFile::GetFileFromPathAsync(s)).then([](task<StorageFile^> task)
-  {
-	  try
-	  {
-		  StorageFile^ file = task.get();
-		  if (file) return true;
-		  else return false;
-	  }
-	  catch (Exception^ e)
-	  {
-		  return false;
-	  }
-  });
+  auto t = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(s);
+  
+  if (t!=nullptr) status = true;
 
-  return true;
+  return status;
 }
 
 //bool pws_os::FileExists(const stringT &filename, bool &bReadOnly)
@@ -409,8 +399,9 @@ bool pws_os::FileExists(const stringT &filename)
 //  }
 //}
 //
-task<StorageFile^> pws_os::FOpen(const stringT &filename, const TCHAR *mode)
+task<IRandomAccessStream^> pws_os::FOpen(const stringT &filename, const TCHAR *mode)
 {
+	IRandomAccessStream^ ret = nullptr;
 	String ^ s = ref new String(filename.c_str());
 	StorageFile^ file = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(s);
 
@@ -427,27 +418,24 @@ task<StorageFile^> pws_os::FOpen(const stringT &filename, const TCHAR *mode)
 		break;
 		}*/
 
-		file->OpenAsync(m);
+		ret = co_await file->OpenAsync(m);
 	}
 	catch (Exception^ e)
 	{
-		file = nullptr;
+		ret = nullptr;
 	}
 
-	return file;
+	return ret;
 }
 
-//ulong64 pws_os::fileLength(std::FILE *fp) {
-//  if (fp != NULL) {
-//    __int64 pos = _ftelli64(fp);
-//    _fseeki64(fp, 0, SEEK_END);
-//    __int64 len = _ftelli64(fp);
-//    _fseeki64(fp, pos, SEEK_SET);
-//    return ulong64(len);
-//  } else
-//    return 0;
-//}
-//
+ulong64 pws_os::fileLength(IRandomAccessStream^ fp) {
+
+  if (fp != nullptr) {
+	  return fp->Size;
+  } else
+    return 0;
+}
+
 //bool pws_os::GetFileTimes(const stringT &filename,
 //      time_t &atime, time_t &ctime, time_t &mtime)
 //{

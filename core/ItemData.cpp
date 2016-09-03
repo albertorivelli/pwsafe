@@ -19,7 +19,7 @@
 #include "StringXStream.h"
 //#include "core.h"
 #include "PWSfile.h"
-#include "PWSfileV4.h"
+//#include "PWSfileV4.h"
 //#include "PWStime.h"
 
 #include "os/typedefs.h"
@@ -145,7 +145,7 @@ void CItemData::SetSpecialPasswords()
   } // IsDependent()
 }
 
-int CItemData::Read(PWSfile *in)
+task<int> CItemData::Read(PWSfile *in)
 {
   int status = PWSfile::SUCCESS;
 
@@ -159,7 +159,7 @@ int CItemData::Read(PWSfile *in)
   do {
     unsigned char *utf8 = NULL;
     size_t utf8Len = 0;
-    fieldLen = static_cast<signed long>(in->ReadField(type, utf8,
+    fieldLen = static_cast<signed long>(co_await in->ReadField(type, utf8,
                                                       utf8Len));
 
     if (fieldLen > 0) {
@@ -345,44 +345,44 @@ int CItemData::Write(PWSfile *out) const
   return status;
 }
 
-int CItemData::Write(PWSfileV4 *out) const
-{
-  int status = PWSfile::SUCCESS;
-  uuid_array_t item_uuid;
-
-  //ASSERT(HasUUID());
-
-  FieldType ft = END;
-
-  //ASSERT(HasUUID());
-  if (!IsDependent())
-    ft = UUID;
-  else if (IsAlias())
-    ft = ALIASUUID;
-  else if (IsShortcut())
-    ft = SHORTCUTUUID;
-  //else ASSERT(0);
-  GetUUID(item_uuid, ft);
-
-  out->WriteField(static_cast<unsigned char>(ft), item_uuid,
-                  sizeof(uuid_array_t));
-  if (IsDependent()) {
-    uuid_array_t base_uuid;
-    //ASSERT(IsFieldSet(BASEUUID));
-    GetUUID(base_uuid, BASEUUID);
-    out->WriteField(BASEUUID, base_uuid, sizeof(uuid_array_t));
-  }
-
-  if (IsFieldSet(ATTREF)) {
-    uuid_array_t ref_uuid;
-    GetUUID(ref_uuid, ATTREF);
-    out->WriteField(ATTREF, ref_uuid, sizeof(uuid_array_t));
-  }
-
-  status = WriteCommon(out);
-
-  return status;
-}
+//int CItemData::Write(PWSfileV4 *out) const
+//{
+//  int status = PWSfile::SUCCESS;
+//  uuid_array_t item_uuid;
+//
+//  //ASSERT(HasUUID());
+//
+//  FieldType ft = END;
+//
+//  //ASSERT(HasUUID());
+//  if (!IsDependent())
+//    ft = UUID;
+//  else if (IsAlias())
+//    ft = ALIASUUID;
+//  else if (IsShortcut())
+//    ft = SHORTCUTUUID;
+//  //else ASSERT(0);
+//  GetUUID(item_uuid, ft);
+//
+//  out->WriteField(static_cast<unsigned char>(ft), item_uuid,
+//                  sizeof(uuid_array_t));
+//  if (IsDependent()) {
+//    uuid_array_t base_uuid;
+//    //ASSERT(IsFieldSet(BASEUUID));
+//    GetUUID(base_uuid, BASEUUID);
+//    out->WriteField(BASEUUID, base_uuid, sizeof(uuid_array_t));
+//  }
+//
+//  if (IsFieldSet(ATTREF)) {
+//    uuid_array_t ref_uuid;
+//    GetUUID(ref_uuid, ATTREF);
+//    out->WriteField(ATTREF, ref_uuid, sizeof(uuid_array_t));
+//  }
+//
+//  status = WriteCommon(out);
+//
+//  return status;
+//}
 
 int CItemData::WriteUnknowns(PWSfile *out) const
 {

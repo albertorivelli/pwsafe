@@ -874,7 +874,7 @@ task<int> PWScore::CheckPasskey(const StringX &filename, const StringX &passkey)
 }
 
 
-int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
+task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	const bool bValidate, const size_t iMAXCHARS)
 {
 	int status;
@@ -887,7 +887,7 @@ int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	//// Clear any old entry keyboard shortcuts
 	////m_KBShortcutMap.clear();
 
-	PWSfile *in = PWSfile::MakePWSfile(a_filename, a_passkey, m_ReadFileVersion,
+	PWSfile *in = co_await PWSfile::MakePWSfile(a_filename, a_passkey, m_ReadFileVersion,
 		PWSfile::Read, status, m_pAsker, m_pReporter);
 
 	if (status != PWSfile::SUCCESS) {
@@ -895,7 +895,7 @@ int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 		return status;
 	}
 
-	status = in->Open(a_passkey);
+	status = co_await in->Open(a_passkey);
 
 	// in the old times we could open even 1.x files
 	// for compatibility reasons, we open them again, to see if this is really a "1.x" file
@@ -907,7 +907,7 @@ int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 		//Closing previously opened file
 		in->Close();
 		in->SetCurVersion(PWSfile::V17);
-		status = in->Open(a_passkey);
+		status = co_await in->Open(a_passkey);
 		if (status != PWSfile::SUCCESS) {
 			m_ReadFileVersion = tmp_version;
 		}
@@ -960,7 +960,7 @@ int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 
 	do {
 		ci_temp.Clear(); // Rather than creating a new one each time.
-		status = in->ReadRecord(ci_temp);
+		status = co_await in->ReadRecord(ci_temp);
 		switch (status) {
 		case PWSfile::FAILURE:
 		{
@@ -1013,8 +1013,8 @@ int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	// Only do the rest if user hasn't explicitly disabled the checks
 	// NOTE: When a "other" core is involved (Compare, Merge etc.), we NEVER validate
 	// the "other" core.
-	if (bValidate)
-		bValidateRC = Validate(iMAXCHARS, st_vr);
+	//if (bValidate)
+		//bValidateRC = Validate(iMAXCHARS, st_vr);
 
 	SetDBChanged(bValidateRC);
 
@@ -1030,7 +1030,6 @@ int PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 		closeStatus = OK_WITH_VALIDATION_ERRORS;
 
 	return closeStatus;
-return 0;
 }
 
 // functor object type for find_if:

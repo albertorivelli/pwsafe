@@ -24,6 +24,14 @@
 #include <sstream>
 #include <stdarg.h>
 
+#include <collection.h>
+#include <pplawait.h>
+
+using namespace concurrency;
+using namespace Platform;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+
 // For V1V2 and file encryption, NOT for V3 and later:
 #define SaltLength 20
 #define StuffSize 10
@@ -49,7 +57,7 @@ extern void GenRandhash(const StringX &passkey,
                         unsigned char *m_randhash);
 
 // buffer is allocated by _readcbc, *** delete[] is responsibility of caller ***
-extern size_t _readcbc(FILE *fp, unsigned char * &buffer,
+extern task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char * &buffer,
                        size_t &buffer_len,
                        unsigned char &type, Fish *Algorithm,
                        unsigned char *cbcbuffer,
@@ -57,17 +65,17 @@ extern size_t _readcbc(FILE *fp, unsigned char * &buffer,
                        ulong64 file_len = 0);
 
 // typeless version for V4 content (caller pre-allocates buffer)
-extern size_t _readcbc(FILE *fp, unsigned char *buffer,
+extern task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char *buffer,
                        const size_t buffer_len, Fish *Algorithm,
                        unsigned char *cbcbuffer);
 
 // _writecbc will throw(EIO) iff a write fail occurs!
-extern size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length,
+extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
                         unsigned char type, Fish *Algorithm,
                         unsigned char *cbcbuffer);
 
 // typeless version for V4 content:
-extern size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length,
+extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
                         Fish *Algorithm, unsigned char *cbcbuffer);
 
 

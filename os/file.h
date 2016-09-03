@@ -26,7 +26,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 namespace pws_os {
   //extern void AddDrive(stringT &path);
-  extern bool FileExists(const stringT &filename);
+  extern task<bool> FileExists(const stringT &filename);
   //extern bool FileExists(const stringT &filename, bool &bReadOnly);
   //extern bool RenameFile(const stringT &oldname, const stringT &newname);
   //extern bool CopyAFile(const stringT &from, const stringT &to); // creates dirs as needed!
@@ -38,8 +38,8 @@ namespace pws_os {
   //extern void UnlockFile(const stringT &filename,
   //                       HANDLE &lockFileHandle, int &LockCount);
 
-  extern task<StorageFile^> FOpen(const stringT &filename, const TCHAR *mode);
-  //extern ulong64 fileLength(std::FILE *fp);
+  extern task<IRandomAccessStream^> FOpen(const stringT &filename, const TCHAR *mode);
+  extern ulong64 fileLength(IRandomAccessStream^ fp);
   //extern bool GetFileTimes(const stringT &filename,
   //    time_t &ctime, time_t &mtime, time_t &atime);
   //extern bool SetFileTimes(const stringT &filename,

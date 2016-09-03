@@ -13,7 +13,7 @@
 #include "TwoFish.h"
 #include "PWSrand.h"
 #include "PWSfile.h"
-#include "PWSfileV4.h"
+//#include "PWSfileV4.h"
 #include "PWScore.h"
 
 #include "os/typedefs.h"

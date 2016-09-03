@@ -97,7 +97,7 @@ public:
     HDR_LAST,                             // Start of unknown fields!
     HDR_END                   = 0xff};    // header field types, per formatV{2,3}.txt
 
-  static PWSfile *MakePWSfile(const StringX &a_filename, const StringX &passkey,
+  static task<PWSfile *> MakePWSfile(const StringX &a_filename, const StringX &passkey,
                               VERSION &version, RWmode mode, int &status, 
                               Asker *pAsker = NULL, Reporter *pReporter = NULL);
 
@@ -111,11 +111,11 @@ public:
 
   virtual ~PWSfile();
 
-  virtual int Open(const StringX &passkey) = 0;
+  virtual task<int> Open(const StringX &passkey) = 0;
   virtual int Close();
 
   virtual int WriteRecord(const CItemData &item) = 0;
-  virtual int ReadRecord(CItemData &item) = 0;
+  virtual task<int> ReadRecord(CItemData &item) = 0;
 
   const PWSfileHeader &GetHeader() const {return m_hdr;}
   void SetHeader(const PWSfileHeader &h) {m_hdr = h;}
@@ -148,24 +148,24 @@ public:
   size_t WriteField(unsigned char type,
                     const unsigned char *data,
                     size_t length) {return WriteCBC(type, data, length);}
-  size_t ReadField(unsigned char &type,
+  task<size_t> ReadField(unsigned char &type,
                    unsigned char* &data,
-                   size_t &length) {return ReadCBC(type, data, length);}
+                   size_t &length) {return co_await ReadCBC(type, data, length);}
   
 protected:
   PWSfile(const StringX &filename, RWmode mode, VERSION v = UNKNOWN_VERSION);
-  void FOpen(); // calls right variant of m_fd = fopen(m_filename);
+  task<void> FOpen(); // calls right variant of m_fd = fopen(m_filename);
   virtual size_t WriteCBC(unsigned char type, const StringX &data) = 0;
   virtual size_t WriteCBC(unsigned char type, const unsigned char *data,
                           size_t length);
-  virtual size_t ReadCBC(unsigned char &type, unsigned char* &data,
+  virtual task<size_t> ReadCBC(unsigned char &type, unsigned char* &data,
                          size_t &length);
   
   static void HashRandom256(unsigned char *p256); // when we don't want to expose our RNG
 
   const StringX m_filename;
   StringX m_passkey;
-  FILE *m_fd;
+  IRandomAccessStream^ m_fd;
   VERSION m_curversion;
   const RWmode m_rw;
   StringX m_defusername; // for V17 conversion (read) only

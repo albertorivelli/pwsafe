@@ -156,7 +156,7 @@ void GenRandhash(const StringX &a_passkey,
   keyHash.Final(a_randhash);
 }
 
-size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length, unsigned char type,
+size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length, unsigned char type,
                  Fish *Algorithm, unsigned char *cbcbuffer)
 {
   const unsigned int BS = Algorithm->GetBlockSize();
@@ -193,7 +193,7 @@ size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length, unsigned 
   Algorithm->Encrypt(curblock, curblock);
   memcpy(cbcbuffer, curblock, BS); // update CBC for next round
 
-  numWritten = fwrite(curblock, 1, BS, fp);
+  //numWritten = fwrite(curblock, 1, BS, fp);
   if (numWritten != BS) {
     trashMemory(curblock, BS);
     throw(EIO);
@@ -205,7 +205,7 @@ size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length, unsigned 
   return numWritten;
 }
 
-size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length,
+size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
                  Fish *Algorithm, unsigned char *cbcbuffer)
 {
   // Doesn't write out length, just CBC's the data, padding with randomness
@@ -243,7 +243,7 @@ size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length,
       xormem(curblock, cbcbuffer, BS);
       Algorithm->Encrypt(curblock, curblock);
       memcpy(cbcbuffer, curblock, BS);
-      size_t nw =  fwrite(curblock, 1, BS, fp);
+	  size_t nw = 0;// fwrite(curblock, 1, BS, fp);
       if (nw != BS) {
         trashMemory(curblock, BS);
         throw(EIO);
@@ -271,7 +271,7 @@ size_t _writecbc(FILE *fp, const unsigned char *buffer, size_t length,
 * If TERMINAL_BLOCK is non-NULL, the first block read is tested against it,
 * and -1 is returned if it matches. (used in V3)
 */
-size_t _readcbc(FILE *fp,
+task<size_t> _readcbc(IRandomAccessStream^ fp,
          unsigned char* &buffer, size_t &buffer_len, unsigned char &type,
          Fish *Algorithm, unsigned char *cbcbuffer,
          const unsigned char *TERMINAL_BLOCK, ulong64 file_len)
@@ -295,7 +295,14 @@ size_t _readcbc(FILE *fp,
   lengthblock = block1;
 
   buffer_len = 0;
-  numRead = fread(lengthblock, 1, BS, fp);
+  Array<unsigned char>^ lblock = ref new Array<unsigned char>(BS);
+  DataReader^ dataReader = ref new DataReader(fp);
+  co_await dataReader->LoadAsync(fp->Size);
+  dataReader->ReadBytes(lblock);
+  dataReader->DetachStream();
+  for (int i = 0; i < lblock->Length; i++) lengthblock[i] = lblock[i];
+  numRead = BS;
+  //numRead = fread(lengthblock, 1, BS, fp);
   if (numRead != BS) {
     return 0;
   }
@@ -353,7 +360,7 @@ size_t _readcbc(FILE *fp,
   if (length > 0 ||
       (BS == 8 && length == 0)) { // pre-3 pain
     unsigned char *tempcbc = block3;
-    numRead += fread(b, 1, BlockLength, fp);
+    //numRead += fread(b, 1, BlockLength, fp);
     for (unsigned int x = 0; x < BlockLength; x += BS) {
       memcpy(tempcbc, b + x, BS);
       Algorithm->Decrypt(b + x, b + x);
@@ -370,7 +377,7 @@ size_t _readcbc(FILE *fp,
 }
 
 // typeless version for V4 content (caller pre-allocates buffer)
-size_t _readcbc(FILE *fp, unsigned char *buffer,
+task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char *buffer,
                 const size_t buffer_len, Fish *Algorithm,
                 unsigned char *cbcbuffer)
 {
@@ -381,17 +388,22 @@ size_t _readcbc(FILE *fp, unsigned char *buffer,
   unsigned char *tmpcbc = new unsigned char[BS];
 
   do {
-    size_t nr = fread(p, 1, BS, fp);
-    nread += nr;
-    if (nr != BS)
-      break;
+    Array<unsigned char>^ lblock = ref new Array<unsigned char>(BS);
+	DataReader^ dataReader = ref new DataReader(fp);
+	co_await dataReader->LoadAsync(fp->Size);
+	dataReader->ReadBytes(lblock);
+	dataReader->DetachStream();
+    //size_t nr = fread(p, 1, BS, fp);
+    nread += BS;
+    /*if (nr != BS)
+      break;*/
 
     memcpy(tmpcbc, p, BS);
     Algorithm->Decrypt(p, p);
     xormem(p, cbcbuffer, BS);
     memcpy(cbcbuffer, tmpcbc, BS);
 
-    p += nr;
+    p += BS;
   } while (nread < buffer_len);
 
   delete[] tmpcbc;
