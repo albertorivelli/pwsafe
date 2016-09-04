@@ -10,7 +10,7 @@
 #include "PWSfileV3.h"
 //#include "PWSfileV4.h"
 //#include "SysInfo.h"
-//#include "core.h"
+#include "core.h"
 //#include "os/file.h"
 
 #include "sha1.h" // for simple encrypt/decrypt

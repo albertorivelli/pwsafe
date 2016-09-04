@@ -98,40 +98,40 @@ public:
   StringX GetGroup() const {return GetField(GROUP);} // V20
   StringX GetURL() const {return GetField(URL);} // V30
   StringX GetAutoType() const {return GetField(AUTOTYPE);} // V30
-//  StringX GetATime() const {return GetTime(ATIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
-//  StringX GetCTime() const {return GetTime(CTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
-//  StringX GetXTime() const {return GetTime(XTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
-//  StringX GetPMTime() const {return GetTime(PMTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
-//  StringX GetRMTime() const {return GetTime(RMTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
-//  StringX GetATimeL() const {return GetTime(ATIME, PWSUtil::TMC_LOCALE);}  // V30
-//  StringX GetCTimeL() const {return GetTime(CTIME, PWSUtil::TMC_LOCALE);}  // V30
-//  StringX GetXTimeL() const {return GetTime(XTIME, PWSUtil::TMC_LOCALE_DATE_ONLY);}  // V30
-//  StringX GetPMTimeL() const {return GetTime(PMTIME, PWSUtil::TMC_LOCALE);}  // V30
-//  StringX GetRMTimeL() const {return GetTime(RMTIME, PWSUtil::TMC_LOCALE);}  // V30
-//  StringX GetATimeN() const {return GetTime(ATIME, PWSUtil::TMC_ASC_NULL);}  // V30
-//  StringX GetCTimeN() const {return GetTime(CTIME, PWSUtil::TMC_ASC_NULL);}  // V30
-//  StringX GetXTimeN() const {return GetTime(XTIME, PWSUtil::TMC_ASC_NULL);}  // V30
-//  StringX GetPMTimeN() const {return GetTime(PMTIME, PWSUtil::TMC_ASC_NULL);}  // V30
-//  StringX GetRMTimeN() const {return GetTime(RMTIME, PWSUtil::TMC_ASC_NULL);}  // V30
-//  StringX GetATimeExp() const {return GetTime(ATIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
-//  StringX GetCTimeExp() const {return GetTime(CTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
-//  StringX GetXTimeExp() const {return GetTime(XTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
-//  StringX GetPMTimeExp() const {return GetTime(PMTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
-//  StringX GetRMTimeExp() const {return GetTime(RMTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
-//  StringX GetATimeXML() const {return GetTime(ATIME, PWSUtil::TMC_XML);}  // V30
-//  StringX GetCTimeXML() const {return GetTime(CTIME, PWSUtil::TMC_XML);}  // V30
-//  StringX GetXTimeXML() const {return GetTime(XTIME, PWSUtil::TMC_XML);}  // V30
-//  StringX GetPMTimeXML() const {return GetTime(PMTIME, PWSUtil::TMC_XML);}  // V30
-//  StringX GetRMTimeXML() const {return GetTime(RMTIME, PWSUtil::TMC_XML);}  // V30
-//  //  These populate (and return) time_t instead of giving a character string
-//  time_t GetATime(time_t &t) const {CItem::GetTime(ATIME, t); return t;}  // V30
-//  time_t GetCTime(time_t &t) const {CItem::GetTime(CTIME, t); return t;}  // V30
-//  time_t GetXTime(time_t &t) const {CItem::GetTime(XTIME, t); return t;}  // V30
-//  time_t GetPMTime(time_t &t) const {CItem::GetTime(PMTIME, t); return t;}  // V30
-//  time_t GetRMTime(time_t &t) const {CItem::GetTime(RMTIME, t); return t;}  // V30
-//  int32 GetXTimeInt(int32 &xint) const; // V30
-//  StringX GetXTimeInt() const; // V30
-//  StringX GetPWHistory() const;  // V30
+  StringX GetATime() const {return GetTime(ATIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
+  StringX GetCTime() const {return GetTime(CTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
+  StringX GetXTime() const {return GetTime(XTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
+  StringX GetPMTime() const {return GetTime(PMTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
+  StringX GetRMTime() const {return GetTime(RMTIME, PWSUtil::TMC_ASC_UNKNOWN);}  // V30
+  StringX GetATimeL() const {return GetTime(ATIME, PWSUtil::TMC_LOCALE);}  // V30
+  StringX GetCTimeL() const {return GetTime(CTIME, PWSUtil::TMC_LOCALE);}  // V30
+  StringX GetXTimeL() const {return GetTime(XTIME, PWSUtil::TMC_LOCALE_DATE_ONLY);}  // V30
+  StringX GetPMTimeL() const {return GetTime(PMTIME, PWSUtil::TMC_LOCALE);}  // V30
+  StringX GetRMTimeL() const {return GetTime(RMTIME, PWSUtil::TMC_LOCALE);}  // V30
+  StringX GetATimeN() const {return GetTime(ATIME, PWSUtil::TMC_ASC_NULL);}  // V30
+  StringX GetCTimeN() const {return GetTime(CTIME, PWSUtil::TMC_ASC_NULL);}  // V30
+  StringX GetXTimeN() const {return GetTime(XTIME, PWSUtil::TMC_ASC_NULL);}  // V30
+  StringX GetPMTimeN() const {return GetTime(PMTIME, PWSUtil::TMC_ASC_NULL);}  // V30
+  StringX GetRMTimeN() const {return GetTime(RMTIME, PWSUtil::TMC_ASC_NULL);}  // V30
+  StringX GetATimeExp() const {return GetTime(ATIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
+  StringX GetCTimeExp() const {return GetTime(CTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
+  StringX GetXTimeExp() const {return GetTime(XTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
+  StringX GetPMTimeExp() const {return GetTime(PMTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
+  StringX GetRMTimeExp() const {return GetTime(RMTIME, PWSUtil::TMC_EXPORT_IMPORT);}  // V30
+  StringX GetATimeXML() const {return GetTime(ATIME, PWSUtil::TMC_XML);}  // V30
+  StringX GetCTimeXML() const {return GetTime(CTIME, PWSUtil::TMC_XML);}  // V30
+  StringX GetXTimeXML() const {return GetTime(XTIME, PWSUtil::TMC_XML);}  // V30
+  StringX GetPMTimeXML() const {return GetTime(PMTIME, PWSUtil::TMC_XML);}  // V30
+  StringX GetRMTimeXML() const {return GetTime(RMTIME, PWSUtil::TMC_XML);}  // V30
+  //  These populate (and return) time_t instead of giving a character string
+  time_t GetATime(time_t &t) const {CItem::GetTime(ATIME, t); return t;}  // V30
+  time_t GetCTime(time_t &t) const {CItem::GetTime(CTIME, t); return t;}  // V30
+  time_t GetXTime(time_t &t) const {CItem::GetTime(XTIME, t); return t;}  // V30
+  time_t GetPMTime(time_t &t) const {CItem::GetTime(PMTIME, t); return t;}  // V30
+  time_t GetRMTime(time_t &t) const {CItem::GetTime(RMTIME, t); return t;}  // V30
+  int32 GetXTimeInt(int32 &xint) const; // V30
+  StringX GetXTimeInt() const; // V30
+  StringX GetPWHistory() const;  // V30
 //  void GetPWPolicy(PWPolicy &pwp) const;
 //  StringX GetPWPolicy() const {return GetField(POLICY);}
 //  StringX GetRunCommand() const {return GetField(RUNCMD);}
@@ -173,24 +173,24 @@ public:
   void SetGroup(const StringX &group) {CItem::SetField(GROUP, group);} // V20
   void SetURL(const StringX &url) {CItem::SetField(URL, url);} // V30
   void SetAutoType(const StringX &autotype) {CItem::SetField(AUTOTYPE, autotype);} // V30
-//  void SetATime() {SetTime(ATIME);}  // V30
-//  void SetATime(time_t t) {CItem::SetTime(ATIME, t);}  // V30
-//  bool SetATime(const stringT &time_str) {return SetTime(ATIME, time_str);}  // V30
-//  void SetCTime() {SetTime(CTIME);}  // V30
-//  void SetCTime(time_t t) {CItem::SetTime(CTIME, t);}  // V30
-//  bool SetCTime(const stringT &time_str) {return SetTime(CTIME, time_str);}  // V30
-//  void SetXTime() {SetTime(XTIME);}  // V30
-//  void SetXTime(time_t t) {CItem::SetTime(XTIME, t);}  // V30
-//  bool SetXTime(const stringT &time_str) {return SetTime(XTIME, time_str);}  // V30
-//  void SetPMTime() {SetTime(PMTIME);}  // V30
-//  void SetPMTime(time_t t) {CItem::SetTime(PMTIME, t);}  // V30
-//  bool SetPMTime(const stringT &time_str) {return SetTime(PMTIME, time_str);}  // V30
-//  void SetRMTime() {SetTime(RMTIME);}  // V30
-//  void SetRMTime(time_t t) {CItem::SetTime(RMTIME, t);}  // V30
-//  bool SetRMTime(const stringT &time_str) {return SetTime(RMTIME, time_str);}  // V30
-//  void SetXTimeInt(int32 xint); // V30
-//  bool SetXTimeInt(const stringT &xint_str); // V30
-//  void SetPWHistory(const StringX &PWHistory);  // V30
+  void SetATime() {SetTime(ATIME);}  // V30
+  void SetATime(time_t t) {CItem::SetTime(ATIME, t);}  // V30
+  bool SetATime(const stringT &time_str) {return SetTime(ATIME, time_str);}  // V30
+  void SetCTime() {SetTime(CTIME);}  // V30
+  void SetCTime(time_t t) {CItem::SetTime(CTIME, t);}  // V30
+  bool SetCTime(const stringT &time_str) {return SetTime(CTIME, time_str);}  // V30
+  void SetXTime() {SetTime(XTIME);}  // V30
+  void SetXTime(time_t t) {CItem::SetTime(XTIME, t);}  // V30
+  bool SetXTime(const stringT &time_str) {return SetTime(XTIME, time_str);}  // V30
+  void SetPMTime() {SetTime(PMTIME);}  // V30
+  void SetPMTime(time_t t) {CItem::SetTime(PMTIME, t);}  // V30
+  bool SetPMTime(const stringT &time_str) {return SetTime(PMTIME, time_str);}  // V30
+  void SetRMTime() {SetTime(RMTIME);}  // V30
+  void SetRMTime(time_t t) {CItem::SetTime(RMTIME, t);}  // V30
+  bool SetRMTime(const stringT &time_str) {return SetTime(RMTIME, time_str);}  // V30
+  void SetXTimeInt(int32 xint); // V30
+  bool SetXTimeInt(const stringT &xint_str); // V30
+  void SetPWHistory(const StringX &PWHistory);  // V30
 //  void SetPWPolicy(const PWPolicy &pwp);
 //  bool SetPWPolicy(const stringT &cs_pwp);
 //  void SetRunCommand(const StringX &sx_RunCommand) {CItem::SetField(RUNCMD, sx_RunCommand);}
@@ -233,29 +233,29 @@ public:
 //  bool Matches(EntryStatus estatus, int iFunction) const;  // Entrystatus values
 //
   bool HasUUID() const; // UUID type matches entry type and is set
-//  bool IsGroupSet() const                  { return IsFieldSet(GROUP);     }
-//  bool IsUserSet() const                   { return IsFieldSet(USER);      }
-//  bool IsNotesSet() const                  { return IsFieldSet(NOTES);     }
-//  bool IsURLSet() const                    { return IsFieldSet(URL);       }
-//  bool IsRunCommandSet() const             { return IsFieldSet(RUNCMD);    }
-//  bool IsEmailSet() const                  { return IsFieldSet(EMAIL);     }
-//  bool IsTitleSet() const                  { return IsFieldSet(TITLE);     }
-//  bool IsPasswordSet() const               { return IsFieldSet(PASSWORD);  }
-//  bool IsCreationTimeSet() const           { return IsFieldSet(CTIME);     }
-//  bool IsModificationTimeSet() const       { return IsFieldSet(PMTIME);    }
-//  bool IsLastAccessTimeSet() const         { return IsFieldSet(ATIME);     }
-//  bool IsExpiryDateSet() const             { return IsFieldSet(XTIME);     }
-//  bool IsRecordModificationTimeSet() const { return IsFieldSet(RMTIME);    }
-//  bool IsAutoTypeSet() const               { return IsFieldSet(AUTOTYPE);  }
-//  bool IsPasswordHistorySet() const        { return IsFieldSet(PWHIST);    }
-//  bool IsPasswordPolicySet() const         { return IsFieldSet(POLICY);    }
-//  bool IsPasswordExpiryIntervalSet() const { return IsFieldSet(XTIME_INT); }
-//  bool IsDCASet() const                    { return IsFieldSet(DCA);       }
-//  bool IsShiftDCASet() const               { return IsFieldSet(SHIFTDCA);  }
-//  bool IsProtectionSet() const             { return IsFieldSet(PROTECTED); }
-//  bool IsSymbolsSet() const                { return IsFieldSet(SYMBOLS);   }
-//  bool IsPolicyNameSet() const             { return IsFieldSet(POLICYNAME);}
-//  bool IsKBShortcutSet() const             { return IsFieldSet(KBSHORTCUT);}
+  bool IsGroupSet() const                  { return IsFieldSet(GROUP);     }
+  bool IsUserSet() const                   { return IsFieldSet(USER);      }
+  bool IsNotesSet() const                  { return IsFieldSet(NOTES);     }
+  bool IsURLSet() const                    { return IsFieldSet(URL);       }
+  bool IsRunCommandSet() const             { return IsFieldSet(RUNCMD);    }
+  bool IsEmailSet() const                  { return IsFieldSet(EMAIL);     }
+  bool IsTitleSet() const                  { return IsFieldSet(TITLE);     }
+  bool IsPasswordSet() const               { return IsFieldSet(PASSWORD);  }
+  bool IsCreationTimeSet() const           { return IsFieldSet(CTIME);     }
+  bool IsModificationTimeSet() const       { return IsFieldSet(PMTIME);    }
+  bool IsLastAccessTimeSet() const         { return IsFieldSet(ATIME);     }
+  bool IsExpiryDateSet() const             { return IsFieldSet(XTIME);     }
+  bool IsRecordModificationTimeSet() const { return IsFieldSet(RMTIME);    }
+  bool IsAutoTypeSet() const               { return IsFieldSet(AUTOTYPE);  }
+  bool IsPasswordHistorySet() const        { return IsFieldSet(PWHIST);    }
+  bool IsPasswordPolicySet() const         { return IsFieldSet(POLICY);    }
+  bool IsPasswordExpiryIntervalSet() const { return IsFieldSet(XTIME_INT); }
+  bool IsDCASet() const                    { return IsFieldSet(DCA);       }
+  bool IsShiftDCASet() const               { return IsFieldSet(SHIFTDCA);  }
+  bool IsProtectionSet() const             { return IsFieldSet(PROTECTED); }
+  bool IsSymbolsSet() const                { return IsFieldSet(SYMBOLS);   }
+  bool IsPolicyNameSet() const             { return IsFieldSet(POLICYNAME);}
+  bool IsKBShortcutSet() const             { return IsFieldSet(KBSHORTCUT);}
 //    
 //  bool IsGroupEmpty() const                { return !IsGroupSet();         }
 //  bool IsUserEmpty() const                 { return !IsUserSet();          }
@@ -302,10 +302,10 @@ private:
   // move from pre-2.0 name to post-2.0 title+user
   void SplitName(const StringX &name,
                  StringX &title, StringX &username);
-//  StringX GetTime(int whichtime, PWSUtil::TMC result_format) const; // V30
-//  void SetTime(const int whichtime); // V30
-//  bool SetTime(const int whichtime, const stringT &time_str); // V30
-//
+  StringX GetTime(int whichtime, PWSUtil::TMC result_format) const; // V30
+  void SetTime(const int whichtime); // V30
+  bool SetTime(const int whichtime, const stringT &time_str); // V30
+
   // Laziness is a Virtue:
   bool SetField(unsigned char type, const unsigned char *data, size_t len);
 

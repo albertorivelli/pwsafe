@@ -192,7 +192,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BlowFish.h" />
+    <ClInclude Include="core.h" />
     <ClInclude Include="coredefs.h" />
+    <ClInclude Include="ExpiredList.h" />
     <ClInclude Include="Fish.h" />
     <ClInclude Include="hmac.h" />
     <ClInclude Include="Item.h" />
@@ -202,6 +204,7 @@
     <ClInclude Include="KeyWrap.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Proxy.h" />
+    <ClInclude Include="PWHistory.h" />
     <ClInclude Include="PWScore.h" />
     <ClInclude Include="PWSfile.h" />
     <ClInclude Include="PWSfileHeader.h" />
@@ -218,9 +221,11 @@
     <ClInclude Include="UnknownField.h" />
     <ClInclude Include="UTF8Conv.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="VerifyFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BlowFish.cpp" />
+    <ClCompile Include="ExpiredList.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemAtt.cpp" />
     <ClCompile Include="ItemData.cpp" />
@@ -234,6 +239,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PWHistory.cpp" />
     <ClCompile Include="PWScore.cpp" />
     <ClCompile Include="PWSfile.cpp" />
     <ClCompile Include="PWSfileHeader.cpp" />
@@ -246,6 +252,7 @@
     <ClCompile Include="UnknownField.cpp" />
     <ClCompile Include="UTF8Conv.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="VerifyFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\os\os.vcxproj">

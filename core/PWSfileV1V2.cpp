@@ -7,9 +7,9 @@
 */
 #include "PWSfileV1V2.h"
 #include "PWSrand.h"
-//#include "core.h"
-//#include "os/file.h"
-//#include "os/utf8conv.h"
+#include "core.h"
+#include "os/file.h"
+#include "os/utf8conv.h"
 #include "os/UUID.h"
 
 #ifdef _WIN32

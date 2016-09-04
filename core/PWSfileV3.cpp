@@ -13,7 +13,7 @@
 #include "StringXStream.h" //#include "PWSFilters.h"
 //#include "PWSdirs.h"
 //#include "PWSprefs.h"
-//#include "core.h"
+#include "core.h"
 
 //#include "os/debug.h"
 #include "os/file.h"

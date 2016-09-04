@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include "PWScore.h"
-//#include "core.h"
+#include "core.h"
 #include "TwoFish.h"
 //#include "PWSprefs.h"
 #include "PWSrand.h"
@@ -280,7 +280,7 @@ bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
 	GTUSet setGTU;
 	GTUSetPair pr_gtu;
 	std::vector<st_GroupTitleUser> vGTU_UUID, vGTU_EmptyPassword, vGTU_PWH, vGTU_TEXT,
-		vGTU_ALIASES, vGTU_SHORTCUTS;
+		                           vGTU_ALIASES, vGTU_SHORTCUTS;
 	std::vector<st_GroupTitleUser2> vGTU_NONUNIQUE, vGTU_EmptyTitle;
 	std::vector<st_GroupTitleUser> vGTU_MissingAtt;
 	std::vector<st_AttTitle_Filename> vOrphanAtt;
@@ -332,7 +332,7 @@ bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
 				StringX s_copy, sxnewtitle(sxtitle);
 				do {
 					i++;
-					Format(s_copy, 3387, i);
+					Format(s_copy, IDSC_DUPLICATENUMBER, i);
 					sxnewtitle = sxtitle + s_copy;
 					st_gtu.title = sxnewtitle;
 					pr_gtu = setGTU.insert(st_gtu);
@@ -350,7 +350,7 @@ bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
 		// Test if Password is present as it is mandatory! was fixed
 		if (ci.GetPassword().empty()) {
 			StringX sxMissingPassword;
-			LoadAString(sxMissingPassword, 3435);
+			LoadAString(sxMissingPassword, IDSC_MISSINGPASSWORD);
 			fixedItem.SetPassword(sxMissingPassword);
 
 			bFixed = true;
@@ -359,11 +359,11 @@ bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
 		}
 
 		// Test if Password History was fixed
-		/*if (!fixedItem.ValidatePWHistory()) {
+		if (!fixedItem.ValidatePWHistory()) {
 			bFixed = true;
 			vGTU_PWH.push_back(st_GroupTitleUser(sxgroup, sxtitle, sxuser));
 			st_vr.num_PWH_fixed++;
-		}*/
+		}
 
 		// Note excessively sized text fields
 		if (iMAXCHARS > 0) {
@@ -392,8 +392,8 @@ bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
 			sAtts.insert(ci.GetAttUUID());
 			if (!HasAtt(ci.GetAttUUID())) {
 				vGTU_MissingAtt.push_back(st_GroupTitleUser(ci.GetGroup(),
-					ci.GetTitle(),
-					ci.GetUser()));
+					                                        ci.GetTitle(),
+					                                        ci.GetUser()));
 				st_vr.num_missing_att++;
 				// Fix the problem:
 				fixedItem.ClearAttUUID();
@@ -422,6 +422,8 @@ bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
 		}
 	}
 
+	//pws_os::Trace(_T("End validation. %d entries processed\n"), n + 1);
+	
 	m_bUniqueGTUValidated = true;
 	if (st_vr.TotalIssues() > 0) {
 		SetDBChanged(true);
@@ -514,7 +516,20 @@ int PWScore::DoAddDependentEntries(UUIDVector &dependentlist,
 				if (type == CItemData::ET_SHORTCUT) {
 					// Adding shortcuts -> Base must be normal or already a shortcut base
 					if (!iter->second.IsNormal() && !iter->second.IsShortcutBase()) {
-						
+						//// Bad news!
+						//if (pRpt != NULL) {
+						//	if (!bwarnings) {
+						//		bwarnings = true;
+						//		LoadAString(strError, IDSC_IMPORTWARNINGHDR);
+						//		pRpt->WriteLine(strError);
+						//	}
+						//	stringT cs_type;
+						//	LoadAString(cs_type, IDSC_SHORTCUT);
+						//	Format(strError, IDSC_IMPORTWARNING3, cs_type.c_str(),
+						//		pci_curitem->GetGroup().c_str(), pci_curitem->GetTitle().c_str(),
+						//		pci_curitem->GetUser().c_str(), cs_type.c_str());
+						//	pRpt->WriteLine(strError);
+						//}
 						// Invalid - delete!
 						if (pmapDeletedItems != NULL)
 							pmapDeletedItems->insert(ItemList_Pair(*paiter, *pci_curitem));
@@ -525,7 +540,20 @@ int PWScore::DoAddDependentEntries(UUIDVector &dependentlist,
 				if (type == CItemData::ET_ALIAS) {
 					// Adding Aliases -> Base must be normal or already a alias base
 					if (!iter->second.IsNormal() && !iter->second.IsAliasBase()) {
-						
+						//// Bad news!
+						//if (pRpt != NULL) {
+						//	if (!bwarnings) {
+						//		bwarnings = true;
+						//		LoadAString(strError, IDSC_IMPORTWARNINGHDR);
+						//		pRpt->WriteLine(strError);
+						//	}
+						//	stringT cs_type;
+						//	LoadAString(cs_type, IDSC_ALIAS);
+						//	Format(strError, IDSC_IMPORTWARNING3, cs_type.c_str(),
+						//		pci_curitem->GetGroup().c_str(), pci_curitem->GetTitle().c_str(),
+						//		pci_curitem->GetUser().c_str(), cs_type.c_str());
+						//	pRpt->WriteLine(strError);
+						//}
 						// Invalid - delete!
 						if (pmapDeletedItems != NULL)
 							pmapDeletedItems->insert(ItemList_Pair(*paiter, *pci_curitem));
@@ -537,7 +565,18 @@ int PWScore::DoAddDependentEntries(UUIDVector &dependentlist,
 						// Note: this may be random as who knows the order of reading records?
 						CUUID temp_uuid = iter->second.GetUUID();
 						base_uuid = iter->second.GetBaseUUID(); // ??? used here ???
-						
+						/*if (pRpt != NULL) {
+							if (!bwarnings) {
+								bwarnings = true;
+								LoadAString(strError, IDSC_IMPORTWARNINGHDR);
+								pRpt->WriteLine(strError);
+							}
+							Format(strError, IDSC_IMPORTWARNING1, pci_curitem->GetGroup().c_str(),
+								pci_curitem->GetTitle().c_str(), pci_curitem->GetUser().c_str());
+							pRpt->WriteLine(strError);
+							LoadAString(strError, IDSC_IMPORTWARNING1A);
+							pRpt->WriteLine(strError);
+						}*/
 						if (pmapSaveTypePW != NULL) {
 							st_typepw.et = iter->second.GetEntryType();
 							st_typepw.sxpw = _T("");
@@ -577,6 +616,7 @@ int PWScore::DoAddDependentEntries(UUIDVector &dependentlist,
 					pci_curitem->SetAlias();
 				}
 				else
+				{
 					if (type == CItemData::ET_SHORTCUT) {
 						if (pmapSaveTypePW != NULL) {
 							st_typepw.et = iter->second.GetEntryType();
@@ -586,9 +626,23 @@ int PWScore::DoAddDependentEntries(UUIDVector &dependentlist,
 						pci_curitem->SetPassword(_T("[Shortcut]"));
 						pci_curitem->SetShortcut();
 					}
+				}
+					
 			}
 			else {
-				
+				//// Specified base does not exist!
+				//if (pRpt != NULL) {
+				//	if (!bwarnings) {
+				//		bwarnings = true;
+				//		LoadAString(strError, IDSC_IMPORTWARNINGHDR);
+				//		pRpt->WriteLine(strError);
+				//	}
+				//	Format(strError, IDSC_IMPORTWARNING2, pci_curitem->GetGroup().c_str(),
+				//		pci_curitem->GetTitle().c_str(), pci_curitem->GetUser().c_str());
+				//	pRpt->WriteLine(strError);
+				//	LoadAString(strError, IDSC_IMPORTWARNING2A);
+				//	pRpt->WriteLine(strError);
+				//}
 				if (type == CItemData::ET_SHORTCUT) {
 					if (pmapDeletedItems != NULL)
 						pmapDeletedItems->insert(ItemList_Pair(*paiter, *pci_curitem));
@@ -881,8 +935,8 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	st_ValidateResults st_vr;
 	std::vector<st_GroupTitleUser> vGTU_INVALID_UUID, vGTU_DUPLICATE_UUID;
 
-	//// Clear any old expired password entries
-	////m_ExpireCandidates.clear();
+	// Clear any old expired password entries
+	m_ExpireCandidates.clear();
 
 	//// Clear any old entry keyboard shortcuts
 	////m_KBShortcutMap.clear();
@@ -923,9 +977,9 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 		return UNKNOWN_VERSION;
 	}
 
-	//m_hdr = in->GetHeader();
-	//m_OrigDisplayStatus = m_hdr.m_displaystatus; // for WasDisplayStatusChanged
-	//m_RUEList = m_hdr.m_RUEList;
+	m_hdr = in->GetHeader();
+	m_OrigDisplayStatus = m_hdr.m_displaystatus; // for WasDisplayStatusChanged
+	m_RUEList = m_hdr.m_RUEList;
 
 	//if (!m_isAuxCore) { // aux. core does not modify db prefs in pref singleton
 	//					// Get pref string and tree display status & who saved when
@@ -948,7 +1002,7 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	ClearData(); //Before overwriting old data, but after opening the file...
 	SetChanged(false, false);
 
-	//SetPassKey(a_passkey); // so user won't be prompted for saves
+	SetPassKey(a_passkey); // so user won't be prompted for saves
 
 	CItemData ci_temp;
 	bool go = true;
@@ -957,6 +1011,12 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	///*if (in->GetFilters() != NULL) m_MapFilters = *in->GetFilters();
 	//if (in->GetPasswordPolicies() != NULL) m_MapPSWDPLC = *in->GetPasswordPolicies();
 	//if (in->GetEmptyGroups() != NULL) m_vEmptyGroups = *in->GetEmptyGroups();*/
+
+	/*if (pRpt != NULL) {
+		std::wstring cs_title;
+		LoadAString(cs_title, IDSC_RPTVALIDATE);
+		pRpt->StartReport(cs_title.c_str(), m_currfile.c_str());
+	}*/
 
 	do {
 		ci_temp.Clear(); // Rather than creating a new one each time.
@@ -981,14 +1041,14 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 			break;
 		case PWSfile::WRONG_RECORD: {
 			// See if this is a V4 attachment:
-			//CItemAtt att;
-			//status = att.Read(in);
-			//if (status == PWSfile::SUCCESS) {
-			//	m_attlist.insert(std::make_pair(att.GetUUID(), att));
-			//}
-			//else {
-			//	// XXX report problem!
-			//}
+			CItemAtt att;
+			status = att.Read(in);
+			if (status == PWSfile::SUCCESS) {
+				m_attlist.insert(std::make_pair(att.GetUUID(), att));
+			}
+			else {
+				// XXX report problem!
+			}
 		}
 									break;
 		case PWSfile::END_OF_FILE:
@@ -1006,6 +1066,8 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	int closeStatus = in->Close(); // in V3 & later this checks integrity
 	delete in;
 
+	//ReportReadErrors(pRpt, vGTU_INVALID_UUID, vGTU_DUPLICATE_UUID);
+	
 	// Validate rest of things in the database (excluding duplicate UUIDs fixed above
 	// as needed for m_pwlist - map uses UUID as its key)
 	bool bValidateRC = !vGTU_INVALID_UUID.empty() || !vGTU_DUPLICATE_UUID.empty();
@@ -1013,8 +1075,8 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 	// Only do the rest if user hasn't explicitly disabled the checks
 	// NOTE: When a "other" core is involved (Compare, Merge etc.), we NEVER validate
 	// the "other" core.
-	//if (bValidate)
-		//bValidateRC = Validate(iMAXCHARS, st_vr);
+	if (bValidate)
+		bValidateRC = Validate(iMAXCHARS, st_vr);
 
 	SetDBChanged(bValidateRC);
 

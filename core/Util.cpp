@@ -12,8 +12,8 @@
 #include "BlowFish.h"
 #include "PWSrand.h"
 #include "PwsPlatform.h"
-//#include "core.h"
-//#include "StringXStream.h"
+#include "core.h"
+#include "StringXStream.h"
 //#include "PWPolicy.h"
 
 #include "Util.h"
@@ -299,7 +299,6 @@ task<size_t> _readcbc(IRandomAccessStream^ fp,
   DataReader^ dataReader = ref new DataReader(fp);
   co_await dataReader->LoadAsync(fp->Size);
   dataReader->ReadBytes(lblock);
-  dataReader->DetachStream();
   for (int i = 0; i < lblock->Length; i++) lengthblock[i] = lblock[i];
   numRead = BS;
   //numRead = fread(lengthblock, 1, BS, fp);
@@ -360,7 +359,11 @@ task<size_t> _readcbc(IRandomAccessStream^ fp,
   if (length > 0 ||
       (BS == 8 && length == 0)) { // pre-3 pain
     unsigned char *tempcbc = block3;
-    //numRead += fread(b, 1, BlockLength, fp);
+	Array<unsigned char>^ tbl = ref new Array<unsigned char>(BlockLength);
+	dataReader->ReadBytes(tbl);
+	for (int i = 0; i < tbl->Length; i++) b[i] = tbl[i];
+	numRead += BlockLength;
+	//numRead += fread(b, 1, BlockLength, fp);
     for (unsigned int x = 0; x < BlockLength; x += BS) {
       memcpy(tempcbc, b + x, BS);
       Algorithm->Decrypt(b + x, b + x);
@@ -373,6 +376,8 @@ task<size_t> _readcbc(IRandomAccessStream^ fp,
     // delete[] buffer here since caller will see zero length
     delete[] buffer;
   }
+
+  dataReader->DetachStream();
   return numRead;
 }
 

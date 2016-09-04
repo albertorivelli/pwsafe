@@ -13,11 +13,11 @@
 #include "TwoFish.h"
 #include "UTF8Conv.h"
 //#include "PWSprefs.h"
-//#include "VerifyFormat.h"
-//#include "PWHistory.h"
+#include "VerifyFormat.h"
+#include "PWHistory.h"
 #include "Util.h"
 #include "StringXStream.h"
-//#include "core.h"
+#include "core.h"
 #include "PWSfile.h"
 //#include "PWSfileV4.h"
 //#include "PWStime.h"
@@ -423,27 +423,27 @@ StringX CItemData::GetFieldValue(FieldType ft) const
         str = CUUID(uuid_array, true);
         break;
       }
-    //case NOTES:      /* 05 */
-    //  return GetNotes();
-    //case CTIME:      /* 07 */
-    //  return GetCTimeL();
-    //case PMTIME:     /* 08 */
-    //  return GetPMTimeL();
-    //case ATIME:      /* 09 */
-    //  return GetATimeL();
-    //case XTIME:      /* 0a */
-    //  {
-    //    int32 xint(0);
-    //    str = GetXTimeL();
-    //    GetXTimeInt(xint);
-    //    if (xint != 0)
-    //      str += _T(" *");
-    //    return str;
-    //  }
-    //case RESERVED:   /* 0b */
-    //  break;
-    //case RMTIME:     /* 0c */
-    //  return GetRMTimeL();
+    case NOTES:      /* 05 */
+      return GetNotes();
+    case CTIME:      /* 07 */
+      return GetCTimeL();
+    case PMTIME:     /* 08 */
+      return GetPMTimeL();
+    case ATIME:      /* 09 */
+      return GetATimeL();
+    case XTIME:      /* 0a */
+      {
+        int32 xint(0);
+        str = GetXTimeL();
+        GetXTimeInt(xint);
+        if (xint != 0)
+          str += _T(" *");
+        return str;
+      }
+    case RESERVED:   /* 0b */
+      break;
+    case RMTIME:     /* 0c */
+      return GetRMTimeL();
     //case PWHIST:     /* 0f */
     //  return GetPWHistory();
     //case XTIME_INT:  /* 11 */
@@ -491,14 +491,14 @@ StringX CItemData::GetNotes(TCHAR delimiter) const
   return ret;
 }
 
-//StringX CItemData::GetTime(int whichtime, PWSUtil::TMC result_format) const
-//{
-//  time_t t;
-//
-//  CItem::GetTime(whichtime, t);
-//  return PWSUtil::ConvertToDateTimeString(t, result_format);
-//}
-//
+StringX CItemData::GetTime(int whichtime, PWSUtil::TMC result_format) const
+{
+  time_t t;
+
+  CItem::GetTime(whichtime, t);
+  return PWSUtil::ConvertToDateTimeString(t, result_format);
+}
+
 void CItemData::GetUUID(uuid_array_t &uuid_array, FieldType ft) const
 {
   size_t length = sizeof(uuid_array_t);
@@ -548,38 +548,38 @@ const CUUID CItemData::GetUUID(FieldType ft) const
 //  pwp = mypol;
 //}
 //
-//int32 CItemData::GetXTimeInt(int32 &xint) const
-//{
-//  FieldConstIter fiter = m_fields.find(XTIME_INT);
-//  if (fiter == m_fields.end())
-//    xint = 0;
-//  else {
-//    unsigned char in[TwoFish::BLOCKSIZE]; // required by GetField
-//    size_t tlen = sizeof(in); // ditto
-//
-//    CItem::GetField(fiter->second, in, tlen);
-//    if (tlen != 0) {
-//      ASSERT(tlen == sizeof(int32));
-//      memcpy(&xint, in, sizeof(int32));
-//    } else {
-//      xint = 0;
-//    }
-//  }
-//  return xint;
-//}
-//
-//StringX CItemData::GetXTimeInt() const
-//{
-//  int32 xint;
-//  GetXTimeInt(xint);
-//  if (xint == 0)
-//    return _T("");
-//
-//  oStringXStream os;
-//  os << xint;
-//  return os.str();
-//}
-//
+int32 CItemData::GetXTimeInt(int32 &xint) const
+{
+  FieldConstIter fiter = m_fields.find(XTIME_INT);
+  if (fiter == m_fields.end())
+    xint = 0;
+  else {
+    unsigned char in[TwoFish::BLOCKSIZE]; // required by GetField
+    size_t tlen = sizeof(in); // ditto
+
+    CItem::GetField(fiter->second, in, tlen);
+    if (tlen != 0) {
+      //ASSERT(tlen == sizeof(int32));
+      memcpy(&xint, in, sizeof(int32));
+    } else {
+      xint = 0;
+    }
+  }
+  return xint;
+}
+
+StringX CItemData::GetXTimeInt() const
+{
+  int32 xint;
+  GetXTimeInt(xint);
+  if (xint == 0)
+    return _T("");
+
+  oStringXStream os;
+  os << xint;
+  return os.str();
+}
+
 //void CItemData::GetProtected(unsigned char &ucprotected) const
 //{
 //  FieldConstIter fiter = m_fields.find(PROTECTED);
@@ -694,14 +694,14 @@ const CUUID CItemData::GetUUID(FieldType ft) const
 //  return _T("");
 //}
 //
-//StringX CItemData::GetPWHistory() const
-//{
-//  StringX ret = GetField(PWHIST);
-//  if (ret == _T("0") || ret == _T("00000"))
-//    ret = _T("");
-//  return ret;
-//}
-//
+StringX CItemData::GetPWHistory() const
+{
+  StringX ret = GetField(PWHIST);
+  if (ret == _T("0") || ret == _T("00000"))
+    ret = _T("");
+  return ret;
+}
+
 //StringX CItemData::GetPlaintext(const TCHAR &separator,
 //                                const FieldBits &bsFields,
 //                                const TCHAR &delimiter,
@@ -1324,74 +1324,74 @@ void CItemData::SetUUID(const CUUID &uuid, FieldType ft)
   CItem::SetField(ft, static_cast<const unsigned char *>(*uuid.GetARep()), sizeof(uuid_array_t));
 }
 
-//void CItemData::SetTime(int whichtime)
-//{
-//  time_t t;
-//  time(&t);
-//  CItem::SetTime(whichtime, t);
-//}
-//
-//bool CItemData::SetTime(int whichtime, const stringT &time_str)
-//{
-//  time_t t(0);
-//
-//  if (time_str.empty()) {
-//    CItem::SetTime(whichtime, t);
-//    return true;
-//  } else
-//    if (time_str == _T("now")) {
-//      time(&t);
-//      CItem::SetTime(whichtime, t);
-//      return true;
-//    } else
-//      if ((VerifyImportDateTimeString(time_str, t) ||
-//           VerifyXMLDateTimeString(time_str, t) ||
-//           VerifyASCDateTimeString(time_str, t)) &&
-//          (t != time_t(-1))  // checkerror despite all our verification!
-//          ) {
-//        CItem::SetTime(whichtime, t);
-//        return true;
-//      }
-//  return false;
-//}
-//
-//void CItemData::SetXTimeInt(int32 xint)
-//{
-//  unsigned char buf[sizeof(int32)];
-//  putInt(buf, xint);
-//  CItem::SetField(XTIME_INT, buf, sizeof(int32));
-//}
-//
-//bool CItemData::SetXTimeInt(const stringT &xint_str)
-//{
-//  int32 xint(0);
-//
-//  if (xint_str.empty()) {
-//    SetXTimeInt(xint);
-//    return true;
-//  }
-//
-//  if (xint_str.find_first_not_of(_T("0123456789")) == stringT::npos) {
-//    istringstreamT is(xint_str);
-//    is >> xint;
-//    if (is.fail())
-//      return false;
-//    if (xint >= 0 && xint <= 3650) {
-//      SetXTimeInt(xint);
-//      return true;
-//    }
-//  }
-//  return false;
-//}
-//
-//void CItemData::SetPWHistory(const StringX &PWHistory)
-//{
-//  StringX pwh = PWHistory;
-//  if (pwh == _T("0") || pwh == _T("00000"))
-//    pwh = _T("");
-//  CItem::SetField(PWHIST, pwh);
-//}
-//
+void CItemData::SetTime(int whichtime)
+{
+  time_t t;
+  time(&t);
+  CItem::SetTime(whichtime, t);
+}
+
+bool CItemData::SetTime(int whichtime, const stringT &time_str)
+{
+  time_t t(0);
+
+  if (time_str.empty()) {
+    CItem::SetTime(whichtime, t);
+    return true;
+  } else
+    if (time_str == _T("now")) {
+      time(&t);
+      CItem::SetTime(whichtime, t);
+      return true;
+    } else
+      if ((VerifyImportDateTimeString(time_str, t) ||
+           VerifyXMLDateTimeString(time_str, t) ||
+           VerifyASCDateTimeString(time_str, t)) &&
+          (t != time_t(-1))  // checkerror despite all our verification!
+          ) {
+        CItem::SetTime(whichtime, t);
+        return true;
+      }
+  return false;
+}
+
+void CItemData::SetXTimeInt(int32 xint)
+{
+  unsigned char buf[sizeof(int32)];
+  putInt(buf, xint);
+  CItem::SetField(XTIME_INT, buf, sizeof(int32));
+}
+
+bool CItemData::SetXTimeInt(const stringT &xint_str)
+{
+  int32 xint(0);
+
+  if (xint_str.empty()) {
+    SetXTimeInt(xint);
+    return true;
+  }
+
+  if (xint_str.find_first_not_of(_T("0123456789")) == stringT::npos) {
+    istringstreamT is(xint_str);
+    is >> xint;
+    if (is.fail())
+      return false;
+    if (xint >= 0 && xint <= 3650) {
+      SetXTimeInt(xint);
+      return true;
+    }
+  }
+  return false;
+}
+
+void CItemData::SetPWHistory(const StringX &PWHistory)
+{
+  StringX pwh = PWHistory;
+  if (pwh == _T("0") || pwh == _T("00000"))
+    pwh = _T("");
+  CItem::SetField(PWHIST, pwh);
+}
+
 //void CItemData::SetPWPolicy(const PWPolicy &pwp)
 //{
 //  const StringX cs_pwp(pwp);
@@ -1557,48 +1557,48 @@ void CItemData::SetUUID(const CUUID &uuid, FieldType ft)
 //
 bool CItemData::ValidatePWHistory()
 {
-  //// Return true if valid
-  //if (!IsPasswordHistorySet())
-  //  return true; // empty is a kind of valid
+  // Return true if valid
+  if (!IsPasswordHistorySet())
+    return true; // empty is a kind of valid
 
-  //const StringX pwh = GetPWHistory();
-  //if (pwh.length() < 5) { // not empty, but too short.
-  //  SetPWHistory(_T(""));
-  //  return false;
-  //}
+  const StringX pwh = GetPWHistory();
+  if (pwh.length() < 5) { // not empty, but too short.
+    SetPWHistory(_T(""));
+    return false;
+  }
 
-  //size_t pwh_max, num_err;
-  //PWHistList pwhistlist;
-  //bool pwh_status = CreatePWHistoryList(pwh, pwh_max, num_err,
-  //                                      pwhistlist, PWSUtil::TMC_EXPORT_IMPORT);
-  //if (num_err == 0)
-  //  return true;
+  size_t pwh_max, num_err;
+  PWHistList pwhistlist;
+  bool pwh_status = CreatePWHistoryList(pwh, pwh_max, num_err,
+                                        pwhistlist, PWSUtil::TMC_EXPORT_IMPORT);
+  if (num_err == 0)
+    return true;
 
-  //size_t listnum = pwhistlist.size();
+  size_t listnum = pwhistlist.size();
 
-  //if (pwh_max == 0 && listnum == 0) {
-  //  SetPWHistory(_T(""));
-  //  return false;
-  //}
+  if (pwh_max == 0 && listnum == 0) {
+    SetPWHistory(_T(""));
+    return false;
+  }
 
-  //if (listnum > pwh_max)
-  //  pwh_max = listnum;
+  if (listnum > pwh_max)
+    pwh_max = listnum;
 
-  //// Rebuild PWHistory from the data we have
-  //StringX sxBuffer;
-  //StringX sxNewHistory = MakePWHistoryHeader(pwh_status, pwh_max, listnum);
+  // Rebuild PWHistory from the data we have
+  StringX sxBuffer;
+  StringX sxNewHistory = MakePWHistoryHeader(pwh_status, pwh_max, listnum);
 
-  //PWHistList::const_iterator citer;
-  //for (citer = pwhistlist.begin(); citer != pwhistlist.end(); citer++) {
-  //  Format(sxBuffer, L"%08x%04x%ls",
-  //           static_cast<long>(citer->changetttdate), citer->password.length(),
-  //           citer->password.c_str());
-  //    sxNewHistory += sxBuffer;
-  //    sxBuffer = _T("");
-  //}
+  PWHistList::const_iterator citer;
+  for (citer = pwhistlist.begin(); citer != pwhistlist.end(); citer++) {
+    Format(sxBuffer, L"%08x%04x%ls",
+             static_cast<long>(citer->changetttdate), citer->password.length(),
+             citer->password.c_str());
+      sxNewHistory += sxBuffer;
+      sxBuffer = _T("");
+  }
 
-  //if (pwh != sxNewHistory)
-  //  SetPWHistory(sxNewHistory);
+  if (pwh != sxNewHistory)
+    SetPWHistory(sxNewHistory);
 
   return false;
 }

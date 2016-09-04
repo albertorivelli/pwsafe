@@ -21,7 +21,7 @@
 //#include "Command.h"
 //#include "CommandInterface.h"
 //#include "DBCompareData.h"
-//#include "ExpiredList.h"
+#include "ExpiredList.h"
 
 #include "coredefs.h"
 
@@ -189,6 +189,26 @@ public:
 	// Callback to be notified if the database changes
 	void NotifyDBModified();
 
+	/*void GUISetupDisplayInfo(CItemData &ci);
+	void GUIRefreshEntry(const CItemData &ci);
+	void UpdateWizard(const stringT &s);*/
+
+	// Get/Set Display information from/to database
+	/*void SetDisplayStatus(const std::vector<bool> &s);
+	const std::vector<bool> &GetDisplayStatus() const;
+	bool WasDisplayStatusChanged() const;*/
+
+	const PWSfileHeader &GetHeader() const { return m_hdr; }
+	void SetHeader(const PWSfileHeader &hdr) { m_hdr = hdr; }
+
+	void GetRUEList(UUIDList &RUElist)
+    {RUElist = m_RUEList;}
+    void SetRUEList(const UUIDList &RUElist)
+    {m_RUEList = RUElist;}
+
+    size_t GetExpirySize() {return m_ExpireCandidates.size();}
+    ExpiredList GetExpired(int idays) {return m_ExpireCandidates.GetExpired(idays);}
+
 	bool HasAtt(const pws_os::CUUID &attuuid) const { return m_attlist.find(attuuid) != m_attlist.end(); }
 
 protected:
@@ -251,6 +271,17 @@ private:
 	static Reporter *m_pReporter; // set as soon as possible to show errors
 	static Asker *m_pAsker;
 	PWSFileSig *m_pFileSig;
+
+	// Entries with an expiry date
+    ExpiredList m_ExpireCandidates;
+    void AddExpiryEntry(const CItemData &ci)
+    {m_ExpireCandidates.Add(ci);}
+    void UpdateExpiryEntry(const CItemData &ci)
+    {m_ExpireCandidates.Update(ci);}
+    /*void UpdateExpiryEntry(const pws_os::CUUID &uuid, const CItemData::FieldType ft,
+                           const StringX &value);*/
+    void RemoveExpiryEntry(const CItemData &ci)
+    {m_ExpireCandidates.Remove(ci);}
 
 	UnknownFieldList m_UHFL;
 	int m_nRecordsWithUnknownFields;

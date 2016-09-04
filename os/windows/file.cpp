@@ -30,7 +30,7 @@
 //#include "../env.h"
 
 #include "../../core/StringX.h"
-//#include "../../core/core.h"
+#include "../../core/core.h"
 
 const TCHAR pws_os::PathSeparator = _T('\\');
 
