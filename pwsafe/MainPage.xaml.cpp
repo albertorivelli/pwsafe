@@ -37,14 +37,8 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 	for (auto listPos = m_core.GetEntryIter(); listPos != m_core.GetEntryEndIter();
 		listPos++) {
 		CItemData &ci = m_core.GetEntry(listPos);
-		StringX group = ci.GetGroup();
-		StringX title = ci.GetTitle();
-		StringX username = ci.GetUser();
-		StringX sx_fielddata(L"");
-		//DisplayInfo *pdi = (DisplayInfo *)ci.GetDisplayInfo();
-		//if (pdi != NULL)
-			//pdi->list_index = -1; // easier, but less efficient, to delete pdi
-		//InsertItemIntoGUITreeList(ci, -1, false, iView);
+		ItemEntry^ t = ref new ItemEntry(ref new String(ci.GetGroup().data()), ref new String(ci.GetTitle().data()), ref new String(ci.GetUser().data()));
+		ItemEntries->Append(t);
 	}
 
 	//// Need to add any empty groups into the view
@@ -56,4 +50,3 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 	//m_ctlItemTree.SortTree(TVI_ROOT);
 	//SortListView();
 }
-
