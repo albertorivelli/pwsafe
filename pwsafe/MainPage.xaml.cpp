@@ -28,6 +28,11 @@ void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 	NavigatedToHandler(s);
 }
 
+bool CompareItems(ItemEntry^ i1, ItemEntry^ i2)
+{
+	return i1->Title < i2->Title;
+}
+
 task<void> MainPage::NavigatedToHandler(String^ s)
 {
 	StringX pass(s->Data());
@@ -40,6 +45,8 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 		ItemEntry^ t = ref new ItemEntry(ref new String(ci.GetTitle().data()), ref new String(ci.GetUser().data()), ref new String(ci.GetPassword().data()));
 		ItemEntries->Append(t);
 	}
+
+	std::sort(begin(ItemEntries), end(ItemEntries), CompareItems);
 
 	//// Need to add any empty groups into the view
 	//for (auto &emptyGrp : m_core.GetEmptyGroups()) {
