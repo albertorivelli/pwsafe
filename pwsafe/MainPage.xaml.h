@@ -14,19 +14,15 @@ namespace pwsafe
 	public ref class ItemEntry sealed
 	{
 	private:
-		Platform::String^ group;
 		Platform::String^ title;
 		Platform::String^ user;
+		Platform::String^ password;
 	public:
-		ItemEntry(Platform::String^ group, Platform::String^ title, Platform::String^ user) :
-			group{ group },
+		ItemEntry(Platform::String^ title, Platform::String^ user, Platform::String^ password) :
 			title{ title },
-			user{ user } {}
+			user{ user },
+			password{ password } {}
 
-		property Platform::String^ Group
-		{
-			Platform::String^ get() { return this->group; }
-		}
 		property Platform::String^ Title
 		{
 			Platform::String^ get() { return this->title; }
@@ -34,6 +30,10 @@ namespace pwsafe
 		property Platform::String^ User
 		{
 			Platform::String^ get() { return this->user; }
+		}
+		property Platform::String^ Password
+		{
+			Platform::String^ get() { return this->password; }
 		}
 	};
 

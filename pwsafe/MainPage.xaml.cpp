@@ -37,7 +37,7 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 	for (auto listPos = m_core.GetEntryIter(); listPos != m_core.GetEntryEndIter();
 		listPos++) {
 		CItemData &ci = m_core.GetEntry(listPos);
-		ItemEntry^ t = ref new ItemEntry(ref new String(ci.GetGroup().data()), ref new String(ci.GetTitle().data()), ref new String(ci.GetUser().data()));
+		ItemEntry^ t = ref new ItemEntry(ref new String(ci.GetTitle().data()), ref new String(ci.GetUser().data()), ref new String(ci.GetPassword().data()));
 		ItemEntries->Append(t);
 	}
 
