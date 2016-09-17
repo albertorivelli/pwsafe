@@ -46,14 +46,6 @@ task<void> pwsafe::PasskeyEntryPage::PickfileAsync()
 
 void pwsafe::PasskeyEntryPage::btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	OkHandler();
-}
-
-task<void> pwsafe::PasskeyEntryPage::OkHandler()
-{
-	m_passkey.clear();
-	m_passkey.append(txtPassphrase->Password->Data());
-
 	/*if (m_filespec->IsEmpty()) {
 		m_status = TAR_OPEN_NODB;
 		CPWDialog::OnCancel();
@@ -72,6 +64,14 @@ task<void> pwsafe::PasskeyEntryPage::OkHandler()
 			m_MRU_combo.SetFocus();
 		return;
 	}*/
+
+	ProcessPhrase();
+}
+
+task<void> pwsafe::PasskeyEntryPage::ProcessPhrase()
+{
+	m_passkey.clear();
+	m_passkey.append(txtPassphrase->Password->Data());
 
 	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
 

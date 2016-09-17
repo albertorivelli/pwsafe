@@ -37,7 +37,7 @@ namespace pwsafe
 		void btnOpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		task<void> PickfileAsync();
 		void btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		task<void> OkHandler();
+		task<void> ProcessPhrase();
 
 	};
 }
