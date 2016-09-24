@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="9eca17f3-be24-40bb-88c4-d9c722422333" Publisher="CN=alber" Version="1.0.0.0" />
+  <Identity Name="9eca17f3-be24-40bb-88c4-d9c722422333" Publisher="CN=alber" Version="0.39.2.0" />
   <mp:PhoneIdentity PhoneProductId="9eca17f3-be24-40bb-88c4-d9c722422333" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>pwsafe</DisplayName>
