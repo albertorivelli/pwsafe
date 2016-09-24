@@ -14,7 +14,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <StackPanel>
-                <TextBlock Text="Open Password Database" Margin="0,0,0,7" />
+                <TextBlock x:Uid="txbDBPath" Margin="0,0,0,7" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -25,7 +25,7 @@
                 </Grid>
             </StackPanel>
             <StackPanel Grid.Row="1" Margin="0,20,0,0">
-                <TextBlock Text="Safe Combination" Margin="0,0,0,7" />
+                <TextBlock x:Uid="txbPassphrase" Margin="0,0,0,7" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />

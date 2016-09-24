@@ -203,6 +203,9 @@
       <Project>{1c02f455-7ae2-4c65-9fd8-45c4552c3711}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

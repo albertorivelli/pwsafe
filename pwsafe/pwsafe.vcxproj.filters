@@ -57,4 +57,7 @@
     <Page Include="MainPage.xaml" />
     <Page Include="PasskeyEntryPage.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+  </ItemGroup>
 </Project>
