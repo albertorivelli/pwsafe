@@ -30,7 +30,7 @@ void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 
 bool CompareItems(ItemEntry^ i1, ItemEntry^ i2)
 {
-	return i1->Title < i2->Title;
+	return _wcsicmp(i1->Title->Data(), i2->Title->Data()) < 0;
 }
 
 task<void> MainPage::NavigatedToHandler(String^ s)
