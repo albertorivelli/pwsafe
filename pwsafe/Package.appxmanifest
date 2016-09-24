@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="9eca17f3-be24-40bb-88c4-d9c722422333" Publisher="CN=alber" Version="0.39.2.0" />
+  <Identity Name="620AlbertoRivelli.PasswordSafeBeta" Publisher="CN=4695C6F3-0571-45BE-A3A5-8CE9BF41BCD1" Version="0.39.2.0" />
   <mp:PhoneIdentity PhoneProductId="9eca17f3-be24-40bb-88c4-d9c722422333" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>pwsafe</DisplayName>
-    <PublisherDisplayName>alber</PublisherDisplayName>
+    <DisplayName>Password Safe Beta</DisplayName>
+    <PublisherDisplayName>Alberto Rivelli</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="pwsafe.App">
-      <uap:VisualElements DisplayName="pwsafe" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="pwsafe" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Password Safe Beta" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="pwsafe" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />

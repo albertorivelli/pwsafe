@@ -97,7 +97,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <PackageCertificateKeyFile>pwsafe_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>pwsafe_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>27E96767F26BC768D8B101251B2537D8E958D27B</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\;$(IncludePath)</IncludePath>
@@ -198,7 +199,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="pwsafe_TemporaryKey.pfx" />
+    <None Include="pwsafe_StoreKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
@@ -235,6 +236,9 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
