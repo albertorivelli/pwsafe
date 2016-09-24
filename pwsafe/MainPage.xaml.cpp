@@ -11,6 +11,7 @@ using namespace pwsafe;
 
 using namespace concurrency;
 using namespace Platform;
+using namespace Windows::ApplicationModel::DataTransfer;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Pickers;
 using namespace Windows::UI::Xaml;
@@ -57,3 +58,84 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 	//m_ctlItemTree.SortTree(TVI_ROOT);
 	//SortListView();
 }
+
+void pwsafe::MainPage::lvItems_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e)
+{
+	if (e->PointerDeviceType == Windows::Devices::Input::PointerDeviceType::Mouse)
+	{
+		auto item = ((FrameworkElement^)e->OriginalSource)->DataContext;
+
+		if (item != nullptr)
+		{
+			lvItems->SelectedItem = item;
+
+			ContextFlyout->ShowAt((FrameworkElement^)sender, e->GetPosition((FrameworkElement^)sender));
+
+			e->Handled = true;
+		}
+	}
+}
+
+void pwsafe::MainPage::lvItems_Holding(Platform::Object^ sender, Windows::UI::Xaml::Input::HoldingRoutedEventArgs^ e)
+{
+	if (e->HoldingState == Windows::UI::Input::HoldingState::Started)
+	{
+		auto item = ((FrameworkElement^)e->OriginalSource)->DataContext;
+
+		if (item != nullptr)
+		{
+			lvItems->SelectedItem = item;
+
+			ContextFlyout->ShowAt((FrameworkElement^)sender, e->GetPosition((FrameworkElement^)sender));
+
+			e->Handled = true;
+		}
+	}
+}
+
+void pwsafe::MainPage::btnCopyUsername_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto item = (ItemEntry^)lvItems->SelectedItem;
+
+	if (item != nullptr)
+	{
+		auto dataPackage = ref new DataPackage();
+
+		// Set the content as CF_TEXT text format.
+		dataPackage->SetText(item->User);
+
+		try
+		{
+			// Set the contents in the clipboard
+			Clipboard::SetContent(dataPackage);
+		}
+		catch (Exception^ ex)
+		{
+			// Copying data to the Clipboard can potentially fail - for example, if another application is holding the Clipboard open
+		}
+	}
+}
+
+void pwsafe::MainPage::btnCopyPassword_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto item = (ItemEntry^)lvItems->SelectedItem;
+
+	if (item != nullptr)
+	{
+		auto dataPackage = ref new DataPackage();
+
+		// Set the content as CF_TEXT text format.
+		dataPackage->SetText(item->Password);
+
+		try
+		{
+			// Set the contents in the clipboard
+			Clipboard::SetContent(dataPackage);
+		}
+		catch (Exception^ ex)
+		{
+			// Copying data to the Clipboard can potentially fail - for example, if another application is holding the Clipboard open
+		}
+	}
+}
+

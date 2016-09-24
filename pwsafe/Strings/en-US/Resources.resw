@@ -117,14 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="menuCopyPassword.Text" xml:space="preserve">
+    <value>Copy Password to Clipboard</value>
+  </data>
+  <data name="menuCopyUsername.Text" xml:space="preserve">
+    <value>Copy Username to Clipboard</value>
+  </data>
   <data name="txbDBPath.Text" xml:space="preserve">
     <value>Open Password Database</value>
   </data>
   <data name="txbPassphrase.Text" xml:space="preserve">
     <value>Safe Combination</value>
-  </data>
-  <data name="txtHeaderPassword.Text" xml:space="preserve">
-    <value>Password</value>
   </data>
   <data name="txtHeaderTitle.Text" xml:space="preserve">
     <value>Title</value>
