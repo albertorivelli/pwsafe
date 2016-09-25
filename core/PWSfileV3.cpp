@@ -688,14 +688,14 @@ task<int> PWSfileV3::ReadHeader()
       break;
 
     case HDR_DISPSTAT: /* Tree Display Status */
-      if (utf8 != NULL) utf8[utf8Len] = '\0';
+      /*if (utf8 != NULL) utf8[utf8Len] = '\0';
       utf8status = m_utf8conv.FromUTF8(utf8, utf8Len, text);
       for (StringX::iterator iter = text.begin(); iter != text.end(); iter++) {
         const TCHAR v = *iter;
         m_hdr.m_displaystatus.push_back(v == TCHAR('1'));
       }
       if (!utf8status)
-        //pws_os::Trace0(_T("FromUTF8(m_displaystatus) failed\n"));
+        pws_os::Trace0(_T("FromUTF8(m_displaystatus) failed\n"));*/
       break;
 
     case HDR_LASTUPDATETIME: /* When last saved */
