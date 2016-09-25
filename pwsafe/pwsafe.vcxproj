@@ -99,6 +99,9 @@
   <PropertyGroup>
     <PackageCertificateKeyFile>pwsafe_StoreKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>27E96767F26BC768D8B101251B2537D8E958D27B</PackageCertificateThumbprint>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\;$(IncludePath)</IncludePath>
