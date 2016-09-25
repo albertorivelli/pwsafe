@@ -70,8 +70,8 @@ void pws_os::GetRandomSeed(void *p, unsigned &slen)
     tms.tm_sec = st.wSecond;
     t = mktime(&tms);
 
-    //pid = _getpid();
-    //ticks = GetTickCount();
+    pid = 0; // _getpid();
+    ticks = 0; // GetTickCount();
     unsigned char *pc = static_cast<unsigned char *>(p);
     memcpy(pc, &t, sizeof(t));
     memcpy(pc + sizeof(t), &pid, sizeof(pid));
