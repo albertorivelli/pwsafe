@@ -99,22 +99,27 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>C:\Users\alber\Desktop\pwsafe;$(IncludePath)</IncludePath>
+    <IncludePath>..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -131,8 +136,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -144,9 +149,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,9 +162,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,9 +175,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -180,9 +188,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
