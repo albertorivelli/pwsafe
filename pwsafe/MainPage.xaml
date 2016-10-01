@@ -126,6 +126,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ProgressRing x:Name="progressItems" HorizontalAlignment="Center" VerticalAlignment="Center" Width="70" Height="70" />
         <Grid x:Name="semanticGrid" Margin="4,4,4,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

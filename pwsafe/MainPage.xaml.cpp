@@ -36,6 +36,8 @@ bool CompareItems(ItemEntry^ i1, ItemEntry^ i2)
 
 task<void> MainPage::NavigatedToHandler(String^ s)
 {
+	progressItems->IsActive = true;
+
 	StringX pass(s->Data());
 
 	int rc2 = co_await m_core.ReadCurFile(pass, true, 30000);
@@ -48,6 +50,8 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 	}
 
 	std::sort(begin(ItemEntries), end(ItemEntries), CompareItems);
+
+	progressItems->IsActive = false;
 
 	//// Need to add any empty groups into the view
 	//for (auto &emptyGrp : m_core.GetEmptyGroups()) {
