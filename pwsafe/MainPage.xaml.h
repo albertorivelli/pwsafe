@@ -11,6 +11,8 @@
 
 using namespace concurrency;
 using namespace Platform;
+using namespace Platform::Collections;
+using namespace Windows::Foundation::Collections;
 using namespace Windows::UI::Xaml::Interop;
 
 namespace pwsafe
@@ -138,6 +140,26 @@ namespace pwsafe
 		}
 	};
 
+	[Windows::UI::Xaml::Data::Bindable]
+	public ref class ItemEntryGroup sealed {
+	private:
+		String^ key;
+		IVector<ItemEntry^>^ items;
+	public:
+		property String^ Key
+		{
+			Platform::String^ get() { return this->key; }
+			void set(Platform::String^ value) { key = value; }
+		}
+
+		property IVector<ItemEntry^>^ Items
+		{
+			IVector<ItemEntry^>^ get() { return this->items; }
+			void set(IVector<ItemEntry^>^ value) { items = value; }
+		}
+
+	};
+
 	/// <summary>
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
@@ -145,23 +167,24 @@ namespace pwsafe
 	{
 	public:
 		MainPage();
-		property Windows::Foundation::Collections::IVector<ItemEntry^>^ ItemEntries
+		property IVector<ItemEntryGroup^>^ ItemEntries
 		{
-			Windows::Foundation::Collections::IVector<ItemEntry^>^ get()
+			IVector<ItemEntryGroup^>^ get()
 			{
 				if (this->m_pwcollection == nullptr)
 				{
-					this->m_pwcollection = ref new Platform::Collections::Vector<ItemEntry^>();
+					this->m_pwcollection = ref new Vector<ItemEntryGroup^>();
 				}
 				return this->m_pwcollection;
 			};
 		}
 	private:
 		task<void> NavigatedToHandler(String^ e);
-		Windows::Foundation::Collections::IVector<ItemEntry^>^ m_pwcollection;
+		IVector<ItemEntryGroup^>^ m_pwcollection;
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 	private:
+		ItemEntryGroup^ Find(IVector<ItemEntryGroup^>^ v, String^ key);
 		void lvItems_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e);
 		void lvItems_Holding(Platform::Object^ sender, Windows::UI::Xaml::Input::HoldingRoutedEventArgs^ e);
 		void btnCopyUsername_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

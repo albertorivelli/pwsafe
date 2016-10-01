@@ -41,6 +41,11 @@ bool CompareItems(ItemEntry^ i1, ItemEntry^ i2)
 	return _wcsicmp(i1->Title->Data(), i2->Title->Data()) < 0;
 }
 
+bool CompareItemGroups(ItemEntryGroup^ g1, ItemEntryGroup^ g2)
+{
+	return String::CompareOrdinal(g1->Key, g2->Key) < 0;
+}
+
 task<void> MainPage::NavigatedToHandler(String^ s)
 {
 	progressItems->IsActive = true;
@@ -49,14 +54,45 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 
 	int rc2 = co_await m_core.ReadCurFile(pass, true, 30000);
 
-	for (auto listPos = m_core.GetEntryIter(); listPos != m_core.GetEntryEndIter();
-		listPos++) {
+	for (auto listPos = m_core.GetEntryIter(); listPos != m_core.GetEntryEndIter(); listPos++)
+	{
 		CItemData &ci = m_core.GetEntry(listPos);
 		ItemEntry^ t = ref new ItemEntry(&ci);
-		ItemEntries->Append(t);
+
+		auto iter = t->Title->Begin();
+		wchar_t letter[1];
+		letter[0] = towupper(iter[0]);
+		String^ l = ref new String(letter, 1);
+
+		auto group = Find(ItemEntries, l);
+		if (group != nullptr) {
+			group->Items->Append(t);
+		}
+		else {
+			auto g = ref new ItemEntryGroup();
+			g->Key = l;
+			g->Items = ref new Vector<ItemEntry^>();
+			g->Items->Append(t);
+
+			ItemEntries->Append(g);
+		}
 	}
 
-	std::sort(begin(ItemEntries), end(ItemEntries), CompareItems);
+	// extremely inefficient it's better to insert in order above
+	std::sort(begin(ItemEntries), end(ItemEntries), CompareItemGroups);
+
+	// extremely inefficient it's better to insert in order above
+	auto iterator = ItemEntries->First();
+	while (iterator->HasCurrent)
+	{
+		auto group = iterator->Current;
+
+		std::sort(begin(group->Items), end(group->Items), CompareItems);
+
+		iterator->MoveNext();
+	}
+
+	cvsLetters->Source = ItemEntries;
 
 	progressItems->IsActive = false;
 
@@ -68,6 +104,26 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 
 	//m_ctlItemTree.SortTree(TVI_ROOT);
 	//SortListView();
+}
+
+ItemEntryGroup^ MainPage::Find(Windows::Foundation::Collections::IVector<ItemEntryGroup^>^ v, String^ k)
+{
+	ItemEntryGroup^ ret = nullptr;
+
+	auto iterator = v->First();
+	while (iterator->HasCurrent)
+	{
+		auto item = iterator->Current;
+		if (item->Key == k)
+		{
+			ret = item;
+			break;
+		}
+
+		iterator->MoveNext();
+	}
+
+	return ret;
 }
 
 void pwsafe::MainPage::lvItems_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e)
