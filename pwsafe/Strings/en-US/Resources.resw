@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="chkItemShowPassword.Content" xml:space="preserve">
+    <value>Show</value>
+  </data>
   <data name="menuCopyPassword.Text" xml:space="preserve">
     <value>Copy Password to Clipboard</value>
   </data>
@@ -125,6 +128,27 @@
   </data>
   <data name="txbDBPath.Text" xml:space="preserve">
     <value>Open Password Database</value>
+  </data>
+  <data name="txbItemHeaderEmail.Text" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="txbItemHeaderGroup.Text" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="txbItemHeaderNotes.Text" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="txbItemHeaderPassword.Text" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="txbItemHeaderTitle.Text" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="txbItemHeaderUrl.Text" xml:space="preserve">
+    <value>Url</value>
+  </data>
+  <data name="txbItemHeaderUser.Text" xml:space="preserve">
+    <value>User</value>
   </data>
   <data name="txbPassphrase.Text" xml:space="preserve">
     <value>Safe Combination</value>

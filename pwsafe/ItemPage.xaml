@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="pwsafe.ItemPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:pwsafe"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" IsTabStop="True">
+            <Grid Margin="24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <TextBlock x:Uid="txbItemHeaderGroup" FontSize="20" />
+                    <TextBox Text="{Binding Group}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                    <TextBlock x:Uid="txbItemHeaderTitle" FontSize="20" />
+                    <TextBox Text="{Binding Title}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
+                </StackPanel>
+                <StackPanel Grid.Row="2">
+                    <TextBlock x:Uid="txbItemHeaderUser" FontSize="20" />
+                    <TextBox Text="{Binding User}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
+                </StackPanel>
+                <StackPanel Grid.Row="3">
+                    <TextBlock x:Uid="txbItemHeaderPassword" FontSize="20" />
+                    <PasswordBox x:Name="txtItemPassword" Password="{Binding Password}" Height="38" FontSize="20" Margin="0,7" PasswordRevealMode="Hidden" ScrollViewer.VerticalScrollMode="Disabled" />
+                    <PasswordBox x:Name="txtItemPasswordConfirm" Password="{Binding Password}" Height="38" FontSize="20" Margin="0,7" ScrollViewer.VerticalScrollMode="Disabled" />
+                    <CheckBox x:Uid="chkItemShowPassword" Margin="0,7,0,24" Checked="chkItemShowPassword_Checked" Unchecked="chkItemShowPassword_Unchecked" />
+                </StackPanel>
+                <StackPanel Grid.Row="4">
+                    <TextBlock x:Uid="txbItemHeaderUrl" FontSize="20" />
+                    <HyperlinkButton x:Name="hlkItemUrl" Content="{Binding Url}" FontSize="20" Margin="0,0,0,24" Click="hlkItemUrl_Click" />
+                </StackPanel>
+                <StackPanel Grid.Row="5">
+                    <TextBlock x:Uid="txbItemHeaderEmail" FontSize="20" />
+                    <HyperlinkButton x:Name="hlkItemEmail" Content="{Binding Email}" FontSize="20" Margin="0,0,0,24" Click="hlkItemEmail_Click" />
+                </StackPanel>
+                <StackPanel Grid.Row="6">
+                    <TextBlock x:Uid="txbItemHeaderNotes" FontSize="20" />
+                    <TextBox Text="{Binding Notes}" Height="300" FontSize="20" Margin="0,7,0,24" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

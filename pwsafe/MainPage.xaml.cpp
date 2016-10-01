@@ -6,6 +6,7 @@
 #include "pch.h"
 #include "App.xaml.h"
 #include "MainPage.xaml.h"
+#include "ItemPage.xaml.h"
 
 using namespace pwsafe;
 
@@ -21,10 +22,16 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
+	this->NavigationCacheMode = Windows::UI::Xaml::Navigation::NavigationCacheMode::Enabled;
 }
 
 void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 {
+	Windows::UI::Core::SystemNavigationManager::GetForCurrentView()->AppViewBackButtonVisibility =
+		Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
+
+	if (e->NavigationMode == NavigationMode::Back) return;
+
 	String^ s = (String^)e->Parameter;
 	NavigatedToHandler(s);
 }
@@ -45,7 +52,7 @@ task<void> MainPage::NavigatedToHandler(String^ s)
 	for (auto listPos = m_core.GetEntryIter(); listPos != m_core.GetEntryEndIter();
 		listPos++) {
 		CItemData &ci = m_core.GetEntry(listPos);
-		ItemEntry^ t = ref new ItemEntry(ref new String(ci.GetTitle().data()), ref new String(ci.GetUser().data()), ref new String(ci.GetPassword().data()));
+		ItemEntry^ t = ref new ItemEntry(&ci);
 		ItemEntries->Append(t);
 	}
 
@@ -143,3 +150,16 @@ void pwsafe::MainPage::btnCopyPassword_Click(Platform::Object^ sender, Windows::
 	}
 }
 
+void pwsafe::MainPage::lvItems_ItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
+{
+	if (e->ClickedItem != nullptr)
+	{
+		auto i = (ItemEntry^)e->ClickedItem;
+
+		auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
+		if (rootFrame != nullptr)
+		{
+			rootFrame->Navigate(TypeName(ItemPage::typeid), i);
+		}
+	}
+}

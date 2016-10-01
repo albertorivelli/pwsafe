@@ -139,11 +139,11 @@ public:
 //  StringX GetDCA(const bool bShift = false) const;
 //  int16 GetShiftDCA(int16 &iDCA) const {return GetDCA(iDCA, true);}
 //  StringX GetShiftDCA() const {return GetDCA(true);}
-//  StringX GetEmail() const {return GetField(EMAIL);}
+  StringX GetEmail() const {return GetField(EMAIL);}
 //  StringX GetProtected() const;
 //  void GetProtected(unsigned char &ucprotected) const;
 //  bool IsProtected() const;
-//  StringX GetSymbols() const    {return GetField(SYMBOLS);}
+  StringX GetSymbols() const    {return GetField(SYMBOLS);}
 //  StringX GetPolicyName() const {return GetField(POLICYNAME);}
 //  int32 GetKBShortcut(int32 &iKBShortcut) const;
 //  StringX GetKBShortcut() const;

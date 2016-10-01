@@ -176,6 +176,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ItemPage.xaml.h">
+      <DependentUpon>ItemPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="PasskeyEntryPage.xaml.h">
       <DependentUpon>PasskeyEntryPage.xaml</DependentUpon>
     </ClInclude>
@@ -191,6 +194,9 @@
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ItemPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -216,6 +222,9 @@
   <ItemGroup>
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="ItemPage.xaml.cpp">
+      <DependentUpon>ItemPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>

@@ -41,6 +41,8 @@ App::App()
 /// <param name="e">Details about the launch request and process.</param>
 void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e)
 {
+	Windows::UI::Core::SystemNavigationManager::GetForCurrentView()->BackRequested += ref new EventHandler<Windows::UI::Core::BackRequestedEventArgs ^>(this, &App::App_BackRequested);
+
 	std::bitset<UIInterFace::NUM_SUPPORTED> bsSupportedFunctions;
 	bsSupportedFunctions.set(UIInterFace::DATABASEMODIFIED);
 	bsSupportedFunctions.set(UIInterFace::UPDATEGUI);
@@ -138,4 +140,18 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
 void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e)
 {
     throw ref new FailureException("Failed to load Page " + e->SourcePageType.Name);
+}
+
+void App::App_BackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs^ e)
+{
+	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
+	if (rootFrame == nullptr)
+		return;
+
+	// Navigate back if possible, and if the event has not already been handled
+	if (rootFrame->CanGoBack && e->Handled == false)
+	{
+		e->Handled = true;
+		rootFrame->GoBack();
+	}
 }
