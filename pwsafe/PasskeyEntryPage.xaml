@@ -31,7 +31,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <PasswordBox x:Name="txtPassphrase" Margin="0,0,2,0" />
+                    <PasswordBox x:Name="txtPassphrase" Margin="0,0,2,0" KeyUp="txtPassphrase_KeyUp" />
                     <Button x:Name="btnOk" Grid.Column="1" Content="&#xE111;" FontFamily="{ThemeResource SymbolThemeFontFamily}" FontWeight="Normal" Margin="0" Padding="0" Width="30" VerticalAlignment="Stretch" Click="btnOk_Click" />
                 </Grid>
             </StackPanel>

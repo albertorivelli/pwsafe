@@ -129,3 +129,10 @@ task<void> pwsafe::PasskeyEntryPage::ProcessPhrase()
 	}
 }
 
+void pwsafe::PasskeyEntryPage::txtPassphrase_KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+	if (e->Key == Windows::System::VirtualKey::Enter)
+	{
+		btnOk_Click(this, ref new RoutedEventArgs());
+	}
+}

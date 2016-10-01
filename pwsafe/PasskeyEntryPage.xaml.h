@@ -38,6 +38,6 @@ namespace pwsafe
 		task<void> PickfileAsync();
 		void btnOk_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		task<void> ProcessPhrase();
-
+		void txtPassphrase_KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
 	};
 }
