@@ -209,7 +209,7 @@ static bool pull_string(StringX &str,
 
   static int cp_acp = -1;
   if (cp_acp == -1) {
-    cp_acp = /*pws_os::getenv("PWS_CP_ACP", false).empty() ? 0 :*/ 1;
+    cp_acp = /*pws_os::getenv("PWS_CP_ACP", false).empty() ? 0 :*/ 0;
   }
   CUTF8Conv utf8conv(cp_acp != 0);
   std::vector<unsigned char> v(data, (data + len));

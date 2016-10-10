@@ -9,7 +9,6 @@
 #ifndef __FILE_H
 #define __FILE_H
 #include "typedefs.h"
-#include <cstdio>
 #include <vector>
 
 #include <collection.h>

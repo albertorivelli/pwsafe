@@ -11,7 +11,6 @@
  */
 #include <time.h>
 #include <stdlib.h>
-#include <process.h>
 
 #include "../rand.h"
 //#include "../lib.h"
@@ -70,7 +69,7 @@ void pws_os::GetRandomSeed(void *p, unsigned &slen)
     tms.tm_sec = st.wSecond;
     t = mktime(&tms);
 
-    pid = 0; // _getpid();
+    pid = GetCurrentProcessId();
     ticks = 0; // GetTickCount();
     unsigned char *pc = static_cast<unsigned char *>(p);
     memcpy(pc, &t, sizeof(t));

@@ -13,7 +13,7 @@
 // Abstract the gory details of reading and writing an encrypted database
 //-----------------------------------------------------------------------------
 
-#include <stdio.h> // for FILE *
+//#include <stdio.h> // for FILE *
 #include <vector>
 
 #include "ItemData.h"
@@ -106,8 +106,8 @@ public:
                           const StringX &passkey, VERSION &version);
 
   // Following for 'legacy' use of pwsafe as file encryptor/decryptor
-  static bool Encrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
-  static bool Decrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
+  //static bool Encrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
+  //static bool Decrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
 
   virtual ~PWSfile();
 

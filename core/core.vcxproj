@@ -153,6 +153,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -211,7 +212,6 @@
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="ItemField.h" />
     <ClInclude Include="KeyWrap.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="Proxy.h" />
     <ClInclude Include="PWHistory.h" />
     <ClInclude Include="PWScore.h" />
@@ -224,7 +224,6 @@
     <ClInclude Include="sha256.h" />
     <ClInclude Include="StringX.h" />
     <ClInclude Include="StringXStream.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="TwoFish.h" />
     <ClInclude Include="UIinterface.h" />
     <ClInclude Include="UnknownField.h" />
@@ -240,14 +239,6 @@
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="ItemField.cpp" />
     <ClCompile Include="KeyWrap.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="PWHistory.cpp" />
     <ClCompile Include="PWScore.cpp" />
     <ClCompile Include="PWSfile.cpp" />

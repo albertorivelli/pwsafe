@@ -18,11 +18,11 @@
  *
  */
 
-#include <string>
-#include <memory>
-#include <limits>
-#include <cstddef> // for ptrdiff_t
-#include <cstdlib> // for malloc
+//#include <string>
+//#include <memory>
+//#include <limits>
+//#include <cstddef> // for ptrdiff_t
+//#include <cstdlib> // for malloc
 #include <cstring> // for memset
 
 #include "../os/typedefs.h"
@@ -104,9 +104,6 @@ namespace S_Alloc
         return p;
       }
 
-#ifdef _WIN32
-#pragma optimize("", off)
-#endif
       // Free raw memory.
       // Note that C++ standard defines this function as:
       //   deallocate(pointer p, size_type n).
@@ -124,9 +121,6 @@ namespace S_Alloc
         }
         std::free(p);
       }
-#ifdef _WIN32
-#pragma optimize("", on)
-#endif
 
     private:
       // No data

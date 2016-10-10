@@ -11,15 +11,15 @@
 //#include "PWSfileV4.h"
 //#include "SysInfo.h"
 #include "core.h"
-//#include "os/file.h"
+#include "os/file.h"
 
 #include "sha1.h" // for simple encrypt/decrypt
 #include "PWSrand.h"
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <limits>
+//#include <fcntl.h>
+//#include <sys/stat.h>
+//#include <errno.h>
+//#include <limits>
 
 task<PWSfile *> PWSfile::MakePWSfile(const StringX &a_filename, const StringX &passkey,
                               VERSION &version, RWmode mode, int &status,
@@ -271,11 +271,11 @@ static const stringT CIPHERTEXT_SUFFIX(_S(".PSF"));
 //}
 
 // Following specific for PWSfile::Encrypt
-#define SAFE_FWRITE(p, sz, cnt, stream) \
-  { \
-    size_t _ret = fwrite(p, sz, cnt, stream); \
-    if (_ret != cnt) { status = false; goto exit;} \
-  }
+//#define SAFE_FWRITE(p, sz, cnt, stream) \
+//  { \
+//    size_t _ret = fwrite(p, sz, cnt, stream); \
+//    if (_ret != cnt) { status = false; goto exit;} \
+//  }
 
 // std::numeric_limits<>::max() && m'soft's silly macros don't work together
 #ifdef max

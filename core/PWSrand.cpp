@@ -5,7 +5,7 @@
 * distributed with this code, or available from
 * http://www.opensource.org/licenses/artistic-license-2.0.php
 */
-#include <limits.h>
+//#include <limits.h>
 #include "os/rand.h"
 
 #include "PwsPlatform.h"

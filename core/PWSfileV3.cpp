@@ -21,15 +21,15 @@
 
 //#include "XML/XMLDefs.h"  // Required if testing "USE_XML_LIBRARY"
 
-#ifdef _WIN32
-#include <io.h>
-#endif
-
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <iomanip>
-#include <type_traits> // for static_assert
+//#ifdef _WIN32
+//#include <io.h>
+//#endif
+//
+//#include <fcntl.h>
+//#include <sys/stat.h>
+//#include <errno.h>
+//#include <iomanip>
+//#include <type_traits> // for static_assert
 
 using namespace std;
 using pws_os::CUUID;
@@ -342,11 +342,11 @@ void PWSfileV3::StretchKey(const unsigned char *salt, unsigned long saltLen,
 }
 
 // Following specific for PWSfileV3::WriteHeader
-#define SAFE_FWRITE(p, sz, cnt, stream) \
-  { \
-    size_t _ret = fwrite(p, sz, cnt, stream); \
-    if (_ret != cnt) { m_status = FAILURE; goto end;} \
-  }
+//#define SAFE_FWRITE(p, sz, cnt, stream) \
+//  { \
+//    size_t _ret = fwrite(p, sz, cnt, stream); \
+//    if (_ret != cnt) { m_status = FAILURE; goto end;} \
+//  }
 
 //int PWSfileV3::WriteHeader()
 //{

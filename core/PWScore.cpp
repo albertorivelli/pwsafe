@@ -18,13 +18,13 @@
 #include "UTF8Conv.h"
 //#include "Report.h"
 //#include "VerifyFormat.h"
-//#include "StringXStream.h"
+#include "StringXStream.h"
 
 //#include "os/pws_tchar.h"
 #include "os/typedefs.h"
 //#include "os/dir.h"
 //#include "os/debug.h"
-//#include "os/file.h"
+#include "os/file.h"
 //#include "os/mem.h"
 //#include "os/logit.h"
 

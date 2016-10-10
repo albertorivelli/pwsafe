@@ -41,15 +41,24 @@
 
 #ifndef __PWSPLATFORM_H
 #define __PWSPLATFORM_H
-#include "pch.h"
+
 #if (defined(_WIN32) || defined (_WIN64))
 // Make sure Windows.h does not define min & max macros
 #define NOMINMAX
 #endif
 
 #if (defined(_WIN32) || defined (_WIN64)) && !defined(__WX__)
-// ONLY place in core which refers to parent. Ugh.
-//#include "../ui/Windows/stdafx.h"
+#include <SDKDDKVer.h>
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
+//#include <assert.h>
+#include <tchar.h>
+#include <Strsafe.h>
+//#include <atlstr.h>
 #else
 // some globally useful includes for non-Windows
 #include <cassert>
@@ -92,7 +101,7 @@
 // * Windows 32                                 *
 // **********************************************
 #if defined(_WIN32)
-  #if defined(x86) || defined(_x86) || defined(_X86) || defined(_X86_) || defined(_M_IX86) || defined(_M_X64)
+  #if defined(x86) || defined(_x86) || defined(_X86) || defined(_X86_) || defined(_M_IX86) || defined(_M_X64) || defined(_M_ARM)
     #define PWS_PLATFORM "Windows"
     #define PWS_LITTLE_ENDIAN
   #endif

@@ -18,7 +18,7 @@
 
 #include "os/typedefs.h"
 //#include "os/pws_tchar.h"
-//#include "os/file.h"
+#include "os/file.h"
 //#include "os/media.h"
 #include "os/utf8conv.h"
 //#include "os/dir.h"

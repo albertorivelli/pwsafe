@@ -22,16 +22,16 @@
 //#include "os/pws_tchar.h"
 //#include "os/dir.h"
 
-#include <stdio.h>
-#ifdef _WIN32
-#include <sys/timeb.h>
-#else
-#include <sys/time.h>
-#endif
-#include <sstream>
-#include <iomanip>
+//#include <stdio.h>
+//#ifdef _WIN32
+//#include <sys/timeb.h>
+//#else
+//#include <sys/time.h>
+//#endif
+//#include <sstream>
+//#include <iomanip>
 
-#include <errno.h>
+//#include <errno.h>
 
 using namespace std;
 
@@ -49,9 +49,6 @@ static void xormem(unsigned char *mem1, const unsigned char *mem2, int length)
 // see http://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html
 // and http://www.cypherpunks.to/~peter/usenix01.pdf
 
-#ifdef _WIN32
-#pragma optimize("",off)
-#endif
 void trashMemory(void *buffer, size_t length)
 {
   //ASSERT(buffer != NULL);
@@ -68,9 +65,6 @@ void trashMemory(void *buffer, size_t length)
 #endif
   }
 }
-#ifdef _WIN32
-#pragma optimize("",on)
-#endif
 void trashMemory(LPTSTR buffer, size_t length)
 {
   trashMemory(reinterpret_cast<unsigned char *>(buffer), length * sizeof(buffer[0]));
