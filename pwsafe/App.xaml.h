@@ -27,5 +27,6 @@ namespace pwsafe
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
 		void OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e);
 		void App_BackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^e);
+		void App_BackPressed(Platform::Object ^sender, Windows::Phone::UI::Input::BackPressedEventArgs^ e);
 	};
 }
