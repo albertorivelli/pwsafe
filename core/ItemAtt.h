@@ -48,7 +48,7 @@ public:
   ~CItemAtt();
 
   int Read(PWSfile *in);
-  int Write(PWSfile *out) const;
+  //int Write(PWSfile *out) const;
 
   /*int Import(const stringT &fname);
   int Export(const stringT &fname) const;*/
@@ -130,7 +130,7 @@ public:
 
 private:
   bool SetField(unsigned char type, const unsigned char *data, size_t len);
-  size_t WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
+  //size_t WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
 
   EntryStatus m_entrystatus;
   long m_offset; // location on file, for lazy evaluation

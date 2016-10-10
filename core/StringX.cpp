@@ -12,12 +12,8 @@
 #include "StringX.h"
 #include "Util.h"
 
-#include "PwsPlatform.h"
+//#include "PwsPlatform.h"
 //#include "os/pws_tchar.h"
-
-#if !defined(_WIN32) || defined(__WX__)
-#include "core_st.h"
-#endif
 
 // A few convenience functions for StringX & stringT
 
@@ -150,13 +146,6 @@ template<class T> int Remove(T &s, TCHAR c)
 
 template<class T> void LoadAString(T &s, int id)
 {
-#if defined(_WIN32) && !defined(__WX__)
-  CString cs = "";
-  //cs.LoadString(id);
-  s = cs;
-#else
-  s = core_st[id];
-#endif
 }
 
 template<class T> void Format(T &s, const TCHAR *fmt, ...)

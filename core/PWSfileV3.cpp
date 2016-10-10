@@ -6,7 +6,7 @@
 * http://www.opensource.org/licenses/artistic-license-2.0.php
 */
 #include "PWSfileV3.h"
-#include "PWSrand.h"
+//#include "PWSrand.h"
 #include "Util.h"
 //#include "SysInfo.h"
 #include "PWScore.h"
@@ -21,15 +21,15 @@
 
 //#include "XML/XMLDefs.h"  // Required if testing "USE_XML_LIBRARY"
 
-#ifdef _WIN32
-#include <io.h>
-#endif
-
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <iomanip>
-#include <type_traits> // for static_assert
+//#ifdef _WIN32
+//#include <io.h>
+//#endif
+//
+//#include <fcntl.h>
+//#include <sys/stat.h>
+//#include <errno.h>
+//#include <iomanip>
+//#include <type_traits> // for static_assert
 
 using namespace std;
 using pws_os::CUUID;
@@ -262,31 +262,31 @@ err:
   return retval;
 }
 
-size_t PWSfileV3::WriteCBC(unsigned char type, const StringX &data)
-{
-  const unsigned char *utf8(nullptr);
-  size_t utf8Len(0);
+//size_t PWSfileV3::WriteCBC(unsigned char type, const StringX &data)
+//{
+//  const unsigned char *utf8(nullptr);
+//  size_t utf8Len(0);
+//
+//  bool status = m_utf8conv.ToUTF8(data, utf8, utf8Len);
+//  if (!status)
+//    //pws_os::Trace(_T("ToUTF8(%ls) failed\n"), data.c_str());
+//  return WriteCBC(type, utf8, utf8Len);
+//}
+//
+//size_t PWSfileV3::WriteCBC(unsigned char type, const unsigned char *data,
+//                           size_t length)
+//{
+//  m_hmac.Update(data, reinterpret_cast<int &>(length));
+//  return PWSfile::WriteCBC(type, data, length);
+//}
 
-  bool status = m_utf8conv.ToUTF8(data, utf8, utf8Len);
-  if (!status)
-    //pws_os::Trace(_T("ToUTF8(%ls) failed\n"), data.c_str());
-  return WriteCBC(type, utf8, utf8Len);
-}
-
-size_t PWSfileV3::WriteCBC(unsigned char type, const unsigned char *data,
-                           size_t length)
-{
-  m_hmac.Update(data, reinterpret_cast<int &>(length));
-  return PWSfile::WriteCBC(type, data, length);
-}
-
-int PWSfileV3::WriteRecord(const CItemData &item)
-{
-  //ASSERT(m_fd != NULL);
-  //ASSERT(m_curversion == V30);
-  return item.Write(this);
-}
-
+//int PWSfileV3::WriteRecord(const CItemData &item)
+//{
+//  //ASSERT(m_fd != NULL);
+//  //ASSERT(m_curversion == V30);
+//  return item.Write(this);
+//}
+//
 task<size_t> PWSfileV3::ReadCBC(unsigned char &type, unsigned char* &data,
                           size_t &length)
 {
@@ -342,11 +342,11 @@ void PWSfileV3::StretchKey(const unsigned char *salt, unsigned long saltLen,
 }
 
 // Following specific for PWSfileV3::WriteHeader
-#define SAFE_FWRITE(p, sz, cnt, stream) \
-  { \
-    size_t _ret = fwrite(p, sz, cnt, stream); \
-    if (_ret != cnt) { m_status = FAILURE; goto end;} \
-  }
+//#define SAFE_FWRITE(p, sz, cnt, stream) \
+//  { \
+//    size_t _ret = fwrite(p, sz, cnt, stream); \
+//    if (_ret != cnt) { m_status = FAILURE; goto end;} \
+//  }
 
 //int PWSfileV3::WriteHeader()
 //{

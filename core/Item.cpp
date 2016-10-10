@@ -11,7 +11,7 @@
 #include "Item.h"
 #include "BlowFish.h"
 #include "TwoFish.h"
-#include "PWSrand.h"
+//#include "PWSrand.h"
 #include "UTF8Conv.h"
 #include "Util.h"
 //#include "os/env.h"
@@ -20,7 +20,7 @@
 
 CItem::CItem()
 {
-  PWSrand::GetInstance()->GetRandomData( m_key, sizeof(m_key) );
+  //PWSrand::GetInstance()->GetRandomData( m_key, sizeof(m_key) );
 }
 
 CItem::CItem(const CItem &that) :
@@ -209,7 +209,7 @@ static bool pull_string(StringX &str,
 
   static int cp_acp = -1;
   if (cp_acp == -1) {
-    cp_acp = /*pws_os::getenv("PWS_CP_ACP", false).empty() ? 0 :*/ 1;
+    cp_acp = /*pws_os::getenv("PWS_CP_ACP", false).empty() ? 0 :*/ 0;
   }
   CUTF8Conv utf8conv(cp_acp != 0);
   std::vector<unsigned char> v(data, (data + len));

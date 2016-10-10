@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 #include "StringX.h"
-#include "PwsPlatform.h"
+//#include "PwsPlatform.h"
 #include "os/typedefs.h"
 
 // Verify PWHistory String return codes
