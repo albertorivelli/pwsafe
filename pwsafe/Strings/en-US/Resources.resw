@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="btnClearClipboard.Label" xml:space="preserve">
+    <value>Clear Clipboard</value>
+  </data>
   <data name="chkItemShowPassword.Content" xml:space="preserve">
     <value>Show</value>
   </data>

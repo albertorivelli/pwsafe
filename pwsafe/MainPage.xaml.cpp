@@ -212,6 +212,19 @@ void pwsafe::MainPage::btnCopyPassword_Click(Platform::Object^ sender, Windows::
 	}
 }
 
+void pwsafe::MainPage::btnClearClipboard_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	try
+	{
+		// Set the contents in the clipboard
+		Clipboard::Clear();
+	}
+	catch (Exception^ ex)
+	{
+		// Copying data to the Clipboard can potentially fail - for example, if another application is holding the Clipboard open
+	}
+}
+
 void pwsafe::MainPage::lvItems_ItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
 {
 	if (e->ClickedItem != nullptr)

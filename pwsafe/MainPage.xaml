@@ -127,6 +127,10 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ApplicationViewStates">
                 <VisualState x:Name="Landscape">
@@ -284,5 +288,12 @@
                 </SemanticZoom.ZoomedInView>
             </SemanticZoom>
         </Grid>
+        <CommandBar Grid.Row="1">
+            <AppBarButton x:Name="btnClearClipboard" x:Uid="btnClearClipboard" Click="btnClearClipboard_Click">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE75C;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
     </Grid>
 </Page>
