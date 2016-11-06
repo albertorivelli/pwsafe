@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="620AlbertoRivelli.PasswordSafeBeta" Publisher="CN=4695C6F3-0571-45BE-A3A5-8CE9BF41BCD1" Version="0.3392.1.0" />
+  <Identity Name="620AlbertoRivelli.PasswordSafeBeta" Publisher="CN=4695C6F3-0571-45BE-A3A5-8CE9BF41BCD1" Version="0.3392.2.0" />
   <mp:PhoneIdentity PhoneProductId="9eca17f3-be24-40bb-88c4-d9c722422333" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Password Safe Beta</DisplayName>
