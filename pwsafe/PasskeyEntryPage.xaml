@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid VerticalAlignment="Center" MaxWidth="400">
+        <Grid VerticalAlignment="Center" MaxWidth="400" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />

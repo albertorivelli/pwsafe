@@ -43,6 +43,9 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 {
 	Windows::UI::Core::SystemNavigationManager::GetForCurrentView()->BackRequested += ref new EventHandler<Windows::UI::Core::BackRequestedEventArgs ^>(this, &App::App_BackRequested);
 
+	if (Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0))
+		Windows::Phone::UI::Input::HardwareButtons::BackPressed += ref new EventHandler<Windows::Phone::UI::Input::BackPressedEventArgs ^>(this, &App::App_BackPressed);
+
 	std::bitset<UIInterFace::NUM_SUPPORTED> bsSupportedFunctions;
 	bsSupportedFunctions.set(UIInterFace::DATABASEMODIFIED);
 	bsSupportedFunctions.set(UIInterFace::UPDATEGUI);
@@ -143,6 +146,20 @@ void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Naviga
 }
 
 void App::App_BackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs^ e)
+{
+	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
+	if (rootFrame == nullptr)
+		return;
+
+	// Navigate back if possible, and if the event has not already been handled
+	if (rootFrame->CanGoBack && e->Handled == false)
+	{
+		e->Handled = true;
+		rootFrame->GoBack();
+	}
+}
+
+void App::App_BackPressed(Platform::Object ^sender, Windows::Phone::UI::Input::BackPressedEventArgs^ e)
 {
 	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
 	if (rootFrame == nullptr)

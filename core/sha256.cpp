@@ -10,7 +10,7 @@
 // Tom St Denis, tomstdenis@iahu.ca, http://libtomcrypt.org
 //-----------------------------------------------------------------------------
 #include "sha256.h"
-#include "PwsPlatform.h"
+//#include "PwsPlatform.h"
 #include "Util.h"
 
 #include <algorithm>
@@ -37,6 +37,24 @@ static const unsigned long K[64] = {
   0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
 };
 #endif
+
+#define RORc(x,n) _lrotr(x,n)
+
+#define LOAD32H(x, y)                            \
+{ x = (static_cast<unsigned long>((y)[0] & 255)<<24) | \
+  (static_cast<unsigned long>((y)[1] & 255)<<16) | \
+  (static_cast<unsigned long>((y)[2] & 255)<<8)  | \
+  (static_cast<unsigned long>((y)[3] & 255)); }
+
+#define STORE32H(x, y)                                                                     \
+{ (y)[0] = static_cast<unsigned char>(((x)>>24)&255); (y)[1] = static_cast<unsigned char>(((x)>>16)&255);   \
+  (y)[2] = static_cast<unsigned char>(((x)>>8)&255); (y)[3] = static_cast<unsigned char>((x)&255); }
+
+#define STORE64H(x, y)                                                                     \
+{ (y)[0] = static_cast<unsigned char>(((x)>>56)&255); (y)[1] = static_cast<unsigned char>(((x)>>48)&255);     \
+  (y)[2] = static_cast<unsigned char>(((x)>>40)&255); (y)[3] = static_cast<unsigned char>(((x)>>32)&255);     \
+  (y)[4] = static_cast<unsigned char>(((x)>>24)&255); (y)[5] = static_cast<unsigned char>(((x)>>16)&255);     \
+  (y)[6] = static_cast<unsigned char>(((x)>>8)&255); (y)[7] = static_cast<unsigned char>((x)&255); }
 
 /* Various logical functions */
 #define Ch(x,y,z)       (z ^ (x & (y ^ z)))

@@ -18,15 +18,16 @@
  *
  */
 
-#include <string>
-#include <memory>
-#include <limits>
-#include <cstddef> // for ptrdiff_t
-#include <cstdlib> // for malloc
-#include <cstring> // for memset
+#include <string.h>
+//#include <memory>
+//#include <limits>
+//#include <cstddef> // for ptrdiff_t
+//#include <cstdlib> // for malloc
+//#include <cstring> // for memset
 
 #include "../os/typedefs.h"
-#include "PwsPlatform.h"
+//#include "PwsPlatform.h"
+#define UNREFERENCED_PARAMETER(P) (void)(P)
 
 // Using extern definition here instead of including "Util.h" because Util.h
 // references the StringX class and by including "Util.h" here, the StringX
@@ -104,9 +105,6 @@ namespace S_Alloc
         return p;
       }
 
-#ifdef _WIN32
-#pragma optimize("", off)
-#endif
       // Free raw memory.
       // Note that C++ standard defines this function as:
       //   deallocate(pointer p, size_type n).
@@ -124,9 +122,6 @@ namespace S_Alloc
         }
         std::free(p);
       }
-#ifdef _WIN32
-#pragma optimize("", on)
-#endif
 
     private:
       // No data

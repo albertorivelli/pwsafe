@@ -30,6 +30,12 @@ void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 	Windows::UI::Core::SystemNavigationManager::GetForCurrentView()->AppViewBackButtonVisibility =
 		Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
 
+	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
+	if (rootFrame != nullptr)
+	{
+		rootFrame->BackStack->Clear();
+	}
+
 	if (e->NavigationMode == NavigationMode::Back) return;
 
 	String^ s = (String^)e->Parameter;

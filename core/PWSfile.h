@@ -13,7 +13,7 @@
 // Abstract the gory details of reading and writing an encrypted database
 //-----------------------------------------------------------------------------
 
-#include <stdio.h> // for FILE *
+//#include <stdio.h> // for FILE *
 #include <vector>
 
 #include "ItemData.h"
@@ -105,16 +105,16 @@ public:
   static task<int> CheckPasskey(const StringX &filename,
                           const StringX &passkey, VERSION &version);
 
-  // Following for 'legacy' use of pwsafe as file encryptor/decryptor
-  static bool Encrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
-  static bool Decrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
+  //// Following for 'legacy' use of pwsafe as file encryptor/decryptor
+  //static bool Encrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
+  //static bool Decrypt(const stringT &fn, const StringX &passwd, stringT &errmess);
 
   virtual ~PWSfile();
 
   virtual task<int> Open(const StringX &passkey) = 0;
   virtual int Close();
 
-  virtual int WriteRecord(const CItemData &item) = 0;
+  //virtual int WriteRecord(const CItemData &item) = 0;
   virtual task<int> ReadRecord(CItemData &item) = 0;
 
   const PWSfileHeader &GetHeader() const {return m_hdr;}
@@ -143,11 +143,11 @@ public:
   // Following for low-level details that changed between format versions
   virtual size_t timeFieldLen() const {return 4;} // changed in V4
   
-  size_t WriteField(unsigned char type,
+  /*size_t WriteField(unsigned char type,
                     const StringX &data) {return WriteCBC(type, data);}
   size_t WriteField(unsigned char type,
                     const unsigned char *data,
-                    size_t length) {return WriteCBC(type, data, length);}
+                    size_t length) {return WriteCBC(type, data, length);}*/
   task<size_t> ReadField(unsigned char &type,
                    unsigned char* &data,
                    size_t &length) {return co_await ReadCBC(type, data, length);}
@@ -155,13 +155,13 @@ public:
 protected:
   PWSfile(const StringX &filename, RWmode mode, VERSION v = UNKNOWN_VERSION);
   task<void> FOpen(); // calls right variant of m_fd = fopen(m_filename);
-  virtual size_t WriteCBC(unsigned char type, const StringX &data) = 0;
+  /*virtual size_t WriteCBC(unsigned char type, const StringX &data) = 0;
   virtual size_t WriteCBC(unsigned char type, const unsigned char *data,
-                          size_t length);
+                          size_t length);*/
   virtual task<size_t> ReadCBC(unsigned char &type, unsigned char* &data,
                          size_t &length);
   
-  static void HashRandom256(unsigned char *p256); // when we don't want to expose our RNG
+  //static void HashRandom256(unsigned char *p256); // when we don't want to expose our RNG
 
   const StringX m_filename;
   StringX m_passkey;
