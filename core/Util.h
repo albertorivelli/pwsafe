@@ -14,14 +14,14 @@
 #include "sha256.h"
 #include "StringX.h"
 #include "Fish.h"
-//#include "PwsPlatform.h"
+#include "PwsPlatform.h"
 #include "UTF8Conv.h"
 
 //#include "../os/debug.h"
 #include "../os/typedefs.h"
 //#include "../os/mem.h"
 
-//#include <sstream>
+#include <sstream>
 #include <stdarg.h>
 
 #include <collection.h>
@@ -52,9 +52,9 @@ extern void burnStack(unsigned long len); // borrowed from libtomcrypt
 extern void ConvertString(const StringX &text,
                           unsigned char *&txt, size_t &txtlen);
 
-//extern void GenRandhash(const StringX &passkey,
-//                        const unsigned char *m_randstuff,
-//                        unsigned char *m_randhash);
+extern void GenRandhash(const StringX &passkey,
+                        const unsigned char *m_randstuff,
+                        unsigned char *m_randhash);
 
 // buffer is allocated by _readcbc, *** delete[] is responsibility of caller ***
 extern task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char * &buffer,
@@ -70,13 +70,13 @@ extern task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char *buffer,
                        unsigned char *cbcbuffer);
 
 // _writecbc will throw(EIO) iff a write fail occurs!
-//extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
-//                        unsigned char type, Fish *Algorithm,
-//                        unsigned char *cbcbuffer);
-//
-//// typeless version for V4 content:
-//extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
-//                        Fish *Algorithm, unsigned char *cbcbuffer);
+extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
+                        unsigned char type, Fish *Algorithm,
+                        unsigned char *cbcbuffer);
+
+// typeless version for V4 content:
+extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
+                        Fish *Algorithm, unsigned char *cbcbuffer);
 
 
 // The following can be used directly or via template functions getInt<> / putInt<>
@@ -87,17 +87,50 @@ extern task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char *buffer,
 
 inline int16 getInt16(const unsigned char buf[2])
 {
+#if defined(PWS_LITTLE_ENDIAN)
   return *reinterpret_cast<const int16 *>(buf);
+#elif defined(PWS_BIG_ENDIAN)
+  return (buf[0] | (buf[1] << 8) );
+#else
+#error Is the target CPU big or little endian?
+#endif
 }
 
 inline int32 getInt32(const unsigned char buf[4])
 {
+#if defined(PWS_LITTLE_ENDIAN)
+#if defined(_DEBUG)
+  if ( *reinterpret_cast<const int32 *>(buf) != (buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24)) )
+  {
+    //pws_os::Trace0(_T("Warning: PWS_LITTLE_ENDIAN defined but architecture is big endian\n"));
+  }
+#endif
   return *reinterpret_cast<const int32 *>(buf);
+#elif defined(PWS_BIG_ENDIAN)
+#if defined(_DEBUG)
+  // Following code works for big or little endian architectures but we'll warn anyway
+  // if CPU is really little endian
+  if ( *reinterpret_cast<const int32 *>(buf) == (buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24)) )
+  {
+    pws_os::Trace0(_T("Warning: PWS_BIG_ENDIAN defined but architecture is little endian\n"));
+  }
+#endif
+  return (buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24) );
+#else
+#error Is the target CPU big or little endian?
+#endif
 }
 
 inline int64 getInt64(const unsigned char buf[8])
 {
+#if defined(PWS_LITTLE_ENDIAN)
   return *reinterpret_cast<const int64 *>(buf);
+#elif defined(PWS_BIG_ENDIAN)
+  return (buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24) |
+          ((int64)buf[4] << 32) | ((int64)buf[5] << 40) | ((int64)buf[6] << 48) | ((int64)buf[7] << 56));
+#else
+#error Is the target CPU big or little endian?
+#endif
 }
 
 /*
@@ -105,17 +138,60 @@ inline int64 getInt64(const unsigned char buf[8])
 */
 inline void putInt16(unsigned char buf[2], const int16 val )
 {
+#if defined(PWS_LITTLE_ENDIAN)
   *reinterpret_cast<int16 *>(buf) = val;
+#elif defined(PWS_BIG_ENDIAN)
+  buf[0] = val & 0xFF;
+  buf[1] = (val >> 8) & 0xFF;
+#else
+#error Is the target CPU big or little endian?
+#endif
 }
 
 inline void putInt32(unsigned char buf[4], const int32 val )
 {
+#if defined(PWS_LITTLE_ENDIAN)
   *reinterpret_cast<int32 *>(buf) = val;
+#if defined(_DEBUG)
+  if ( *reinterpret_cast<int32*>(buf) != (buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24)) )
+  {
+    //pws_os::Trace0(_T("Warning: PWS_LITTLE_ENDIAN defined but architecture is big endian\n"));
+  }
+#endif
+#elif defined(PWS_BIG_ENDIAN)
+  buf[0] = val & 0xFF;
+  buf[1] = (val >> 8) & 0xFF;
+  buf[2] = (val >> 16) & 0xFF;
+  buf[3] = (val >> 24) & 0xFF;
+#if defined(_DEBUG)
+  // Above code works for big or little endian architectures but we'll warn anyway
+  // if CPU is really little endian
+  if ( *(int32*) buf == (buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24)) )
+  {
+    pws_os::Trace0(_T("Warning: PWS_BIG_ENDIAN defined but architecture is little endian\n"));
+  }
+#endif
+#else
+#error Is the target CPU big or little endian?
+#endif
 }
 
 inline void putInt64(unsigned char buf[8], const int64 val )
 {
+#if defined(PWS_LITTLE_ENDIAN)
   *reinterpret_cast<int64 *>(buf) = val;
+#elif defined(PWS_BIG_ENDIAN)
+  buf[0] = val & 0xFF;
+  buf[1] = (val >> 8) & 0xFF;
+  buf[2] = (val >> 16) & 0xFF;
+  buf[3] = (val >> 24) & 0xFF;
+  buf[4] = (val >> 32) & 0xFF;
+  buf[5] = (val >> 40) & 0xFF;
+  buf[6] = (val >> 48) & 0xFF;
+  buf[7] = (val >> 56) & 0xFF;
+#else
+#error Is the target CPU big or little endian?
+#endif
 }
 
 /**

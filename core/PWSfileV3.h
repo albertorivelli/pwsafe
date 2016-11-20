@@ -33,7 +33,7 @@ public:
   virtual task<int> Open(const StringX &passkey);
   virtual int Close();
 
-//  virtual int WriteRecord(const CItemData &item);
+  virtual int WriteRecord(const CItemData &item);
   virtual task<int> ReadRecord(CItemData &item);
 
   virtual uint32 GetNHashIters() const {return m_nHashIters;}
@@ -46,9 +46,9 @@ public:
   unsigned char m_key[32];
   HMAC<SHA256, SHA256::HASHLEN, SHA256::BLOCKSIZE> m_hmac;
   CUTF8Conv m_utf8conv;
-  /*virtual size_t WriteCBC(unsigned char type, const StringX &data);
+  virtual size_t WriteCBC(unsigned char type, const StringX &data);
   virtual size_t WriteCBC(unsigned char type, const unsigned char *data,
-                          size_t length);*/
+                          size_t length);
 
   virtual task<size_t> ReadCBC(unsigned char &type, unsigned char* &data,
                          size_t &length);

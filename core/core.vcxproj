@@ -219,6 +219,7 @@
     <ClInclude Include="PWSfileHeader.h" />
     <ClInclude Include="PWSfileV3.h" />
     <ClInclude Include="PwsPlatform.h" />
+    <ClInclude Include="PWSrand.h" />
     <ClInclude Include="sha1.h" />
     <ClInclude Include="sha256.h" />
     <ClInclude Include="StringX.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="PWSfile.cpp" />
     <ClCompile Include="PWSfileHeader.cpp" />
     <ClCompile Include="PWSfileV3.cpp" />
+    <ClCompile Include="PWSrand.cpp" />
     <ClCompile Include="sha1.cpp" />
     <ClCompile Include="sha256.cpp" />
     <ClCompile Include="StringX.cpp" />

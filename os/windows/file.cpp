@@ -19,10 +19,10 @@
 //#include <shellapi.h>
 //#include <shlwapi.h>
 
-//#include <io.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fstream>
+#include <io.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fstream>
 
 #include "../typedefs.h"
 #include "../file.h"

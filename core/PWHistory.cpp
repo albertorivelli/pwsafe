@@ -8,7 +8,7 @@
 /// \file PWHistory.cpp
 //-----------------------------------------------------------------------------
 #include "PWHistory.h"
-//#include <sstream>
+#include <sstream>
 #include <iomanip>
 #include "StringXStream.h"
 

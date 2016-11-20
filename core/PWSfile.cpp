@@ -11,15 +11,15 @@
 //#include "PWSfileV4.h"
 //#include "SysInfo.h"
 #include "core.h"
-#include "os/file.h"
+//#include "os/file.h"
 
 #include "sha1.h" // for simple encrypt/decrypt
-//#include "PWSrand.h"
+#include "PWSrand.h"
 
-//#include <fcntl.h>
-//#include <sys/stat.h>
-//#include <errno.h>
-//#include <limits>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <limits>
 
 task<PWSfile *> PWSfile::MakePWSfile(const StringX &a_filename, const StringX &passkey,
                               VERSION &version, RWmode mode, int &status,
@@ -111,22 +111,22 @@ PWSfile::~PWSfile()
   Close(); // idempotent
 }
 
-//void PWSfile::HashRandom256(unsigned char *p256)
-//{
-//  /**
-//   * This is for random data that will be written to the file directly.
-//   * The idea is to avoid directly exposing our generated randomness
-//   * to the attacker, since this might expose state of the RNG.
-//   * Therefore, we'll hash the randomness.
-//   *
-//   * As the names imply, this works on 256 bit (32 byte) arrays.
-//   */
-//  PWSrand::GetInstance()->GetRandomData(p256, 32);
-//  SHA256 salter;
-//  salter.Update(p256, 32);
-//  salter.Final(p256);
-//}
-//
+void PWSfile::HashRandom256(unsigned char *p256)
+{
+  /**
+   * This is for random data that will be written to the file directly.
+   * The idea is to avoid directly exposing our generated randomness
+   * to the attacker, since this might expose state of the RNG.
+   * Therefore, we'll hash the randomness.
+   *
+   * As the names imply, this works on 256 bit (32 byte) arrays.
+   */
+  PWSrand::GetInstance()->GetRandomData(p256, 32);
+  SHA256 salter;
+  salter.Update(p256, 32);
+  salter.Final(p256);
+}
+
 task<void> PWSfile::FOpen()
 {
   //ASSERT(!m_filename.empty());
@@ -151,12 +151,12 @@ int PWSfile::Close()
   return SUCCESS;
 }
 
-//size_t PWSfile::WriteCBC(unsigned char type, const unsigned char *data,
-//                         size_t length)
-//{
-//  //ASSERT(m_fish != NULL && m_IV != NULL);
-//  return _writecbc(m_fd, data, length, type, m_fish, m_IV);
-//}
+size_t PWSfile::WriteCBC(unsigned char type, const unsigned char *data,
+                         size_t length)
+{
+  //ASSERT(m_fish != NULL && m_IV != NULL);
+  return _writecbc(m_fd, data, length, type, m_fish, m_IV);
+}
 
 task<size_t> PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,
                         size_t &length)
@@ -271,11 +271,11 @@ static const stringT CIPHERTEXT_SUFFIX(_S(".PSF"));
 //}
 
 // Following specific for PWSfile::Encrypt
-//#define SAFE_FWRITE(p, sz, cnt, stream) \
-//  { \
-//    size_t _ret = fwrite(p, sz, cnt, stream); \
-//    if (_ret != cnt) { status = false; goto exit;} \
-//  }
+#define SAFE_FWRITE(p, sz, cnt, stream) \
+  { \
+    size_t _ret = fwrite(p, sz, cnt, stream); \
+    if (_ret != cnt) { status = false; goto exit;} \
+  }
 
 // std::numeric_limits<>::max() && m'soft's silly macros don't work together
 #ifdef max

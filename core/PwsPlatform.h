@@ -59,6 +59,12 @@
 #include <stdint.h>
 #endif
 
+#if defined(__linux__) || defined(__CYGWIN__)
+#include <endian.h>
+// Following seems needed on Linux/cygwin
+#define LTC_NO_ROLC
+#endif
+
 #undef PWS_PLATFORM
 #undef POCKET_PC
 
@@ -86,10 +92,58 @@
 // * Windows 32                                 *
 // **********************************************
 #if defined(_WIN32)
-  #if defined(x86) || defined(_x86) || defined(_X86) || defined(_X86_) || defined(_M_IX86) || defined(_M_X64) || defined(_M_ARM)
+  #if defined(x86) || defined(_x86) || defined(_X86) || defined(_X86_) || defined(_M_IX86) || defined(_M_X64)
     #define PWS_PLATFORM "Windows"
     #define PWS_LITTLE_ENDIAN
   #endif
+// **********************************************
+// * Linux                                      *
+// **********************************************
+#elif defined(__linux) || defined(__linux__)
+  #define PWS_PLATFORM "Linux"
+  #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    #define PWS_LITTLE_ENDIAN
+  #else
+    #define PWS_BIG_ENDIAN
+#endif
+// **********************************************
+// * cygwin on Intel                             *
+// **********************************************
+#elif defined(__CYGWIN__)
+#define PWS_PLATFORM "Cygwin"
+#if defined(__i386__) || defined(__i486__)
+#define PWS_LITTLE_ENDIAN
+#endif
+/* http://predef.sourceforge.net/preos.html*/
+#elif defined (macintosh) || defined(Macintosh) || defined(__APPLE__) || defined(__MACH__)
+#define PWS_PLATFORM "Mac"
+#define __PWS_MACINTOSH__
+/* following line was added to avoid "Impossible constraint in 'asm'" errors in ROLc()
+   and RORc() functions below, just like it is defined for Linux and cygwin above */
+#define LTC_NO_ROLC
+#if defined(__APPLE__) && defined(__MACH__)
+#define PWS_PLATFORM_EX MacOSX
+#else
+#define PWS_PLATFORM_EX MacOS9
+#endif
+/* gcc shipped with snow leopard defines this.  Try "cpp -dM dummy.h"*/
+#if defined (__LITTLE_ENDIAN__) && (__LITTLE_ENDIAN__ == 1)
+#define PWS_LITTLE_ENDIAN
+#else
+#define PWS_BIG_ENDIAN
+#endif
+// **********************************************
+// * FreeBSD on Intel                           *
+// **********************************************
+#elif defined(__FreeBSD) || defined(__FreeBSD__)
+#define PWS_PLATFORM "FreeBSD"
+#define LTC_NO_ROLC
+#if defined(__i386__) || defined(__amd64__)
+#define PWS_LITTLE_ENDIAN
+#endif
+// **********************************************
+// * Add other platforms here...                *
+// **********************************************
 #endif
 
 //
@@ -117,6 +171,12 @@
 #if defined(INTEL_CC) || (defined(_MSC_VER) && defined(WIN32)) || (defined(__GNUC__) && (defined(__DJGPP__) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__i386__)))
 #define ENDIAN_LITTLE
 #define ENDIAN_32BITWORD
+#endif
+
+/* detects MIPS R5900 processors (PS2) */
+#if (defined(__R5900) || defined(R5900) || defined(__R5900__)) && (defined(_mips) || defined(__mips__) || defined(mips))
+#define ENDIAN_LITTLE
+#define ENDIAN_64BITWORD
 #endif
 
 /* detect amd64 */
@@ -342,6 +402,58 @@ typedef unsigned long ulong32;
 #define ROL(x,n) _lrotl(x,n)
 #define RORc(x,n) _lrotr(x,n)
 #define ROLc(x,n) _lrotl(x,n)
+
+#elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__)) && !defined(INTEL_CC) && !defined(LTC_NO_ASM)
+
+static inline unsigned ROL(unsigned word, int i)
+{
+  asm ("roll %%cl,%0"
+    :"=r" (word)
+    :"0" (word),"c" (i));
+  return word;
+}
+
+static inline unsigned ROR(unsigned word, int i)
+{
+  asm ("rorl %%cl,%0"
+    :"=r" (word)
+    :"0" (word),"c" (i));
+  return word;
+}
+
+#ifndef LTC_NO_ROLC
+
+static inline unsigned ROLc(unsigned word, const int i)
+{
+  asm ("roll %2,%0"
+    :"=r" (word)
+    :"0" (word),"I" (i));
+  return word;
+}
+
+static inline unsigned RORc(unsigned word, const int i)
+{
+  asm ("rorl %2,%0"
+    :"=r" (word)
+    :"0" (word),"I" (i));
+  return word;
+}
+
+#else
+
+#define ROLc ROL
+#define RORc ROR
+
+#endif
+
+#else
+
+/* rotates the hard way */
+#define ROL(x, y) ( ((static_cast<unsigned long>(x)<<static_cast<unsigned long>((y)&31)) | ((static_cast<unsigned long>(x)&0xFFFFFFFFUL)>>static_cast<unsigned long>(32-((y)&31)))) & 0xFFFFFFFFUL)
+#define ROR(x, y) ( (((static_cast<unsigned long>(x)&0xFFFFFFFFUL)>>static_cast<unsigned long>((y)&31)) | (static_cast<unsigned long>(x)<<static_cast<unsigned long>(32-((y)&31)))) & 0xFFFFFFFFUL)
+#define ROLc(x, y) ( ((static_cast<unsigned long>(x)<<static_cast<unsigned long>((y)&31)) | ((static_cast<unsigned long>(x)&0xFFFFFFFFUL)>>static_cast<unsigned long>(32-((y)&31)))) & 0xFFFFFFFFUL)
+#define RORc(x, y) ( (((static_cast<unsigned long>(x)&0xFFFFFFFFUL)>>static_cast<unsigned long>((y)&31)) | (static_cast<unsigned long>(x)<<static_cast<unsigned long>(32-((y)&31)))) & 0xFFFFFFFFUL)
+
 #endif
 
 

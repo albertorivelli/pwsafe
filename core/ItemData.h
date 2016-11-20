@@ -75,9 +75,9 @@ public:
   ~CItemData();
 
   task<int> Read(PWSfile *in);
-  /*int Write(PWSfile *out) const;
+  int Write(PWSfile *out) const;
   int Write(PWSfileV4 *out) const;
-  int WriteCommon(PWSfile *out) const;*/
+  int WriteCommon(PWSfile *out) const;
 
 //  // Convenience: Get the name associated with FieldType
 //  static stringT FieldName(FieldType ft);
@@ -315,8 +315,8 @@ private:
 
 //  void UpdatePasswordHistory(); // used by UpdatePassword()
 //
-  //int WriteUnknowns(PWSfile *out) const;
-  //size_t WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
+  int WriteUnknowns(PWSfile *out) const;
+  size_t WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
 };
 
 inline bool CItemData::IsTextField(unsigned char t)

@@ -11,19 +11,8 @@
 //-----------------------------------------------------------------------------
 
 #include "TwoFish.h"
-//#include "PwsPlatform.h"
+#include "PwsPlatform.h"
 #include "Util.h"
-
-#define STORE32L(x, y)        \
-{ unsigned long __t = (x); memcpy(y, &__t, 4); }
-
-#define LOAD32L(x, y)         \
-  memcpy(&(x), y, 4);
-
-#define RORc(x,n) _lrotr(x,n)
-#define ROLc(x,n) _lrotl(x,n)
-
-#define byte(x, n) (static_cast<unsigned char>((x) >> (8 * (n))))
 
 #define LTC_CLEAN_STACK
 #define TWOFISH_ALL_TABLES

@@ -12,8 +12,8 @@
 
 #include "ItemField.h"
 #include "Util.h"
-#include "Fish.h"
-//#include "PWSrand.h"
+//#include "Fish.h"
+#include "PWSrand.h"
 //#include "os/funcwrap.h"
 
 //Returns the number of bytes of 8 byte blocks needed to store 'size' bytes
@@ -84,7 +84,7 @@ void CItemField::Set(const unsigned char* value, size_t length,
     memcpy_s(tempmem, BlockLength, value, m_Length);
 
     //Fill the unused characters in with random stuff
-    //PWSrand::GetInstance()->GetRandomData(tempmem + m_Length, static_cast<unsigned long>(BlockLength - m_Length));
+    PWSrand::GetInstance()->GetRandomData(tempmem + m_Length, static_cast<unsigned long>(BlockLength - m_Length));
 
     //Do the actual encryption
     for (size_t x = 0; x < BlockLength; x += 8)

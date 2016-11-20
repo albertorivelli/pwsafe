@@ -10,8 +10,8 @@
 
 #include "sha1.h"
 #include "BlowFish.h"
-//#include "PWSrand.h"
-//#include "PwsPlatform.h"
+#include "PWSrand.h"
+#include "PwsPlatform.h"
 #include "core.h"
 #include "StringXStream.h"
 //#include "PWPolicy.h"
@@ -22,16 +22,16 @@
 //#include "os/pws_tchar.h"
 //#include "os/dir.h"
 
-//#include <stdio.h>
-//#ifdef _WIN32
-//#include <sys/timeb.h>
-//#else
-//#include <sys/time.h>
-//#endif
-//#include <sstream>
-//#include <iomanip>
+#include <stdio.h>
+#ifdef _WIN32
+#include <sys/timeb.h>
+#else
+#include <sys/time.h>
+#endif
+#include <sstream>
+#include <iomanip>
 
-//#include <errno.h>
+#include <errno.h>
 
 using namespace std;
 
@@ -49,6 +49,9 @@ static void xormem(unsigned char *mem1, const unsigned char *mem2, int length)
 // see http://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html
 // and http://www.cypherpunks.to/~peter/usenix01.pdf
 
+#ifdef _WIN32
+#pragma optimize("",off)
+#endif
 void trashMemory(void *buffer, size_t length)
 {
   //ASSERT(buffer != NULL);
@@ -57,9 +60,17 @@ void trashMemory(void *buffer, size_t length)
     std::memset(buffer, 0x55, length);
     std::memset(buffer, 0xAA, length);
     std::memset(buffer,    0, length);
+#ifdef __GNUC__
+    // break compiler optimization of this function for gcc
+    // see trick used in google's boring ssl:
+    // https://boringssl.googlesource.com/boringssl/+/ad1907fe73334d6c696c8539646c21b11178f20f%5E!/#F0
+    __asm__ __volatile__("" : : "r"(buffer) : "memory");
+#endif
   }
 }
-
+#ifdef _WIN32
+#pragma optimize("",on)
+#endif
 void trashMemory(LPTSTR buffer, size_t length)
 {
   trashMemory(reinterpret_cast<unsigned char *>(buffer), length * sizeof(buffer[0]));
@@ -103,146 +114,146 @@ void ConvertString(const StringX &text,
 }
 
 //Generates a passkey-based hash from stuff - used to validate the passkey
-//void GenRandhash(const StringX &a_passkey,
-//                 const unsigned char *a_randstuff,
-//                 unsigned char *a_randhash)
-//{
-//  size_t pkeyLen = 0;
-//  unsigned char *pstr = NULL;
-//
-//  ConvertString(a_passkey, pstr, pkeyLen);
-//
-//  /*
-//  tempSalt <- H(a_randstuff + a_passkey)
-//  */
-//  SHA1 keyHash;
-//  keyHash.Update(a_randstuff, StuffSize);
-//  keyHash.Update(pstr, reinterpret_cast<int &>(pkeyLen));
-//
-//  trashMemory(pstr, pkeyLen);
-//  delete[] pstr;
-//
-//  unsigned char tempSalt[20]; // HashSize
-//  keyHash.Final(tempSalt);
-//
-//  /*
-//  tempbuf <- a_randstuff encrypted 1000 times using tempSalt as key?
-//  */
-//
-//  BlowFish Cipher(tempSalt, sizeof(tempSalt));
-//
-//  unsigned char tempbuf[StuffSize];
-//  memcpy(reinterpret_cast<char *>(tempbuf), reinterpret_cast<const char *>(a_randstuff), StuffSize);
-//
-//  for (int x=0; x<1000; x++)
-//    Cipher.Encrypt(tempbuf, tempbuf);
-//
-//  /*
-//  hmm - seems we're not done with this context
-//  we throw the tempbuf into the hasher, and extract a_randhash
-//  */
-//  keyHash.Update(tempbuf, StuffSize);
-//  keyHash.Final(a_randhash);
-//}
+void GenRandhash(const StringX &a_passkey,
+                 const unsigned char *a_randstuff,
+                 unsigned char *a_randhash)
+{
+  size_t pkeyLen = 0;
+  unsigned char *pstr = NULL;
 
-//size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length, unsigned char type,
-//                 Fish *Algorithm, unsigned char *cbcbuffer)
-//{
-//  const unsigned int BS = Algorithm->GetBlockSize();
-//  size_t numWritten = 0;
-//
-//  // some trickery to avoid new/delete
-//  unsigned char block1[16];
-//
-//  unsigned char *curblock = NULL;
-//  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
-//
-//  // First encrypt and write the length of the buffer
-//  curblock = block1;
-//  // Fill unused bytes of length with random data, to make
-//  // a dictionary attack harder
-//  PWSrand::GetInstance()->GetRandomData(curblock, BS);
-//  // block length overwrites 4 bytes of the above randomness.
-//  putInt32(curblock, reinterpret_cast<int32 &>(length));
-//
-//  // following new for format 2.0 - lengthblock bytes 4-7 were unused before.
-//  curblock[sizeof(int32)] = type;
-//
-//  if (BS == 16) {
-//    // In this case, we've too many (11) wasted bytes in the length block
-//    // So we store actual data there:
-//    // (11 = BlockSize - 4 (length) - 1 (type)
-//    const size_t len1 = (length > 11) ? 11 : length;
-//    memcpy(curblock + 5, buffer, len1);
-//    length -= len1;
-//    buffer += len1;
-//  }
-//
-//  xormem(curblock, cbcbuffer, BS); // do the CBC thing
-//  Algorithm->Encrypt(curblock, curblock);
-//  memcpy(cbcbuffer, curblock, BS); // update CBC for next round
-//
-//  //numWritten = fwrite(curblock, 1, BS, fp);
-//  if (numWritten != BS) {
-//    trashMemory(curblock, BS);
-//    throw(EIO);
-//  }
-//
-//  numWritten += _writecbc(fp, buffer, length, Algorithm, cbcbuffer);
-//
-//  trashMemory(curblock, BS);
-//  return numWritten;
-//}
-//
-//size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
-//                 Fish *Algorithm, unsigned char *cbcbuffer)
-//{
-//  // Doesn't write out length, just CBC's the data, padding with randomness
-//  // as required.
-//
-//  const unsigned int BS = Algorithm->GetBlockSize();
-//  size_t numWritten = 0;
-//
-//  // some trickery to avoid new/delete
-//  unsigned char block1[16];
-//
-//  unsigned char *curblock = NULL;
-//  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
-//
-//  // First encrypt and write the length of the buffer
-//  curblock = block1;
-//  // Fill unused bytes of length with random data, to make
-//  // a dictionary attack harder
-//  PWSrand::GetInstance()->GetRandomData(curblock, BS);
-//
-//  if (length > 0 ||
-//      (BS == 8 && length == 0)) { // This part for bwd compat w/pre-3 format
-//    size_t BlockLength = ((length + (BS - 1)) / BS) * BS;
-//    if (BlockLength == 0 && BS == 8)
-//      BlockLength = BS;
-//
-//    // Now, encrypt and write the (rest of the) buffer
-//    for (unsigned int x = 0; x < BlockLength; x += BS) {
-//      if ((length == 0) || ((length % BS != 0) && (length - x < BS))) {
-//        //This is for an uneven last block
-//        PWSrand::GetInstance()->GetRandomData(curblock, BS);
-//        memcpy(curblock, buffer + x, length % BS);
-//      } else
-//        memcpy(curblock, buffer + x, BS);
-//      xormem(curblock, cbcbuffer, BS);
-//      Algorithm->Encrypt(curblock, curblock);
-//      memcpy(cbcbuffer, curblock, BS);
-//	  size_t nw = 0;// fwrite(curblock, 1, BS, fp);
-//      if (nw != BS) {
-//        trashMemory(curblock, BS);
-//        throw(EIO);
-//      }
-//      numWritten += nw;
-//    }
-//  }
-//  trashMemory(curblock, BS);
-//  return numWritten;
-//}
+  ConvertString(a_passkey, pstr, pkeyLen);
+
+  /*
+  tempSalt <- H(a_randstuff + a_passkey)
+  */
+  SHA1 keyHash;
+  keyHash.Update(a_randstuff, StuffSize);
+  keyHash.Update(pstr, reinterpret_cast<int &>(pkeyLen));
+
+  trashMemory(pstr, pkeyLen);
+  delete[] pstr;
+
+  unsigned char tempSalt[20]; // HashSize
+  keyHash.Final(tempSalt);
+
+  /*
+  tempbuf <- a_randstuff encrypted 1000 times using tempSalt as key?
+  */
+
+  BlowFish Cipher(tempSalt, sizeof(tempSalt));
+
+  unsigned char tempbuf[StuffSize];
+  memcpy(reinterpret_cast<char *>(tempbuf), reinterpret_cast<const char *>(a_randstuff), StuffSize);
+
+  for (int x=0; x<1000; x++)
+    Cipher.Encrypt(tempbuf, tempbuf);
+
+  /*
+  hmm - seems we're not done with this context
+  we throw the tempbuf into the hasher, and extract a_randhash
+  */
+  keyHash.Update(tempbuf, StuffSize);
+  keyHash.Final(a_randhash);
+}
+
+size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length, unsigned char type,
+                 Fish *Algorithm, unsigned char *cbcbuffer)
+{
+  const unsigned int BS = Algorithm->GetBlockSize();
+  size_t numWritten = 0;
+
+  // some trickery to avoid new/delete
+  unsigned char block1[16];
+
+  unsigned char *curblock = NULL;
+  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
+
+  // First encrypt and write the length of the buffer
+  curblock = block1;
+  // Fill unused bytes of length with random data, to make
+  // a dictionary attack harder
+  PWSrand::GetInstance()->GetRandomData(curblock, BS);
+  // block length overwrites 4 bytes of the above randomness.
+  putInt32(curblock, reinterpret_cast<int32 &>(length));
+
+  // following new for format 2.0 - lengthblock bytes 4-7 were unused before.
+  curblock[sizeof(int32)] = type;
+
+  if (BS == 16) {
+    // In this case, we've too many (11) wasted bytes in the length block
+    // So we store actual data there:
+    // (11 = BlockSize - 4 (length) - 1 (type)
+    const size_t len1 = (length > 11) ? 11 : length;
+    memcpy(curblock + 5, buffer, len1);
+    length -= len1;
+    buffer += len1;
+  }
+
+  xormem(curblock, cbcbuffer, BS); // do the CBC thing
+  Algorithm->Encrypt(curblock, curblock);
+  memcpy(cbcbuffer, curblock, BS); // update CBC for next round
+
+  //numWritten = fwrite(curblock, 1, BS, fp);
+  if (numWritten != BS) {
+    trashMemory(curblock, BS);
+    throw(EIO);
+  }
+
+  numWritten += _writecbc(fp, buffer, length, Algorithm, cbcbuffer);
+
+  trashMemory(curblock, BS);
+  return numWritten;
+}
+
+size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
+                 Fish *Algorithm, unsigned char *cbcbuffer)
+{
+  // Doesn't write out length, just CBC's the data, padding with randomness
+  // as required.
+
+  const unsigned int BS = Algorithm->GetBlockSize();
+  size_t numWritten = 0;
+
+  // some trickery to avoid new/delete
+  unsigned char block1[16];
+
+  unsigned char *curblock = NULL;
+  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
+
+  // First encrypt and write the length of the buffer
+  curblock = block1;
+  // Fill unused bytes of length with random data, to make
+  // a dictionary attack harder
+  PWSrand::GetInstance()->GetRandomData(curblock, BS);
+
+  if (length > 0 ||
+      (BS == 8 && length == 0)) { // This part for bwd compat w/pre-3 format
+    size_t BlockLength = ((length + (BS - 1)) / BS) * BS;
+    if (BlockLength == 0 && BS == 8)
+      BlockLength = BS;
+
+    // Now, encrypt and write the (rest of the) buffer
+    for (unsigned int x = 0; x < BlockLength; x += BS) {
+      if ((length == 0) || ((length % BS != 0) && (length - x < BS))) {
+        //This is for an uneven last block
+        PWSrand::GetInstance()->GetRandomData(curblock, BS);
+        memcpy(curblock, buffer + x, length % BS);
+      } else
+        memcpy(curblock, buffer + x, BS);
+      xormem(curblock, cbcbuffer, BS);
+      Algorithm->Encrypt(curblock, curblock);
+      memcpy(cbcbuffer, curblock, BS);
+	  size_t nw = 0;// fwrite(curblock, 1, BS, fp);
+      if (nw != BS) {
+        trashMemory(curblock, BS);
+        throw(EIO);
+      }
+      numWritten += nw;
+    }
+  }
+  trashMemory(curblock, BS);
+  return numWritten;
+}
 
 /*
 * Reads an encrypted record into buffer.

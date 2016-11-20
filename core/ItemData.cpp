@@ -207,143 +207,143 @@ task<int> CItemData::Read(PWSfile *in)
     return PWSfile::END_OF_FILE;
 }
 
-//size_t CItemData::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
-//{
-//  FieldConstIter fiter = m_fields.find(ft);
-//  size_t retval = 0;
-//  if (fiter != m_fields.end()) {
-//    const CItemField &field = fiter->second;
-//    //ASSERT(!field.IsEmpty());
-//    size_t flength = field.GetLength() + BlowFish::BLOCKSIZE;
-//    unsigned char *pdata = new unsigned char[flength];
-//    CItem::GetField(field, pdata, flength);
-//    if (isUTF8) {
-//      wchar_t *wpdata = reinterpret_cast<wchar_t *>(pdata);
-//      size_t srclen = field.GetLength()/sizeof(TCHAR);
-//      wpdata[srclen] = 0;
-//      size_t dstlen = pws_os::wcstombs(NULL, 0, wpdata, srclen);
-//      //ASSERT(dstlen > 0);
-//      char *dst = new char[dstlen+1];
-//      dstlen = pws_os::wcstombs(dst, dstlen, wpdata, srclen);
-//      //ASSERT(dstlen != size_t(-1));
-//      //[BR1150, BR1167]: Discard the terminating NULLs in text fields
-//      if (dstlen && !dst[dstlen-1])
-//        dstlen--;
-//      retval = out->WriteField(static_cast<unsigned char>(ft), reinterpret_cast<unsigned char *>(dst), dstlen);
-//      trashMemory(dst, dstlen);
-//      delete[] dst;
-//    } else {
-//      retval = out->WriteField(static_cast<unsigned char>(ft), pdata, field.GetLength());
-//    }
-//    trashMemory(pdata, flength);
-//    delete[] pdata;
-//  }
-//  return retval;
-//}
-//
-//int CItemData::WriteCommon(PWSfile *out) const
-//{
-//  int i;
-//
-//  //const FieldType TextFields[] = {GROUP, TITLE, USER, PASSWORD,
-//  //                                NOTES, URL, AUTOTYPE, POLICY,
-//  //                                PWHIST, RUNCMD, EMAIL,
-//  //                                SYMBOLS, POLICYNAME,
-//  //                                END};
-//  //const FieldType TimeFields[] = {ATIME, CTIME, XTIME, PMTIME, RMTIME,
-//  //                                END};
-//
-//  //for (i = 0; TextFields[i] != END; i++)
-//  //  WriteIfSet(TextFields[i], out, true);
-//
-//  //for (i = 0; TimeFields[i] != END; i++) {
-//  //  time_t t = 0;
-//  //  CItem::GetTime(TimeFields[i], t);
-//  //  if (t != 0) {
-//  //    if (out->timeFieldLen() == 4) {
-//  //      unsigned char buf[4];
-//  //      putInt32(buf, static_cast<int32>(t));
-//  //      out->WriteField(static_cast<unsigned char>(TimeFields[i]), buf, out->timeFieldLen());
-//  //    } else if (out->timeFieldLen() == PWStime::TIME_LEN) {
-//  //      PWStime pwt(t);
-//  //      out->WriteField(static_cast<unsigned char>(TimeFields[i]), pwt, pwt.GetLength());
-//  //    } /*else ASSERT(0);*/
-//  //  } // t != 0
-//  //}
-//
-//  //int32 i32 = 0;
-//  //unsigned char buf32[sizeof(i32)];
-//  //GetXTimeInt(i32);
-//  //if (i32 > 0 && i32 <= 3650) {
-//  //  putInt(buf32, i32);
-//  //  out->WriteField(XTIME_INT, buf32, sizeof(int32));
-//  //}
-//
-//  //i32 = 0;
-//  //GetKBShortcut(i32);
-//  //if (i32 != 0) {
-//  //  putInt(buf32, i32);
-//  //  out->WriteField(KBSHORTCUT, buf32, sizeof(int32));
-//  //}
-//
-//  //int16 i16 = 0;
-//  //unsigned char buf16[sizeof(i16)];
-//  //GetDCA(i16);
-//  //if (i16 >= PWSprefs::minDCA && i16 <= PWSprefs::maxDCA) {
-//  //  putInt(buf16, i16);
-//  //  out->WriteField(DCA, buf16, sizeof(int16));
-//  //}
-//  //i16 = 0;
-//  //GetShiftDCA(i16);
-//  //if (i16 >= PWSprefs::minDCA && i16 <= PWSprefs::maxDCA) {
-//  //  putInt(buf16, i16);
-//  //  out->WriteField(SHIFTDCA, buf16, sizeof(int16));
-//  //}
-//  //WriteIfSet(PROTECTED, out, false);
-//
-//  //WriteUnknowns(out);
-//  // Assume that if previous write failed, last one will too.
-//  if (out->WriteField(END, _T("")) > 0) {
-//    return PWSfile::SUCCESS;
-//  } else {
-//    return PWSfile::FAILURE;
-//  }
-//}
-//
-//int CItemData::Write(PWSfile *out) const
-//{
-//  int status = PWSfile::SUCCESS;
-//
-//  // Map different UUID types (V4 concept) to original V3 UUID
-//  uuid_array_t item_uuid;
-//  FieldType ft = END;
-//
-//  //ASSERT(HasUUID());
-//  if (!IsDependent())
-//    ft = UUID;
-//  else if (IsAlias())
-//    ft = ALIASUUID;
-//  else if (IsShortcut())
-//    ft = SHORTCUTUUID;
-//  //else ASSERT(0);
-//  GetUUID(item_uuid, ft);
-//
-//  out->WriteField(UUID, item_uuid, sizeof(uuid_array_t));
-//
-//  // We need to cast away constness to change Password field
-//  // for dependent entries
-//  // We restore the password afterwards (not that it should matter
-//  // for a dependent), so logically we're still const.
-//
-//  CItemData *self = const_cast<CItemData *>(this);
-//  const StringX saved_password = GetPassword();
-//  self->SetSpecialPasswords(); // encode baseuuid in password if IsDependent
-//
-//  status = WriteCommon(out);
-//
-//  self->SetPassword(saved_password);
-//  return status;
-//}
+size_t CItemData::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
+{
+  FieldConstIter fiter = m_fields.find(ft);
+  size_t retval = 0;
+  if (fiter != m_fields.end()) {
+    const CItemField &field = fiter->second;
+    //ASSERT(!field.IsEmpty());
+    size_t flength = field.GetLength() + BlowFish::BLOCKSIZE;
+    unsigned char *pdata = new unsigned char[flength];
+    CItem::GetField(field, pdata, flength);
+    if (isUTF8) {
+      wchar_t *wpdata = reinterpret_cast<wchar_t *>(pdata);
+      size_t srclen = field.GetLength()/sizeof(TCHAR);
+      wpdata[srclen] = 0;
+      size_t dstlen = pws_os::wcstombs(NULL, 0, wpdata, srclen);
+      //ASSERT(dstlen > 0);
+      char *dst = new char[dstlen+1];
+      dstlen = pws_os::wcstombs(dst, dstlen, wpdata, srclen);
+      //ASSERT(dstlen != size_t(-1));
+      //[BR1150, BR1167]: Discard the terminating NULLs in text fields
+      if (dstlen && !dst[dstlen-1])
+        dstlen--;
+      retval = out->WriteField(static_cast<unsigned char>(ft), reinterpret_cast<unsigned char *>(dst), dstlen);
+      trashMemory(dst, dstlen);
+      delete[] dst;
+    } else {
+      retval = out->WriteField(static_cast<unsigned char>(ft), pdata, field.GetLength());
+    }
+    trashMemory(pdata, flength);
+    delete[] pdata;
+  }
+  return retval;
+}
+
+int CItemData::WriteCommon(PWSfile *out) const
+{
+  int i;
+
+  //const FieldType TextFields[] = {GROUP, TITLE, USER, PASSWORD,
+  //                                NOTES, URL, AUTOTYPE, POLICY,
+  //                                PWHIST, RUNCMD, EMAIL,
+  //                                SYMBOLS, POLICYNAME,
+  //                                END};
+  //const FieldType TimeFields[] = {ATIME, CTIME, XTIME, PMTIME, RMTIME,
+  //                                END};
+
+  //for (i = 0; TextFields[i] != END; i++)
+  //  WriteIfSet(TextFields[i], out, true);
+
+  //for (i = 0; TimeFields[i] != END; i++) {
+  //  time_t t = 0;
+  //  CItem::GetTime(TimeFields[i], t);
+  //  if (t != 0) {
+  //    if (out->timeFieldLen() == 4) {
+  //      unsigned char buf[4];
+  //      putInt32(buf, static_cast<int32>(t));
+  //      out->WriteField(static_cast<unsigned char>(TimeFields[i]), buf, out->timeFieldLen());
+  //    } else if (out->timeFieldLen() == PWStime::TIME_LEN) {
+  //      PWStime pwt(t);
+  //      out->WriteField(static_cast<unsigned char>(TimeFields[i]), pwt, pwt.GetLength());
+  //    } /*else ASSERT(0);*/
+  //  } // t != 0
+  //}
+
+  //int32 i32 = 0;
+  //unsigned char buf32[sizeof(i32)];
+  //GetXTimeInt(i32);
+  //if (i32 > 0 && i32 <= 3650) {
+  //  putInt(buf32, i32);
+  //  out->WriteField(XTIME_INT, buf32, sizeof(int32));
+  //}
+
+  //i32 = 0;
+  //GetKBShortcut(i32);
+  //if (i32 != 0) {
+  //  putInt(buf32, i32);
+  //  out->WriteField(KBSHORTCUT, buf32, sizeof(int32));
+  //}
+
+  //int16 i16 = 0;
+  //unsigned char buf16[sizeof(i16)];
+  //GetDCA(i16);
+  //if (i16 >= PWSprefs::minDCA && i16 <= PWSprefs::maxDCA) {
+  //  putInt(buf16, i16);
+  //  out->WriteField(DCA, buf16, sizeof(int16));
+  //}
+  //i16 = 0;
+  //GetShiftDCA(i16);
+  //if (i16 >= PWSprefs::minDCA && i16 <= PWSprefs::maxDCA) {
+  //  putInt(buf16, i16);
+  //  out->WriteField(SHIFTDCA, buf16, sizeof(int16));
+  //}
+  //WriteIfSet(PROTECTED, out, false);
+
+  //WriteUnknowns(out);
+  // Assume that if previous write failed, last one will too.
+  if (out->WriteField(END, _T("")) > 0) {
+    return PWSfile::SUCCESS;
+  } else {
+    return PWSfile::FAILURE;
+  }
+}
+
+int CItemData::Write(PWSfile *out) const
+{
+  int status = PWSfile::SUCCESS;
+
+  // Map different UUID types (V4 concept) to original V3 UUID
+  uuid_array_t item_uuid;
+  FieldType ft = END;
+
+  //ASSERT(HasUUID());
+  if (!IsDependent())
+    ft = UUID;
+  else if (IsAlias())
+    ft = ALIASUUID;
+  else if (IsShortcut())
+    ft = SHORTCUTUUID;
+  //else ASSERT(0);
+  GetUUID(item_uuid, ft);
+
+  out->WriteField(UUID, item_uuid, sizeof(uuid_array_t));
+
+  // We need to cast away constness to change Password field
+  // for dependent entries
+  // We restore the password afterwards (not that it should matter
+  // for a dependent), so logically we're still const.
+
+  CItemData *self = const_cast<CItemData *>(this);
+  const StringX saved_password = GetPassword();
+  self->SetSpecialPasswords(); // encode baseuuid in password if IsDependent
+
+  status = WriteCommon(out);
+
+  self->SetPassword(saved_password);
+  return status;
+}
 
 //int CItemData::Write(PWSfileV4 *out) const
 //{
@@ -384,21 +384,21 @@ task<int> CItemData::Read(PWSfile *in)
 //  return status;
 //}
 
-//int CItemData::WriteUnknowns(PWSfile *out) const
-//{
-//  for (auto uiter = m_URFL.begin();
-//       uiter != m_URFL.end();
-//       uiter++) {
-//    unsigned char type;
-//    size_t length = 0;
-//    unsigned char *pdata = NULL;
-//    GetUnknownField(type, length, pdata, *uiter);
-//    out->WriteField(type, pdata, length);
-//    trashMemory(pdata, length);
-//    delete[] pdata;
-//  }
-//  return PWSfile::SUCCESS;
-//}
+int CItemData::WriteUnknowns(PWSfile *out) const
+{
+  for (auto uiter = m_URFL.begin();
+       uiter != m_URFL.end();
+       uiter++) {
+    unsigned char type;
+    size_t length = 0;
+    unsigned char *pdata = NULL;
+    GetUnknownField(type, length, pdata, *uiter);
+    out->WriteField(type, pdata, length);
+    trashMemory(pdata, length);
+    delete[] pdata;
+  }
+  return PWSfile::SUCCESS;
+}
 
 
 

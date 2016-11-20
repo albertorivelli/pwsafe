@@ -11,7 +11,7 @@
 #include "ItemAtt.h"
 #include "BlowFish.h"
 #include "TwoFish.h"
-//#include "PWSrand.h"
+#include "PWSrand.h"
 #include "PWSfile.h"
 //#include "PWSfileV4.h"
 #include "PWScore.h"
@@ -458,84 +458,84 @@ int CItemAtt::Read(PWSfile *in)
     return PWSfile::READ_FAIL;
 }
 
-//size_t CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
-//{
-//  FieldConstIter fiter = m_fields.find(ft);
-//  size_t retval = 0;
-//  if (fiter != m_fields.end()) {
-//    const CItemField &field = fiter->second;
-//    //ASSERT(!field.IsEmpty());
-//    size_t flength = field.GetLength() + BlowFish::BLOCKSIZE;
-//    unsigned char *pdata = new unsigned char[flength];
-//    CItem::GetField(field, pdata, flength);
-//    if (isUTF8) {
-//      wchar_t *wpdata = reinterpret_cast<wchar_t *>(pdata);
-//      size_t srclen = field.GetLength()/sizeof(TCHAR);
-//      wpdata[srclen] = 0;
-//      size_t dstlen = pws_os::wcstombs(NULL, 0, wpdata, srclen);
-//      //ASSERT(dstlen > 0);
-//
-//      char *dst = new char[dstlen+1];
-//      dstlen = pws_os::wcstombs(dst, dstlen, wpdata, srclen);
-//      //ASSERT(dstlen != size_t(-1));
-//
-//      //[BR1150, BR1167]: Discard the terminating NULLs in text fields
-//      if (dstlen && !dst[dstlen-1])
-//        dstlen--;
-//
-//      retval = out->WriteField(static_cast<unsigned char>(ft), reinterpret_cast<unsigned char *>(dst), dstlen);
-//      trashMemory(dst, dstlen);
-//      delete[] dst;
-//    } else {
-//      retval = out->WriteField(static_cast<unsigned char>(ft), pdata, field.GetLength());
-//    }
-//    trashMemory(pdata, flength);
-//    delete[] pdata;
-//  }
-//  return retval;
-//}
-//
-//int CItemAtt::Write(PWSfile *out) const
-//{
-//  int status = PWSfile::SUCCESS;
-//  uuid_array_t att_uuid;
-//
-//  //ASSERT(HasUUID());
-//  //GetUUID(att_uuid);
-//
-//  //out->WriteField(static_cast<unsigned char>(ATTUUID), att_uuid,
-//  //                sizeof(uuid_array_t));
-//
-//  //WriteIfSet(ATTTITLE, out, true);
-//  //WriteIfSet(ATTCTIME, out, false);
-//  //WriteIfSet(MEDIATYPE, out, true);
-//  //WriteIfSet(FILENAME, out, true);
-//  //WriteIfSet(FILEPATH, out, true);
-//  //WriteIfSet(FILECTIME, out, false);
-//  //WriteIfSet(FILEMTIME, out, false);
-//  //WriteIfSet(FILEATIME, out, false);
-//
-//  //FieldConstIter fiter = m_fields.find(CONTENT);
-//  //// XXX TBD - fail if no content, as this is a mandatory field
-//  //if (fiter != m_fields.end()) {
-//  //  PWSfileV4 *out4 = dynamic_cast<PWSfileV4 *>(out);
-//  //  //ASSERT(out4 != NULL);
-//
-//  //  size_t clength = fiter->second.GetLength() + BlowFish::BLOCKSIZE;
-//  //  unsigned char *content = new unsigned char[clength];
-//  //  CItem::GetField(fiter->second, content, clength);
-//  //  out4->WriteContentFields(content, clength);
-//  //  trashMemory(content, clength);
-//  //  delete[] content;
-//  //}
-//
-//  if (out->WriteField(END, _T("")) > 0) {
-//    status = PWSfile::SUCCESS;
-//  } else {
-//    status = PWSfile::FAILURE;
-//  }
-//  return status;
-//}
+size_t CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
+{
+  FieldConstIter fiter = m_fields.find(ft);
+  size_t retval = 0;
+  if (fiter != m_fields.end()) {
+    const CItemField &field = fiter->second;
+    //ASSERT(!field.IsEmpty());
+    size_t flength = field.GetLength() + BlowFish::BLOCKSIZE;
+    unsigned char *pdata = new unsigned char[flength];
+    CItem::GetField(field, pdata, flength);
+    if (isUTF8) {
+      wchar_t *wpdata = reinterpret_cast<wchar_t *>(pdata);
+      size_t srclen = field.GetLength()/sizeof(TCHAR);
+      wpdata[srclen] = 0;
+      size_t dstlen = pws_os::wcstombs(NULL, 0, wpdata, srclen);
+      //ASSERT(dstlen > 0);
+
+      char *dst = new char[dstlen+1];
+      dstlen = pws_os::wcstombs(dst, dstlen, wpdata, srclen);
+      //ASSERT(dstlen != size_t(-1));
+
+      //[BR1150, BR1167]: Discard the terminating NULLs in text fields
+      if (dstlen && !dst[dstlen-1])
+        dstlen--;
+
+      retval = out->WriteField(static_cast<unsigned char>(ft), reinterpret_cast<unsigned char *>(dst), dstlen);
+      trashMemory(dst, dstlen);
+      delete[] dst;
+    } else {
+      retval = out->WriteField(static_cast<unsigned char>(ft), pdata, field.GetLength());
+    }
+    trashMemory(pdata, flength);
+    delete[] pdata;
+  }
+  return retval;
+}
+
+int CItemAtt::Write(PWSfile *out) const
+{
+  int status = PWSfile::SUCCESS;
+  uuid_array_t att_uuid;
+
+  //ASSERT(HasUUID());
+  //GetUUID(att_uuid);
+
+  //out->WriteField(static_cast<unsigned char>(ATTUUID), att_uuid,
+  //                sizeof(uuid_array_t));
+
+  //WriteIfSet(ATTTITLE, out, true);
+  //WriteIfSet(ATTCTIME, out, false);
+  //WriteIfSet(MEDIATYPE, out, true);
+  //WriteIfSet(FILENAME, out, true);
+  //WriteIfSet(FILEPATH, out, true);
+  //WriteIfSet(FILECTIME, out, false);
+  //WriteIfSet(FILEMTIME, out, false);
+  //WriteIfSet(FILEATIME, out, false);
+
+  //FieldConstIter fiter = m_fields.find(CONTENT);
+  //// XXX TBD - fail if no content, as this is a mandatory field
+  //if (fiter != m_fields.end()) {
+  //  PWSfileV4 *out4 = dynamic_cast<PWSfileV4 *>(out);
+  //  //ASSERT(out4 != NULL);
+
+  //  size_t clength = fiter->second.GetLength() + BlowFish::BLOCKSIZE;
+  //  unsigned char *content = new unsigned char[clength];
+  //  CItem::GetField(fiter->second, content, clength);
+  //  out4->WriteContentFields(content, clength);
+  //  trashMemory(content, clength);
+  //  delete[] content;
+  //}
+
+  if (out->WriteField(END, _T("")) > 0) {
+    status = PWSfile::SUCCESS;
+  } else {
+    status = PWSfile::FAILURE;
+  }
+  return status;
+}
 
 //bool CItemAtt::Matches(const stringT &stValue, int iObject,
 //  int iFunction) const

@@ -133,7 +133,7 @@
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\ARM\Debug\core\core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Debug\core\core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -142,7 +142,7 @@
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\ARM\Release\core\core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Release\core\core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

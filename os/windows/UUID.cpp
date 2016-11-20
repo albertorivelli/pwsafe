@@ -17,9 +17,9 @@
 #include "../../core/Util.h" /* for trashMemory() */
 #include "../../core/StringXStream.h"
 #include <iomanip>
-//#include <assert.h>
+#include <assert.h>
 
-#include <Winsock2.h> /* for htonl, htons */
+#include <Winsock.h> /* for htonl, htons */
 
 using namespace std;
 

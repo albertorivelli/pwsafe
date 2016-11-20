@@ -24,9 +24,8 @@ typedef uuid_t uuid_array_t;
 typedef uuid_t UUID;
 #endif
 
-//#include <memory> // for memcmp
-//#include <iostream>
-#include <guiddef.h>
+#include <memory> // for memcmp
+#include <iostream>
 #include "typedefs.h"
 #include "../core/StringX.h"
 
@@ -57,7 +56,7 @@ public:
   friend std::wostream &operator<<(std::wostream &os, const pws_os::CUUID &uuid);
 
 private:
-  GUID m_uuid;
+  UUID m_uuid;
   mutable uuid_array_t *m_ua; // for GetUUID();
   mutable bool m_canonic;
 };

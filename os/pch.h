@@ -7,7 +7,7 @@
 #endif
 
 #include <windows.h>
-//#include <assert.h>
+#include <assert.h>
 #include <tchar.h>
 #include <Strsafe.h>
-//#include <atlstr.h>
+#include <atlstr.h>

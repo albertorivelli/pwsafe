@@ -32,8 +32,7 @@ typedef std::wstring stringT;
 typedef wchar_t charT;
 #define _S(x) L ## x
 
-//#include "../core/PwsPlatform.h" // for afxwin.h, and endian macros
-#include "pch.h"
+#include "../core/PwsPlatform.h" // for afxwin.h, and endian macros
 
 // Hotkey values. Internal PWS values - need to convert to either MFC or wxWidgets
 // values in the GUI when retrieving these from the preferences and aso back to PWS
