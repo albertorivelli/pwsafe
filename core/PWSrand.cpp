@@ -52,7 +52,7 @@ PWSrand::~PWSrand()
 
 void PWSrand::AddEntropy(unsigned char *bytes, unsigned int numBytes)
 {
-  //ASSERT(bytes != NULL);
+  ASSERT(bytes != NULL);
 
   SHA256 s;
 
@@ -81,7 +81,7 @@ void PWSrand::GetRandomData( void * const buffer, unsigned long length )
   if (!m_IsInternalPRNG) {
     bool status;
     status = pws_os::GetRandomData(buffer, length);
-    //ASSERT(status);
+    ASSERT(status);
     UNREFERENCED_PARAMETER(status); // used only in assert
   }
 
@@ -99,7 +99,7 @@ void PWSrand::GetRandomData( void * const buffer, unsigned long length )
     pb += SHA256::HASHLEN;
   }
 
-  //ASSERT(length <= SHA256::HASHLEN);
+  ASSERT(length <= SHA256::HASHLEN);
   if (length > 0) {
     unsigned long i = 0;
     NextRandBlock();

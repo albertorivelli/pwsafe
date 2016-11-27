@@ -26,7 +26,6 @@
 #include "sha256.h"
 
 #include "coredefs.h"
-#include "os/file.h"
 
 // HASH_ITERATIONS is used by the key stretching algorithm.
 // MIN_HASH_ITERATIONS is a lower limit - anything lower than this

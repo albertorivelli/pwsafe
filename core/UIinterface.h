@@ -9,7 +9,7 @@
 #define __UIINTERFACE_H
 
 //#include "Command.h"
-//#include "ItemData.h"
+#include "ItemData.h"
 
 /**
  * An abstract base class representing all of the UI functionality

@@ -21,6 +21,7 @@
 class PWSfileV3 : public PWSfile
 {
 public:
+
   static task<int> CheckPasskey(const StringX &filename,
                           const StringX &passkey,
                           IRandomAccessStream^ a_fd = nullptr,

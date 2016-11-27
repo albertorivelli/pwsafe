@@ -15,7 +15,7 @@ UnknownFieldEntry::UnknownFieldEntry(unsigned char t, size_t s,
   uc_Type = t;
   st_length =s;
   if (d != NULL) {
-    //ASSERT(s != 0);
+    ASSERT(s != 0);
     uc_pUField = new unsigned char[s];
     memcpy(uc_pUField, d, s);
   } else
@@ -36,7 +36,7 @@ UnknownFieldEntry::UnknownFieldEntry(const UnknownFieldEntry &that)
   : uc_Type(that.uc_Type), st_length(that.st_length)
 {
   if (that.uc_pUField != NULL) {
-    //ASSERT(that.st_length != 0);
+    ASSERT(that.st_length != 0);
     uc_pUField = new unsigned char[st_length];
     memcpy(uc_pUField, that.uc_pUField, st_length);
   } else
@@ -49,7 +49,7 @@ UnknownFieldEntry &UnknownFieldEntry::operator=(const UnknownFieldEntry &that)
     uc_Type = that.uc_Type;
     st_length = that.st_length;
     if (uc_pUField != NULL) {
-      //ASSERT(st_length != 0);
+      ASSERT(st_length != 0);
       trashMemory(uc_pUField, st_length);
     }
     uc_pUField = new unsigned char[st_length];

@@ -157,7 +157,7 @@ void CItem::GetUnknownField(unsigned char &type, size_t &length,
                             unsigned char * &pdata,
                             const CItemField &item) const
 {
-  //ASSERT(pdata == NULL && length == 0);
+  ASSERT(pdata == NULL && length == 0);
 
   type = item.GetType();
   size_t flength = item.GetLength();
@@ -281,9 +281,9 @@ void CItem::GetTime(int whichtime, time_t &t) const
     if (tlen != 0) {
     // time field's store in native time_t size, regardless of
     // the representation on file
-      //ASSERT(tlen == sizeof(t));
+      ASSERT(tlen == sizeof(t));
       if (!PWSUtil::pull_time(t, in, tlen))
-        /*ASSERT(0)*/;
+        ASSERT(0);
     } else {
       t = 0;
     }

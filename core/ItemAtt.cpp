@@ -91,8 +91,8 @@ void CItemAtt::GetUUID(uuid_array_t &uuid_array) const
     CItem::GetField(fiter->second,
                     static_cast<unsigned char *>(uuid_array), length);
   } else {
-    /*ASSERT(0);
-    pws_os::Trace(_T("CItemAtt::GetUUID(uuid_array_t) - no UUID found!\n"));*/
+    ASSERT(0);
+    //pws_os::Trace(_T("CItemAtt::GetUUID(uuid_array_t) - no UUID found!\n"));
     memset(uuid_array, 0, length);
   }
 }
@@ -152,7 +152,7 @@ size_t CItemAtt::GetContentSize() const
 
 bool CItemAtt::GetContent(unsigned char *content, size_t csize) const
 {
-  //ASSERT(content != NULL);
+  ASSERT(content != NULL);
 
   if (!HasContent() || csize < GetContentSize())
     return false;
@@ -270,7 +270,7 @@ bool CItemAtt::SetField(unsigned char type, const unsigned char *data,
   case ATTUUID:
     {
       uuid_array_t uuid_array;
-      //ASSERT(len == sizeof(uuid_array_t));
+      ASSERT(len == sizeof(uuid_array_t));
       for (size_t i = 0; i < sizeof(uuid_array_t); i++)
         uuid_array[i] = data[i];
       SetUUID(uuid_array);
@@ -297,7 +297,7 @@ bool CItemAtt::SetField(unsigned char type, const unsigned char *data,
   case CONTENTHMAC:
     // These fields have no business in the record, created and used
     // solely for file i/o.
-    //ASSERT(0);
+    ASSERT(0);
     return false;
   case END:
     break;
@@ -464,7 +464,7 @@ size_t CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
   size_t retval = 0;
   if (fiter != m_fields.end()) {
     const CItemField &field = fiter->second;
-    //ASSERT(!field.IsEmpty());
+    ASSERT(!field.IsEmpty());
     size_t flength = field.GetLength() + BlowFish::BLOCKSIZE;
     unsigned char *pdata = new unsigned char[flength];
     CItem::GetField(field, pdata, flength);
@@ -473,11 +473,11 @@ size_t CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
       size_t srclen = field.GetLength()/sizeof(TCHAR);
       wpdata[srclen] = 0;
       size_t dstlen = pws_os::wcstombs(NULL, 0, wpdata, srclen);
-      //ASSERT(dstlen > 0);
+      ASSERT(dstlen > 0);
 
       char *dst = new char[dstlen+1];
       dstlen = pws_os::wcstombs(dst, dstlen, wpdata, srclen);
-      //ASSERT(dstlen != size_t(-1));
+      ASSERT(dstlen != size_t(-1));
 
       //[BR1150, BR1167]: Discard the terminating NULLs in text fields
       if (dstlen && !dst[dstlen-1])

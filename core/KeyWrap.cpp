@@ -27,9 +27,9 @@ void KeyWrap::Wrap(const unsigned char *in, unsigned char *out,
 {
 	unsigned char *A, B[16], *R;
 	unsigned int i, j, t;
-  //ASSERT(m_fish != NULL);
-  //ASSERT(in != NULL); ASSERT(out != NULL);
-	//ASSERT(!((inlen & 0x7) || (inlen < 8)));
+  ASSERT(m_fish != NULL);
+  ASSERT(in != NULL); ASSERT(out != NULL);
+	ASSERT(!((inlen & 0x7) || (inlen < 8)));
 	A = B;
 	t = 1;
   std::memcpy(out + 8, in, inlen);
@@ -59,8 +59,8 @@ bool KeyWrap::Unwrap(const unsigned char *in, unsigned char *out,
 {
 	unsigned char *A, B[16], *R;
 	unsigned int i, j, t;
-  //ASSERT(m_fish != NULL);
-  //ASSERT(in != NULL); ASSERT(out != NULL);
+  ASSERT(m_fish != NULL);
+  ASSERT(in != NULL); ASSERT(out != NULL);
 	inlen -= 8;
 	if (inlen & 0x7)
 		return false;

@@ -67,7 +67,7 @@ ExpiredList ExpiredList::GetExpired(const int &idays)
   time(&now);
   errno_t err;
   err = localtime_s(&st, &now);
-  //ASSERT(err == 0);
+  ASSERT(err == 0);
   if (!err) {
     st.tm_mday += idays;
     // Note: mktime will normalize the date structure before converting to time_t

@@ -17,7 +17,7 @@
 //#include "SysInfo.h"
 #include "UTF8Conv.h"
 //#include "Report.h"
-//#include "VerifyFormat.h"
+#include "VerifyFormat.h"
 #include "StringXStream.h"
 
 //#include "os/pws_tchar.h"
@@ -50,204 +50,203 @@ Reporter *PWScore::m_pReporter = NULL;
 // Named Password Policy
 static bool GTUCompareV1(const st_GroupTitleUser &gtu1, const st_GroupTitleUser &gtu2)
 {
-	if (gtu1.group != gtu2.group)
-		return gtu1.group.compare(gtu2.group) < 0;
-	else if (gtu1.title != gtu2.title)
-		return gtu1.title.compare(gtu2.title) < 0;
-	else
-		return gtu1.user.compare(gtu2.user) < 0;
+  if (gtu1.group != gtu2.group)
+    return gtu1.group.compare(gtu2.group) < 0;
+  else if (gtu1.title != gtu2.title)
+    return gtu1.title.compare(gtu2.title) < 0;
+  else
+    return gtu1.user.compare(gtu2.user) < 0;
 }
 
 // Helper struct for results of a database verification
 struct st_ValidateResults {
-	int num_invalid_UUIDs;
-	int num_duplicate_UUIDs;
-	int num_empty_titles;
-	int num_empty_passwords;
-	int num_duplicate_GTU_fixed;
-	int num_PWH_fixed;
-	int num_excessivetxt_found;
-	int num_alias_warnings;
-	int num_shortcuts_warnings;
-	int num_missing_att;
-	int num_orphan_att;
+  int num_invalid_UUIDs;
+  int num_duplicate_UUIDs;
+  int num_empty_titles;
+  int num_empty_passwords;
+  int num_duplicate_GTU_fixed;
+  int num_PWH_fixed;
+  int num_excessivetxt_found;
+  int num_alias_warnings;
+  int num_shortcuts_warnings;
+  int num_missing_att;
+  int num_orphan_att;
 
-	st_ValidateResults()
-		: num_invalid_UUIDs(0), num_duplicate_UUIDs(0),
-		num_empty_titles(0), num_empty_passwords(0),
-		num_duplicate_GTU_fixed(0),
-		num_PWH_fixed(0), num_excessivetxt_found(0),
-		num_alias_warnings(0), num_shortcuts_warnings(0),
-		num_missing_att(0), num_orphan_att(0)
-	{}
+  st_ValidateResults()
+  : num_invalid_UUIDs(0), num_duplicate_UUIDs(0),
+  num_empty_titles(0), num_empty_passwords(0),
+  num_duplicate_GTU_fixed(0),
+  num_PWH_fixed(0), num_excessivetxt_found(0),
+  num_alias_warnings(0), num_shortcuts_warnings(0),
+  num_missing_att(0), num_orphan_att(0)
+  {}
 
-	st_ValidateResults(const st_ValidateResults &that)
-		: num_invalid_UUIDs(that.num_invalid_UUIDs),
-		num_duplicate_UUIDs(that.num_duplicate_UUIDs),
-		num_empty_titles(that.num_empty_titles),
-		num_empty_passwords(that.num_empty_passwords),
-		num_duplicate_GTU_fixed(that.num_duplicate_GTU_fixed),
-		num_PWH_fixed(that.num_PWH_fixed),
-		num_excessivetxt_found(that.num_excessivetxt_found),
-		num_alias_warnings(that.num_alias_warnings),
-		num_shortcuts_warnings(that.num_shortcuts_warnings),
-		num_missing_att(that.num_missing_att), num_orphan_att(that.num_orphan_att)
-	{}
+  st_ValidateResults(const st_ValidateResults &that)
+  : num_invalid_UUIDs(that.num_invalid_UUIDs),
+  num_duplicate_UUIDs(that.num_duplicate_UUIDs),
+  num_empty_titles(that.num_empty_titles),
+  num_empty_passwords(that.num_empty_passwords),
+  num_duplicate_GTU_fixed(that.num_duplicate_GTU_fixed),
+  num_PWH_fixed(that.num_PWH_fixed),
+  num_excessivetxt_found(that.num_excessivetxt_found),
+  num_alias_warnings(that.num_alias_warnings),
+  num_shortcuts_warnings(that.num_shortcuts_warnings),
+  num_missing_att(that.num_missing_att), num_orphan_att(that.num_orphan_att)
+  {}
 
-	st_ValidateResults &operator=(const st_ValidateResults &that) {
-		if (this != &that) {
-			num_invalid_UUIDs = that.num_invalid_UUIDs;
-			num_duplicate_UUIDs = that.num_duplicate_UUIDs;
-			num_empty_titles = that.num_empty_titles;
-			num_empty_passwords = that.num_empty_passwords;
-			num_duplicate_GTU_fixed = that.num_duplicate_GTU_fixed;
-			num_PWH_fixed = that.num_PWH_fixed;
-			num_excessivetxt_found = that.num_excessivetxt_found;
-			num_alias_warnings = that.num_alias_warnings;
-			num_shortcuts_warnings = that.num_shortcuts_warnings;
-			num_missing_att = that.num_missing_att;
-			num_orphan_att = that.num_orphan_att;
-		}
-		return *this;
-	}
+  st_ValidateResults &operator=(const st_ValidateResults &that) {
+    if (this != &that) {
+      num_invalid_UUIDs = that.num_invalid_UUIDs;
+      num_duplicate_UUIDs = that.num_duplicate_UUIDs;
+      num_empty_titles = that.num_empty_titles;
+      num_empty_passwords = that.num_empty_passwords;
+      num_duplicate_GTU_fixed = that.num_duplicate_GTU_fixed;
+      num_PWH_fixed = that.num_PWH_fixed;
+      num_excessivetxt_found = that.num_excessivetxt_found;
+      num_alias_warnings = that.num_alias_warnings;
+      num_shortcuts_warnings = that.num_shortcuts_warnings;
+      num_missing_att = that.num_missing_att;
+      num_orphan_att = that.num_orphan_att;
+    }
+    return *this;
+  }
 
-	int TotalIssues()
-	{
-		return (num_invalid_UUIDs + num_duplicate_UUIDs +
-			num_empty_titles + num_empty_passwords +
-			num_duplicate_GTU_fixed +
-			num_PWH_fixed + num_excessivetxt_found +
-			num_alias_warnings + num_shortcuts_warnings +
-			num_missing_att + num_orphan_att);
-	}
+  int TotalIssues()
+  { 
+    return (num_invalid_UUIDs + num_duplicate_UUIDs +
+            num_empty_titles + num_empty_passwords +
+            num_duplicate_GTU_fixed +
+            num_PWH_fixed + num_excessivetxt_found +
+            num_alias_warnings + num_shortcuts_warnings +
+            num_missing_att + num_orphan_att);
+  }
 };
 
 //-----------------------------------------------------------------
 
 PWScore::PWScore() :
-	//m_isAuxCore(false),
-	m_currfile(_T("")),
-	m_passkey(NULL), m_passkey_len(0),
-	m_hashIters(MIN_HASH_ITERATIONS),
-	m_lockFileHandle(INVALID_HANDLE_VALUE),
-	m_lockFileHandle2(INVALID_HANDLE_VALUE),
-	m_LockCount(0), m_LockCount2(0),
-	m_ReadFileVersion(PWSfile::UNKNOWN_VERSION),
-	m_bDBChanged(false), m_bDBPrefsChanged(false),
-	m_IsReadOnly(false), m_bUniqueGTUValidated(false),
-	//m_nRecordsWithUnknownFields(0),
-	m_bNotifyDB(false), m_pUIIF(NULL), m_pFileSig(NULL),
-	m_iAppHotKey(0)
+                     //m_isAuxCore(false),
+                     m_currfile(_T("")),
+                     m_passkey(NULL), m_passkey_len(0),
+                     m_hashIters(MIN_HASH_ITERATIONS),
+                     m_lockFileHandle(INVALID_HANDLE_VALUE),
+                     m_lockFileHandle2(INVALID_HANDLE_VALUE),
+                     m_LockCount(0), m_LockCount2(0),
+                     m_ReadFileVersion(PWSfile::UNKNOWN_VERSION),
+                     m_bDBChanged(false), m_bDBPrefsChanged(false),
+                     m_IsReadOnly(false), m_bUniqueGTUValidated(false),
+                     //m_nRecordsWithUnknownFields(0),
+                     m_bNotifyDB(false), m_pUIIF(NULL), m_pFileSig(NULL),
+                     m_iAppHotKey(0)
 {
-	// following should ideally be wrapped in a mutex
-	/*if (!PWScore::m_session_initialized) {
-		PWScore::m_session_initialized = true;
-		pws_os::mlock(m_session_key, sizeof(m_session_key));
-		PWSrand::GetInstance()->GetRandomData(m_session_key, sizeof(m_session_key));
-		if (!pws_os::mcryptProtect(m_session_key, sizeof(m_session_key))) {
-			pws_os::Trace(_T("pws_os::mcryptProtect failed"));
-		}
-	}
-	m_undo_iter = m_redo_iter = m_vpcommands.end();*/
+  // following should ideally be wrapped in a mutex
+  /*if (!PWScore::m_session_initialized) {
+    PWScore::m_session_initialized = true;
+    pws_os::mlock(m_session_key, sizeof(m_session_key));
+    PWSrand::GetInstance()->GetRandomData(m_session_key, sizeof(m_session_key));
+    if (!pws_os::mcryptProtect(m_session_key, sizeof(m_session_key))) {
+      pws_os::Trace(_T("pws_os::mcryptProtect failed"));
+    }
+  }
+  m_undo_iter = m_redo_iter = m_vpcommands.end();*/
 }
 
 PWScore::~PWScore()
 {
-	// do NOT trash m_session_*, as there may be other cores around
-	// relying on it. Trashing the ciphertext encrypted with it is enough
-	const unsigned int BS = TwoFish::BLOCKSIZE;
-	if (m_passkey_len > 0) {
-		trashMemory(m_passkey, ((m_passkey_len + (BS - 1)) / BS) * BS);
-		delete[] m_passkey;
-		m_passkey = NULL;
-		m_passkey_len = 0;
-	}
+  // do NOT trash m_session_*, as there may be other cores around
+  // relying on it. Trashing the ciphertext encrypted with it is enough
+  const unsigned int BS = TwoFish::BLOCKSIZE;
+  if (m_passkey_len > 0) {
+    trashMemory(m_passkey, ((m_passkey_len + (BS - 1)) / BS) * BS);
+    delete[] m_passkey;
+    m_passkey = NULL;
+    m_passkey_len = 0;
+  }
 
-	m_UHFL.clear();
-	m_vnodes_modified.clear();
+  m_UHFL.clear();
+  m_vnodes_modified.clear();
 
-	delete m_pFileSig;
+  delete m_pFileSig;
 }
 
 void PWScore::SetApplicationNameAndVersion(const stringT &appName,
-	DWORD dwMajorMinor)
+                                           DWORD dwMajorMinor)
 {
-	int nMajor = HIWORD(dwMajorMinor);
-	int nMinor = LOWORD(dwMajorMinor);
-	Format(m_AppNameAndVersion, L"%ls V%d.%02d", appName.c_str(),
-		nMajor, nMinor);
+  int nMajor = HIWORD(dwMajorMinor);
+  int nMinor = LOWORD(dwMajorMinor);
+  Format(m_AppNameAndVersion, L"%ls V%d.%02d", appName.c_str(),
+         nMajor, nMinor);
 }
 
 // For Validate only
 struct st_GroupTitleUser2 {
-	StringX group;
-	StringX title;
-	StringX user;
-	StringX newtitle;
+  StringX group;
+  StringX title;
+  StringX user;
+  StringX newtitle;
 
-	st_GroupTitleUser2() {}
+  st_GroupTitleUser2() {}
 
-	st_GroupTitleUser2(const StringX &g, const StringX &t, const StringX &u,
-		const StringX &n)
-		: group(g), title(t), user(u), newtitle(n) {}
+  st_GroupTitleUser2(const StringX &g, const StringX &t, const StringX &u,
+    const StringX &n)
+  : group(g), title(t), user(u), newtitle(n) {}
 
-	st_GroupTitleUser2 &operator=(const st_GroupTitleUser2 &that) {
-		if (this != &that) {
-			group = that.group; title = that.title; user = that.user;
-			newtitle = that.newtitle;
-		}
-		return *this;
-	}
+  st_GroupTitleUser2 &operator=(const st_GroupTitleUser2 &that) {
+    if (this != &that) {
+      group = that.group; title = that.title; user = that.user;
+      newtitle = that.newtitle;
+    }
+    return *this;
+  }
 };
 
 // For Validate only
 struct st_AttTitle_Filename {
-	StringX title;
-	StringX filename;
+  StringX title;
+  StringX filename;
 
-	st_AttTitle_Filename() {}
+  st_AttTitle_Filename() {}
 
-	st_AttTitle_Filename(const StringX &t, const StringX &fn)
-		: title(t), filename(fn) {}
+  st_AttTitle_Filename(const StringX &t, const StringX &fn)
+    : title(t), filename(fn) {}
 
-	st_AttTitle_Filename &operator=(const st_AttTitle_Filename &that) {
-		if (this != &that) {
-			title = that.title; filename = that.filename;
-		}
-		return *this;
-	}
+  st_AttTitle_Filename &operator=(const st_AttTitle_Filename &that) {
+    if (this != &that) {
+      title = that.title; filename = that.filename;
+    }
+    return *this;
+  }
 };
 
 void PWScore::ParseDependants()
 {
-	UUIDVector Possible_Aliases, Possible_Shortcuts;
+  UUIDVector Possible_Aliases, Possible_Shortcuts;
 
-	for (ItemListIter iter = m_pwlist.begin(); iter != m_pwlist.end(); iter++) {
-		const CItemData &ci = iter->second;
-		// Get all possible Aliases/Shortcuts for future checking if base entries exist
-		if (ci.IsAlias()) {
-			Possible_Aliases.push_back(ci.GetUUID());
-		}
-		else if (ci.IsShortcut()) {
-			Possible_Shortcuts.push_back(ci.GetUUID());
-		}
-		// Set refcount on attachments
-		if (ci.HasAttRef()) {
-			auto attIter = m_attlist.find(ci.GetAttUUID());
-			if (attIter != m_attlist.end())
-				attIter->second.IncRefcount();
-			//else
-			//	pws_os::Trace(_T("dangling ATTREF")); // will be caught in validate
-		}
-	} // iter over m_pwlist
+  for (ItemListIter iter = m_pwlist.begin(); iter != m_pwlist.end(); iter++) {
+    const CItemData &ci = iter->second;
+    // Get all possible Aliases/Shortcuts for future checking if base entries exist
+    if (ci.IsAlias()) {
+      Possible_Aliases.push_back(ci.GetUUID());
+    } else if (ci.IsShortcut()) {
+      Possible_Shortcuts.push_back(ci.GetUUID());
+    }
+    // Set refcount on attachments
+    if (ci.HasAttRef()) {
+      auto attIter = m_attlist.find(ci.GetAttUUID());
+      if (attIter != m_attlist.end())
+        attIter->second.IncRefcount();
+      //else
+      //  pws_os::Trace(_T("dangling ATTREF")); // will be caught in validate
+    }
+  } // iter over m_pwlist
 
-	if (!Possible_Aliases.empty()) {
-		DoAddDependentEntries(Possible_Aliases, CItemData::ET_ALIAS, CItemData::UUID);
-	}
+  if (!Possible_Aliases.empty()) {
+    DoAddDependentEntries(Possible_Aliases, CItemData::ET_ALIAS, CItemData::UUID);
+  }
 
-	if (!Possible_Shortcuts.empty()) {
-		DoAddDependentEntries(Possible_Shortcuts, CItemData::ET_SHORTCUT, CItemData::UUID);
-	}
+  if (!Possible_Shortcuts.empty()) {
+    DoAddDependentEntries(Possible_Shortcuts, CItemData::ET_SHORTCUT, CItemData::UUID);
+  }
 }
 
 bool PWScore::Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr)
@@ -511,7 +510,7 @@ int PWScore::DoAddDependentEntries(UUIDVector &dependentlist,
 			}
 
 			if (iter != m_pwlist.end()) {
-				//ASSERT(base_uuid != CUUID::NullUUID());
+				ASSERT(base_uuid != CUUID::NullUUID());
 				pci_curitem->SetBaseUUID(base_uuid);
 				if (type == CItemData::ET_SHORTCUT) {
 					// Adding shortcuts -> Base must be normal or already a shortcut base
@@ -667,7 +666,7 @@ bool PWScore::SetUIInterFace(UIInterFace *pUIIF, size_t numsupported, std::bitse
 {
 	bool brc(true);
 	m_pUIIF = pUIIF;
-	//ASSERT(numsupported == UIInterFace::NUM_SUPPORTED);
+	ASSERT(numsupported == UIInterFace::NUM_SUPPORTED);
 
 	m_bsSupportedFunctions.reset();
 	if (numsupported == UIInterFace::NUM_SUPPORTED) {
@@ -685,45 +684,45 @@ bool PWScore::SetUIInterFace(UIInterFace *pUIIF, size_t numsupported, std::bitse
 
 void PWScore::ClearData(void)
 {
-	const unsigned int BS = TwoFish::BLOCKSIZE;
-	if (m_passkey_len > 0) {
-		trashMemory(m_passkey, ((m_passkey_len + (BS - 1)) / BS) * BS);
-		delete[] m_passkey;
-		m_passkey = NULL;
-		m_passkey_len = 0;
-	}
-	m_passkey = NULL;
+  const unsigned int BS = TwoFish::BLOCKSIZE;
+  if (m_passkey_len > 0) {
+    trashMemory(m_passkey, ((m_passkey_len + (BS - 1)) / BS) * BS);
+    delete[] m_passkey;
+    m_passkey = NULL;
+    m_passkey_len = 0;
+  }
+  m_passkey = NULL;
 
-	//Composed of ciphertext, so doesn't need to be overwritten
-	m_pwlist.clear();
-	m_attlist.clear();
+  //Composed of ciphertext, so doesn't need to be overwritten
+  m_pwlist.clear();
+  m_attlist.clear();
 
-	// Clear out out dependents mappings
-	m_base2aliases_mmap.clear();
-	m_base2shortcuts_mmap.clear();
+  // Clear out out dependents mappings
+  m_base2aliases_mmap.clear();
+  m_base2shortcuts_mmap.clear();
 
-	// Clear out unknown fields
-	m_UHFL.clear();
+  // Clear out unknown fields
+  m_UHFL.clear();
 
-	// Clear out database filters
-	//m_MapFilters.clear();
+  // Clear out database filters
+  //m_MapFilters.clear();
 
-	// Clear out policies
-	//m_MapPSWDPLC.clear();
+  // Clear out policies
+  //m_MapPSWDPLC.clear();
 
-	// Clear out Empty Groups
-	//m_vEmptyGroups.clear();
+  // Clear out Empty Groups
+  //m_vEmptyGroups.clear();
 
-	// Clear out commands
-	//ClearCommands();
+  // Clear out commands
+  //ClearCommands();
 }
 
 void PWScore::EncryptPassword(const unsigned char *plaintext, size_t len,
-	unsigned char *ciphertext) const
+  unsigned char *ciphertext) const
 {
 	// Chicken out of an interface change, or just a sanity check?
 	// Maybe both...
-	//ASSERT(len > 0);
+	ASSERT(len > 0);
 	unsigned int ulen = static_cast<unsigned int>(len);
 
 	const unsigned int BS = TwoFish::BLOCKSIZE;
@@ -759,20 +758,20 @@ void PWScore::EncryptPassword(const unsigned char *plaintext, size_t len,
 
 void PWScore::SetPassKey(const StringX &new_passkey)
 {
-	// Only used when opening files and for new files
-	const unsigned int BS = TwoFish::BLOCKSIZE;
-	// if changing, clear old
-	if (m_passkey_len > 0) {
-		trashMemory(m_passkey, ((m_passkey_len + (BS - 1)) / BS) * BS);
-		delete[] m_passkey;
-	}
+  // Only used when opening files and for new files
+  const unsigned int BS = TwoFish::BLOCKSIZE;
+  // if changing, clear old
+  if (m_passkey_len > 0) {
+    trashMemory(m_passkey, ((m_passkey_len + (BS - 1)) / BS) * BS);
+    delete[] m_passkey;
+  }
 
-	m_passkey_len = new_passkey.length() * sizeof(TCHAR);
+  m_passkey_len = new_passkey.length() * sizeof(TCHAR);
 
-	size_t BlockLength = ((m_passkey_len + (BS - 1)) / BS) * BS;
-	m_passkey = new unsigned char[BlockLength];
-	LPCTSTR plaintext = LPCTSTR(new_passkey.c_str());
-	EncryptPassword(reinterpret_cast<const unsigned char *>(plaintext), m_passkey_len, m_passkey);
+  size_t BlockLength = ((m_passkey_len + (BS - 1)) / BS) * BS;
+  m_passkey = new unsigned char[BlockLength];
+  LPCTSTR plaintext = LPCTSTR(new_passkey.c_str());
+  EncryptPassword(reinterpret_cast<const unsigned char *>(plaintext), m_passkey_len, m_passkey);
 }
 
 StringX PWScore::GetPassKey() const
@@ -808,8 +807,8 @@ StringX PWScore::GetPassKey() const
 }
 
 static void TestAndFixNullUUID(CItemData &ci_temp,
-	std::vector<st_GroupTitleUser> &vGTU_INVALID_UUID,
-	st_ValidateResults &st_vr)
+  std::vector<st_GroupTitleUser> &vGTU_INVALID_UUID,
+  st_ValidateResults &st_vr)
 {
 	/*
 	* If, for some reason, we're reading in an invalid UUID,
@@ -1096,32 +1095,32 @@ task<int> PWScore::ReadFile(const StringX &a_filename, const StringX &a_passkey,
 
 // functor object type for find_if:
 struct FieldsMatch {
-	bool operator()(std::pair<CUUID, CItemData> p) {
-		const CItemData &item = p.second;
-		return (m_group == item.GetGroup() &&
-			m_title == item.GetTitle() &&
-			m_user == item.GetUser());
-	}
-	FieldsMatch(const StringX &a_group, const StringX &a_title,
-		const StringX &a_user) :
-		m_group(a_group), m_title(a_title), m_user(a_user) {}
+  bool operator()(std::pair<CUUID, CItemData> p) {
+    const CItemData &item = p.second;
+    return (m_group == item.GetGroup() &&
+            m_title == item.GetTitle() &&
+            m_user  == item.GetUser());
+  }
+  FieldsMatch(const StringX &a_group, const StringX &a_title,
+              const StringX &a_user) :
+  m_group(a_group), m_title(a_title), m_user(a_user) {}
 
 private:
-	FieldsMatch& operator=(const FieldsMatch&); // Do not implement
-	const StringX &m_group;
-	const StringX &m_title;
-	const StringX &m_user;
+  FieldsMatch& operator=(const FieldsMatch&); // Do not implement
+  const StringX &m_group;
+  const StringX &m_title;
+  const StringX &m_user;
 };
 
 // Finds stuff based on group, title & user fields only
-ItemListIter PWScore::Find(const StringX &a_group, const StringX &a_title,
-	const StringX &a_user)
+ItemListIter PWScore::Find(const StringX &a_group,const StringX &a_title,
+                           const StringX &a_user)
 {
-	FieldsMatch fields_match(a_group, a_title, a_user);
+  FieldsMatch fields_match(a_group, a_title, a_user);
 
-	ItemListIter retval = find_if(m_pwlist.begin(), m_pwlist.end(),
-		fields_match);
-	return retval;
+  ItemListIter retval = find_if(m_pwlist.begin(), m_pwlist.end(),
+                                fields_match);
+  return retval;
 }
 
 /*
@@ -1130,12 +1129,12 @@ ItemListIter PWScore::Find(const StringX &a_group, const StringX &a_title,
 
 void PWScore::NotifyDBModified()
 {
-	// This allows the core to provide feedback to the UI that the Database
-	// has changed particularly to invalidate any current Find results and
-	// to populate message during Vista and later shutdowns
-	if (m_bNotifyDB && m_pUIIF != NULL &&
-		m_bsSupportedFunctions.test(UIInterFace::DATABASEMODIFIED))
-		m_pUIIF->DatabaseModified(m_bDBChanged || m_bDBPrefsChanged);
+  // This allows the core to provide feedback to the UI that the Database
+  // has changed particularly to invalidate any current Find results and
+  // to populate message during Vista and later shutdowns
+  if (m_bNotifyDB && m_pUIIF != NULL &&
+    m_bsSupportedFunctions.test(UIInterFace::DATABASEMODIFIED))
+    m_pUIIF->DatabaseModified(m_bDBChanged || m_bDBPrefsChanged);
 }
 
 

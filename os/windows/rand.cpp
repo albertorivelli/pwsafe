@@ -11,6 +11,7 @@
  */
 #include <time.h>
 #include <stdlib.h>
+//#include <process.h>
 
 #include "../rand.h"
 //#include "../lib.h"
@@ -54,7 +55,7 @@ void pws_os::GetRandomSeed(void *p, unsigned &slen)
   if (p == NULL) {
     slen = sizeof(t) + sizeof(pid) + sizeof(ticks);
   } else {
-    //ASSERT(slen == sizeof(t) + sizeof(pid) + sizeof(ticks));
+    ASSERT(slen == sizeof(t) + sizeof(pid) + sizeof(ticks));
 
     SYSTEMTIME st;
     struct tm tms;

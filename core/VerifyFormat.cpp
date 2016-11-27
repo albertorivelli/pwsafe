@@ -474,8 +474,8 @@ exit:
     case PWH_INVALID_CHARACTER:
       LoadAString(temp, IDSC_INVALIDSEPARATER);
       break;
-    /*default:
-      ASSERT(0);*/
+    default:
+      ASSERT(0);
   }
   strErrors = buffer + temp;
   if (rc != PWH_OK)
@@ -677,8 +677,8 @@ int VerifyXMLImportPWHistoryString(const StringX &PWHistory,
     case PWH_INVALID_FIELD_LENGTH:
       LoadAString(temp, IDSC_INVALIDFIELDLENGTH);
       break;
-    /*default:
-      ASSERT(0);*/
+    default:
+      ASSERT(0);
   }
 
   if (rc != PWH_OK) {

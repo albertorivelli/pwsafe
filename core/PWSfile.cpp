@@ -72,7 +72,7 @@ task<PWSfile *> PWSfile::MakePWSfile(const StringX &a_filename, const StringX &p
     //  break;
   case NEWFILE: // should never happen
     status = FAILURE;
-    //ASSERT(0);
+    ASSERT(0);
   }
   if (retval != NULL) {
     retval->m_pAsker = pAsker;
@@ -129,7 +129,7 @@ void PWSfile::HashRandom256(unsigned char *p256)
 
 task<void> PWSfile::FOpen()
 {
-  //ASSERT(!m_filename.empty());
+  ASSERT(!m_filename.empty());
   const TCHAR* m = (m_rw == Read) ? _T("rb") : _T("wb");
   /*if (m_fd != nullptr) {
     m_fd->Dispose();
@@ -154,7 +154,7 @@ int PWSfile::Close()
 size_t PWSfile::WriteCBC(unsigned char type, const unsigned char *data,
                          size_t length)
 {
-  //ASSERT(m_fish != NULL && m_IV != NULL);
+  ASSERT(m_fish != NULL && m_IV != NULL);
   return _writecbc(m_fd, data, length, type, m_fish, m_IV);
 }
 
@@ -165,7 +165,7 @@ task<size_t> PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,
   size_t buffer_len = 0;
   size_t retval;
 
-  //ASSERT(m_fish != NULL && m_IV != NULL);
+  ASSERT(m_fish != NULL && m_IV != NULL);
   retval = co_await _readcbc(m_fd, buffer, buffer_len, type,
     m_fish, m_IV, m_terminal, m_fileLength);
 
@@ -197,8 +197,8 @@ task<int> PWSfile::CheckPasskey(const StringX &filename,
    * V4 can take a looong time if the iter value's too big.
    * XXX Need to address this later with a popup prompting the user.
    */
-	if (passkey.empty())
-		return WRONG_PASSWORD;
+  if (passkey.empty())
+    return WRONG_PASSWORD;
 
   int status;
   version = UNKNOWN_VERSION;
@@ -238,37 +238,37 @@ void PWSfile::SetUnknownHeaderFields(UnknownFieldList &UHFL)
 // this is for the undocumented 'command line file encryption'
 static const stringT CIPHERTEXT_SUFFIX(_S(".PSF"));
 
-//static stringT ErrorMessages()
-//{
-//  stringT cs_text;
-//
-//  switch (errno) {
-//  case EACCES:
-//    LoadAString(cs_text, IDSC_FILEREADONLY);
-//    break;
-//  case EEXIST:
-//    LoadAString(cs_text, IDSC_FILEEXISTS);
-//    break;
-//  case EINVAL:
-//    LoadAString(cs_text, IDSC_INVALIDFLAG);
-//    break;
-//  case EMFILE:
-//    LoadAString(cs_text, IDSC_NOMOREHANDLES);
-//    break;
-//  case ENOENT:
-//    LoadAString(cs_text, IDSC_FILEPATHNOTFOUND);
-//    break;
-//  case EIO: // synthesized upon fwrite failure
-//    LoadAString(cs_text, IDSC_FILEWRITEERROR);
-//    break;
-//  case EFBIG:
-//    LoadAString(cs_text, IDSC_FILE_TOO_BIG);
-//    break;
-//  default:
-//    break;
-//  }
-//  return cs_text;
-//}
+static stringT ErrorMessages()
+{
+  stringT cs_text;
+
+  switch (errno) {
+  case EACCES:
+    LoadAString(cs_text, IDSC_FILEREADONLY);
+    break;
+  case EEXIST:
+    LoadAString(cs_text, IDSC_FILEEXISTS);
+    break;
+  case EINVAL:
+    LoadAString(cs_text, IDSC_INVALIDFLAG);
+    break;
+  case EMFILE:
+    LoadAString(cs_text, IDSC_NOMOREHANDLES);
+    break;
+  case ENOENT:
+    LoadAString(cs_text, IDSC_FILEPATHNOTFOUND);
+    break;
+  case EIO: // synthesized upon fwrite failure
+    LoadAString(cs_text, IDSC_FILEWRITEERROR);
+    break;
+  case EFBIG:
+    LoadAString(cs_text, IDSC_FILE_TOO_BIG);
+    break;
+  default:
+    break;
+  }
+  return cs_text;
+}
 
 // Following specific for PWSfile::Encrypt
 //#define SAFE_FWRITE(p, sz, cnt, stream) \

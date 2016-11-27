@@ -49,7 +49,7 @@ bool CUTF8Conv::ToUTF8(const StringX &data,
   size_t mbLen = pws_os::wcstombs(NULL, 0, wcPtr, wcLen);
 
   if (mbLen == 0) { // uh-oh
-    //ASSERT(0);
+    ASSERT(0);
     m_utf8Len = 0;
     return false;
   }
@@ -63,7 +63,7 @@ bool CUTF8Conv::ToUTF8(const StringX &data,
   }
   // Finally get result
   m_utf8Len = pws_os::wcstombs(reinterpret_cast<char *>(m_utf8), mbLen, wcPtr, wcLen);
-  //ASSERT(m_utf8Len != 0);
+  ASSERT(m_utf8Len != 0);
   m_utf8Len--; // remove unneeded null termination
   utf8 = m_utf8;
   utf8Len = m_utf8Len;
@@ -86,7 +86,7 @@ bool CUTF8Conv::FromUTF8(const unsigned char *utf8, size_t utf8Len,
     return true;
   }
 
-  //ASSERT(utf8 != NULL);
+  ASSERT(utf8 != NULL);
 
   // first get needed wide char buffer size
   size_t wcLen = pws_os::mbstowcs(NULL, 0,
@@ -130,15 +130,15 @@ bool CUTF8Conv::FromUTF8(const unsigned char *utf8, size_t utf8Len,
                                   -1,            // -1 means null-terminated
                                   m_wc,          // output buffer
                                   reinterpret_cast<int &>(wcLen));  // output buffer size
-      /*if (wcLen > 0) {
-        pws_os::Trace0(_T("FromUTF8: recovery succeeded!"));
-      }*/
+      //if (wcLen > 0) {
+        //pws_os::Trace0(_T("FromUTF8: recovery succeeded!"));
+      //}
       break;
-    /*default:
-      ASSERT(0);*/
+    default:
+      ASSERT(0);
     }
   }
-  //ASSERT(wcLen != 0);
+  ASSERT(wcLen != 0);
 #endif /* _WIN32 */
   if (wcLen != 0) {
     m_wc[wcLen - 1] = TCHAR('\0');

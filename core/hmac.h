@@ -78,8 +78,8 @@ public:
 
   void Init(const unsigned char *key, unsigned long keylen)
   {
-    //ASSERT(key != NULL);
-    //ASSERT(Hash == NULL);
+    ASSERT(key != NULL);
+    ASSERT(Hash == NULL);
     Hash = new H; // to ensure state's cleared.
 
     if (keylen > BLOCKSIZE) {
@@ -87,7 +87,7 @@ public:
       H0.Update(key, keylen);
       H0.Final(K);
     } else {
-      //ASSERT(keylen <= sizeof(K));
+      ASSERT(keylen <= sizeof(K));
       memcpy(K, key, keylen);
     }
 
@@ -100,14 +100,14 @@ public:
 
   void Update(const unsigned char *in, unsigned long inlen)
   {
-    //ASSERT(Hash != NULL);
+    ASSERT(Hash != NULL);
     Hash->Update(in, inlen);
   }
 
   void Final(unsigned char digest[HASHLEN])
   {
     unsigned char d[HASHLEN];
-    //ASSERT(Hash != NULL);
+    ASSERT(Hash != NULL);
 
     Hash->Final(d);
     delete(Hash);

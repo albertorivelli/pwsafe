@@ -51,7 +51,7 @@ static void xormem(unsigned char *mem1, const unsigned char *mem2, int length)
 
 void trashMemory(void *buffer, size_t length)
 {
-  //ASSERT(buffer != NULL);
+  ASSERT(buffer != NULL);
   // {kjp} no point in looping around doing nothing is there?
   if (length > 0) {
     std::memset(buffer, 0x55, length);
@@ -94,7 +94,7 @@ void ConvertString(const StringX &text,
   txt = new unsigned char[3 * txtlen]; // safe upper limit
   int len = WideCharToMultiByte(CP_ACP, 0, txtstr, static_cast<int>(txtlen),
                                 LPSTR(txt), static_cast<int>(3 * txtlen), NULL, NULL);
-  //ASSERT(len != 0);
+  ASSERT(len != 0);
 #else
   mbstate_t mbs;
   memset(&mbs, 0, sizeof(mbstate_t));
@@ -160,7 +160,7 @@ size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t le
   unsigned char block1[16];
 
   unsigned char *curblock = NULL;
-  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
+  ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
 
   // First encrypt and write the length of the buffer
   curblock = block1;
@@ -212,7 +212,7 @@ size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t le
   unsigned char block1[16];
 
   unsigned char *curblock = NULL;
-  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
+  ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
 
   // First encrypt and write the length of the buffer
   curblock = block1;
@@ -280,7 +280,7 @@ task<size_t> _readcbc(IRandomAccessStream^ fp,
   unsigned char block3[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   unsigned char *lengthblock = NULL;
 
-  //ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
+  ASSERT(BS <= sizeof(block1)); // if needed we can be more sophisticated here...
 
   // Safety check.  (Lockheed Martin) Secure Coding  11-14-2007
   if ((BS > sizeof( block1 )) || (BS == 0))
@@ -381,7 +381,7 @@ task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char *buffer,
                 unsigned char *cbcbuffer)
 {
   const unsigned int BS = Algorithm->GetBlockSize();
-  //ASSERT((buffer_len % BS) == 0);
+  ASSERT((buffer_len % BS) == 0);
   size_t nread = 0;
   unsigned char *p = buffer;
   unsigned char *tmpcbc = new unsigned char[BS];
@@ -772,7 +772,7 @@ int GetStringBufSize(const TCHAR *fmt, va_list args)
   if (buffer)
     delete[] buffer;
 
-  //ASSERT(len > 0);
+  ASSERT(len > 0);
   return len;
 }
 
@@ -846,7 +846,7 @@ bool PWSUtil::pull_time(time_t &t, const unsigned char *data, size_t len)
 {
   // len can be either 4, 5 or 8...
   // len == 5 is new for V4
-  //ASSERT(len == 4 || len == 5 || len == 8);
+  ASSERT(len == 4 || len == 5 || len == 8);
   if (!(len == 4 || len == 5 || len == 8))
     return false;
   // sizeof(time_t) is either 4 or 8
@@ -862,7 +862,7 @@ bool PWSUtil::pull_time(time_t &t, const unsigned char *data, size_t len)
     struct tm ts;
     const __time64_t t64 = getInt<__time64_t>(buf);
     if (_localtime64_s(&ts, &t64) != 0) {
-      /*ASSERT(0);*/ return false;
+      ASSERT(0); return false;
     }
     t = _mktime32(&ts);
     if (t == time_t(-1)) { // time is past 2038!

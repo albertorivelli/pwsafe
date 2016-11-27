@@ -59,6 +59,7 @@
 #include <tchar.h>
 #include <Strsafe.h>
 //#include <atlstr.h>
+#define ASSERT(expression) ((void)0)
 #else
 // some globally useful includes for non-Windows
 #include <cassert>

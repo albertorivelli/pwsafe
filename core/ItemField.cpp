@@ -108,8 +108,8 @@ void CItemField::Set(const StringX &value, const Fish *bf, unsigned char type)
 void CItemField::Get(unsigned char *value, size_t &length, const Fish *bf) const
 {
   // Sanity check: length is 0 iff data ptr is NULL
-  /*ASSERT((m_Length == 0 && m_Data == NULL) ||
-         (m_Length > 0 && m_Data != NULL));*/
+  ASSERT((m_Length == 0 && m_Data == NULL) ||
+         (m_Length > 0 && m_Data != NULL));
   /*
   * length is an in/out parameter:
   * In: size of value array - must be at least BlockLength
@@ -121,7 +121,7 @@ void CItemField::Get(unsigned char *value, size_t &length, const Fish *bf) const
     length = 0;
   } else { // we have data to decrypt
     size_t BlockLength = GetBlockSize(m_Length);
-    //ASSERT(length >= BlockLength);
+    ASSERT(length >= BlockLength);
     unsigned char *tempmem = new unsigned char[BlockLength];
 
     size_t x;
@@ -139,8 +139,8 @@ void CItemField::Get(unsigned char *value, size_t &length, const Fish *bf) const
 void CItemField::Get(StringX &value, const Fish *bf) const
 {
   // Sanity check: length is 0 iff data ptr is NULL
-  /*ASSERT((m_Length == 0 && m_Data == NULL) ||
-         (m_Length > 0 && m_Data != NULL && m_Length % sizeof(TCHAR) == 0));*/
+  ASSERT((m_Length == 0 && m_Data == NULL) ||
+         (m_Length > 0 && m_Data != NULL && m_Length % sizeof(TCHAR) == 0));
 
   if (m_Length == 0) {
     value = _T("");

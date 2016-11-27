@@ -101,9 +101,9 @@ void CItemData::ParseSpecialPasswords()
         ft = ALIASUUID;
       } else if (csMyPassword.substr(0, 2) == _T("[~")) {
         ft = SHORTCUTUUID;
-      } /*else {
+      } else {
         ASSERT(0);
-      }*/
+      }
       ClearField(UUID);
       SetUUID(uuid, ft);
     }
@@ -124,10 +124,10 @@ void CItemData::SetSpecialPasswords()
   // For writing a record in V3 format
 
   if (IsDependent()) {
-    //ASSERT(IsFieldSet(BASEUUID));
+    ASSERT(IsFieldSet(BASEUUID));
     const CUUID base_uuid(GetUUID(BASEUUID));
-    //ASSERT(base_uuid != CUUID::NullUUID());
-    //ASSERT(base_uuid != GetUUID()); // not self-referential!
+    ASSERT(base_uuid != CUUID::NullUUID());
+    ASSERT(base_uuid != GetUUID()); // not self-referential!
     StringX uuid_str;
 
     if (IsAlias()) {
@@ -138,8 +138,8 @@ void CItemData::SetSpecialPasswords()
       uuid_str = _T("[~");
       uuid_str += base_uuid;
       uuid_str += _T("~]");
-    } /*else
-      ASSERT(0);*/
+    } else
+      ASSERT(0);
 
     SetPassword(uuid_str);
   } // IsDependent()
@@ -200,8 +200,8 @@ task<int> CItemData::Read(PWSfile *in)
       m_entrytype = ET_ALIAS;
     else if (m_fields.find(SHORTCUTUUID) != m_fields.end())
       m_entrytype = ET_SHORTCUT;
-    /*else 
-      ASSERT(0);*/
+    else 
+      ASSERT(0);
     return status;
   } else
     return PWSfile::END_OF_FILE;
@@ -213,7 +213,7 @@ size_t CItemData::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
   size_t retval = 0;
   if (fiter != m_fields.end()) {
     const CItemField &field = fiter->second;
-    //ASSERT(!field.IsEmpty());
+    ASSERT(!field.IsEmpty());
     size_t flength = field.GetLength() + BlowFish::BLOCKSIZE;
     unsigned char *pdata = new unsigned char[flength];
     CItem::GetField(field, pdata, flength);
@@ -222,10 +222,10 @@ size_t CItemData::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
       size_t srclen = field.GetLength()/sizeof(TCHAR);
       wpdata[srclen] = 0;
       size_t dstlen = pws_os::wcstombs(NULL, 0, wpdata, srclen);
-      //ASSERT(dstlen > 0);
+      ASSERT(dstlen > 0);
       char *dst = new char[dstlen+1];
       dstlen = pws_os::wcstombs(dst, dstlen, wpdata, srclen);
-      //ASSERT(dstlen != size_t(-1));
+      ASSERT(dstlen != size_t(-1));
       //[BR1150, BR1167]: Discard the terminating NULLs in text fields
       if (dstlen && !dst[dstlen-1])
         dstlen--;
@@ -318,14 +318,14 @@ int CItemData::Write(PWSfile *out) const
   uuid_array_t item_uuid;
   FieldType ft = END;
 
-  //ASSERT(HasUUID());
+  ASSERT(HasUUID());
   if (!IsDependent())
     ft = UUID;
   else if (IsAlias())
     ft = ALIASUUID;
   else if (IsShortcut())
     ft = SHORTCUTUUID;
-  //else ASSERT(0);
+  else ASSERT(0);
   GetUUID(item_uuid, ft);
 
   out->WriteField(UUID, item_uuid, sizeof(uuid_array_t));
@@ -518,8 +518,8 @@ void CItemData::GetUUID(uuid_array_t &uuid_array, FieldType ft) const
     case ET_SHORTCUT:
       fiter = m_fields.find(SHORTCUTUUID);
       break;
-    //default:
-      //ASSERT(0);
+    default:
+      ASSERT(0);
     }
   if (fiter == m_fields.end()) {
     //pws_os::Trace(_T("CItemData::GetUUID(uuid_array_t) - no UUID found!\n"));
@@ -559,7 +559,7 @@ int32 CItemData::GetXTimeInt(int32 &xint) const
 
     CItem::GetField(fiter->second, in, tlen);
     if (tlen != 0) {
-      //ASSERT(tlen == sizeof(int32));
+      ASSERT(tlen == sizeof(int32));
       memcpy(&xint, in, sizeof(int32));
     } else {
       xint = 0;
@@ -1145,7 +1145,7 @@ void CItemData::CreateUUID(FieldType ft)
       ft = UUID; break;
     case ET_ALIAS: ft = ALIASUUID; break;
     case ET_SHORTCUT: ft = SHORTCUTUUID; break;
-    default: /*ASSERT(0);*/ ft = UUID; break;
+    default: ASSERT(0); ft = UUID; break;
     }
   }
   SetUUID(uuid, ft);
@@ -1872,7 +1872,7 @@ bool CItemData::SetField(unsigned char type, const unsigned char *data, size_t l
   FieldType ft = static_cast<FieldType>(type);
   switch (ft) {
     case NAME:
-      //ASSERT(0); // not serialized, or in v3 format
+      ASSERT(0); // not serialized, or in v3 format
       return false;
     case UUID:
     case BASEUUID:
@@ -1881,7 +1881,7 @@ bool CItemData::SetField(unsigned char type, const unsigned char *data, size_t l
     case ATTREF:
       {
         uuid_array_t uuid_array;
-        //ASSERT(len == sizeof(uuid_array_t));
+        ASSERT(len == sizeof(uuid_array_t));
         for (size_t i = 0; i < sizeof(uuid_array_t); i++)
           uuid_array[i] = data[i];
         SetUUID(uuid_array, ft);

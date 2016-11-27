@@ -79,10 +79,10 @@ task<int> PWSfileV3::Open(const StringX &passkey)
 
   m_status = SUCCESS;
 
-  //ASSERT(m_curversion == V30);
+  ASSERT(m_curversion == V30);
   if (passkey.empty()) { // Can happen if db 'locked'
     //pws_os::Trace(_T("PWSfileV3::Open(empty_passkey)\n"));
-	  return WRONG_PASSWORD;
+    return WRONG_PASSWORD;
   }
   m_passkey = passkey;
 
@@ -153,7 +153,7 @@ int PWSfileV3::SanityCheck(FILE *stream)
   int retval = SUCCESS;
   size_t nread = 0;
 
-  //ASSERT(stream != NULL);
+  ASSERT(stream != NULL);
   const long pos = ftell(stream); // restore when we're done
 
   // Is file too small?
@@ -230,7 +230,7 @@ task<int> PWSfileV3::CheckPasskey(const StringX &filename,
   { // block to shut up compiler warning w.r.t. goto
 	const uint32 N = getInt32(Nb->Data);
 
-    //ASSERT(N >= MIN_HASH_ITERATIONS);
+    ASSERT(N >= MIN_HASH_ITERATIONS);
     if (N < MIN_HASH_ITERATIONS) {
       retval = FAILURE;
       //goto err;
@@ -282,8 +282,8 @@ size_t PWSfileV3::WriteCBC(unsigned char type, const unsigned char *data,
 
 int PWSfileV3::WriteRecord(const CItemData &item)
 {
-  //ASSERT(m_fd != NULL);
-  //ASSERT(m_curversion == V30);
+  ASSERT(m_fd != NULL);
+  ASSERT(m_curversion == V30);
   return item.Write(this);
 }
 
@@ -301,14 +301,14 @@ task<size_t> PWSfileV3::ReadCBC(unsigned char &type, unsigned char* &data,
 
 task<int> PWSfileV3::ReadRecord(CItemData &item)
 {
-  //ASSERT(m_fd != NULL);
-  //ASSERT(m_curversion == V30);
+  ASSERT(m_fd != NULL);
+  ASSERT(m_curversion == V30);
   return co_await item.Read(this);
 }
 
 void PWSfileV3::StretchKey(const unsigned char *salt, unsigned long saltLen,
                            const StringX &passkey,
-                           unsigned int N, unsigned char *Ptag)
+                           uint32 N, unsigned char *Ptag)
 {
   /*
   * P' is the "stretched key" of the user's passphrase and the SALT, as defined
@@ -329,7 +329,7 @@ void PWSfileV3::StretchKey(const unsigned char *salt, unsigned long saltLen,
   trashMemory(pstr, passLen);
   delete[] pstr;
 
-  //ASSERT(N >= MIN_HASH_ITERATIONS); // minimal value we're willing to use
+  ASSERT(N >= MIN_HASH_ITERATIONS); // minimal value we're willing to use
   for (unsigned int i = 0; i < N; i++) {
     SHA256 H;
     // The 2nd param in next line was sizeof(X) in Beta-1
@@ -601,10 +601,10 @@ task<int> PWSfileV3::ReadHeader()
   }
 
   //unsigned char B1B2[sizeof(m_key)];
-  //ASSERT(sizeof(B1B2) == 32); // Generalize later
+  ASSERT(sizeof(B1B2) == 32); // Generalize later
+  Array<unsigned char>^ B1B2 = ref new Array<unsigned char>(sizeof(m_key));
   DataReader^ dataReader = ref new DataReader(m_fd);
   co_await dataReader->LoadAsync(m_fd->Size);
-  Array<unsigned char>^ B1B2 = ref new Array<unsigned char>(sizeof(m_key));
   dataReader->ReadBytes(B1B2);
   //fread(B1B2, 1, sizeof(B1B2), m_fd);
   TwoFish TF(Ptag, sizeof(Ptag));
@@ -613,7 +613,7 @@ task<int> PWSfileV3::ReadHeader()
 
   unsigned char L[32]; // for HMAC
   //unsigned char B3B4[sizeof(L)];
-  //ASSERT(sizeof(B3B4) == 32); // Generalize later
+  ASSERT(sizeof(B3B4) == 32); // Generalize later
   Array<unsigned char>^ B3B4 = ref new Array<unsigned char>(sizeof(L));
   dataReader->ReadBytes(B3B4);
   //fread(B3B4, 1, sizeof(B3B4), m_fd);

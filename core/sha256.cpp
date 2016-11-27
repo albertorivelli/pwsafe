@@ -210,8 +210,8 @@ void SHA256::Update(const unsigned char *in, size_t inlen)
 {
   const size_t block_size = 64;
   size_t n;
-  //ASSERT(in != NULL || inlen == 0);
-  //ASSERT(curlen <= sizeof(buf));
+  ASSERT(in != NULL || inlen == 0);
+  ASSERT(curlen <= sizeof(buf));
   while (inlen > 0) {
     if (curlen == 0 && inlen >= block_size) {
       sha256_compress(state, in);
@@ -219,7 +219,7 @@ void SHA256::Update(const unsigned char *in, size_t inlen)
       in             += block_size;
       inlen          -= block_size;
     } else {
-      n = (std::min)(inlen, (block_size - curlen));
+      n = std::min(inlen, (block_size - curlen));
       memcpy(buf + curlen, in, static_cast<size_t>(n));
       curlen += n;
       in             += n;
@@ -241,9 +241,9 @@ void SHA256::Final(unsigned char digest[HASHLEN])
 {
   int i;
 
-  //ASSERT(digest != NULL);
+  ASSERT(digest != NULL);
 
-  //ASSERT(curlen < sizeof(buf));
+  ASSERT(curlen < sizeof(buf));
 
   /* increase the length of the message */
   length += curlen * 8;

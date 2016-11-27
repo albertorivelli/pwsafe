@@ -77,7 +77,7 @@ pws_os::CUUID::CUUID(const StringX &s)
   : m_ua(NULL), m_canonic(false)
 {
   // s is a hex string as returned by cast to StringX
-  //ASSERT(s.length() == 32);
+  ASSERT(s.length() == 32);
   uuid_array_t ua;
 
   unsigned int x(0);
