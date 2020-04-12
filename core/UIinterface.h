@@ -8,7 +8,7 @@
 #ifndef __UIINTERFACE_H
 #define __UIINTERFACE_H
 
-//#include "Command.h"
+#include "Command.h"
 #include "ItemData.h"
 
 /**
@@ -49,20 +49,20 @@ public:
 
   // UpdateGUI - used by GUI if one or more entries have changed
   // and the entry/entries needs refreshing in GUI:
-  //virtual void UpdateGUI(UpdateGUICommand::GUI_Action ga,
-  //                       const pws_os::CUUID &entry_uuid,
-  //                       CItemData::FieldType ft = CItemData::START,
-  //                       bool bUpdateGUI = true) = 0;
+  virtual void UpdateGUI(UpdateGUICommand::GUI_Action ga,
+                         const pws_os::CUUID &entry_uuid,
+                         CItemData::FieldType ft = CItemData::START,
+                         bool bUpdateGUI = true) = 0;
 
-  //// GUISetupDisplayInfo: let GUI populate DisplayInfo field in an entry
-  //virtual void GUISetupDisplayInfo(CItemData &ci) = 0;
+  // GUISetupDisplayInfo: let GUI populate DisplayInfo field in an entry
+  virtual void GUISetupDisplayInfo(CItemData &ci) = 0;
 
-  //// GUIRefreshEntry: called when the entry's graphic representation
-  //// may have changed - GUI should update and invalidate its display.
-  //virtual void GUIRefreshEntry(const CItemData &ci) = 0;
+  // GUIRefreshEntry: called when the entry's graphic representation
+  // may have changed - GUI should update and invalidate its display.
+  virtual void GUIRefreshEntry(const CItemData &ci) = 0;
 
-  //// UpdateWizard: called to update text in Wizard during export Text/XML.
-  //virtual void UpdateWizard(const stringT &s) = 0;
+  // UpdateWizard: called to update text in Wizard during export Text/XML.
+  virtual void UpdateWizard(const stringT &s) = 0;
 
   virtual ~UIInterFace() {}
 };

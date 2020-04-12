@@ -100,7 +100,7 @@ public:
                               VERSION &version, RWmode mode, int &status, 
                               Asker *pAsker = NULL, Reporter *pReporter = NULL);
 
-  static VERSION ReadVersion(const StringX &filename, const StringX &passkey);
+  static task<VERSION> ReadVersion(const StringX &filename, const StringX &passkey);
   static task<int> CheckPasskey(const StringX &filename,
                           const StringX &passkey, VERSION &version);
 
@@ -111,9 +111,9 @@ public:
   virtual ~PWSfile();
 
   virtual task<int> Open(const StringX &passkey) = 0;
-  virtual int Close();
+  virtual task<int> Close();
 
-  virtual int WriteRecord(const CItemData &item) = 0;
+  virtual task<int> WriteRecord(const CItemData &item) = 0;
   virtual task<int> ReadRecord(CItemData &item) = 0;
 
   const PWSfileHeader &GetHeader() const {return m_hdr;}
@@ -142,11 +142,11 @@ public:
   // Following for low-level details that changed between format versions
   virtual size_t timeFieldLen() const {return 4;} // changed in V4
   
-  size_t WriteField(unsigned char type,
-                    const StringX &data) {return WriteCBC(type, data);}
-  size_t WriteField(unsigned char type,
+  task<size_t> WriteField(unsigned char type,
+                    const StringX &data) {return co_await WriteCBC(type, data);}
+  task<size_t> WriteField(unsigned char type,
                     const unsigned char *data,
-                    size_t length) {return WriteCBC(type, data, length);}
+                    size_t length) {return co_await WriteCBC(type, data, length);}
   task<size_t> ReadField(unsigned char &type,
                    unsigned char* &data,
                    size_t &length) {return co_await ReadCBC(type, data, length);}
@@ -154,8 +154,8 @@ public:
 protected:
   PWSfile(const StringX &filename, RWmode mode, VERSION v = UNKNOWN_VERSION);
   task<void> FOpen(); // calls right variant of m_fd = fopen(m_filename);
-  virtual size_t WriteCBC(unsigned char type, const StringX &data) = 0;
-  virtual size_t WriteCBC(unsigned char type, const unsigned char *data,
+  virtual task<size_t> WriteCBC(unsigned char type, const StringX &data) = 0;
+  virtual task<size_t> WriteCBC(unsigned char type, const unsigned char *data,
                           size_t length);
   virtual task<size_t> ReadCBC(unsigned char &type, unsigned char* &data,
                          size_t &length);

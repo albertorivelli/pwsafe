@@ -150,7 +150,7 @@ void GenRandhash(const StringX &a_passkey,
   keyHash.Final(a_randhash);
 }
 
-size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length, unsigned char type,
+task<size_t> _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length, unsigned char type,
                  Fish *Algorithm, unsigned char *cbcbuffer)
 {
   const unsigned int BS = Algorithm->GetBlockSize();
@@ -188,18 +188,27 @@ size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t le
   memcpy(cbcbuffer, curblock, BS); // update CBC for next round
 
   //numWritten = fwrite(curblock, 1, BS, fp);
-  if (numWritten != BS) {
+  numWritten = BS;
+  Array<unsigned char>^ b = ref new Array<unsigned char>(BS);
+  for (int i = 0; i < BS; i++) b[i] = curblock[i];
+  DataWriter^ dataWriter = ref new DataWriter(fp);
+  dataWriter->WriteBytes(b);
+  co_await dataWriter->StoreAsync();
+  dataWriter->DetachStream();
+  delete dataWriter;
+
+  /*if (numWritten != BS) {
     trashMemory(curblock, BS);
     throw(EIO);
-  }
+  }*/
 
-  numWritten += _writecbc(fp, buffer, length, Algorithm, cbcbuffer);
+  numWritten += co_await _writecbc(fp, buffer, length, Algorithm, cbcbuffer);
 
   trashMemory(curblock, BS);
-  return numWritten;
+  co_return numWritten;
 }
 
-size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
+task<size_t> _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
                  Fish *Algorithm, unsigned char *cbcbuffer)
 {
   // Doesn't write out length, just CBC's the data, padding with randomness
@@ -237,16 +246,23 @@ size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t le
       xormem(curblock, cbcbuffer, BS);
       Algorithm->Encrypt(curblock, curblock);
       memcpy(cbcbuffer, curblock, BS);
-	  size_t nw = 0;// fwrite(curblock, 1, BS, fp);
-      if (nw != BS) {
+	  size_t nw = BS;// fwrite(curblock, 1, BS, fp);
+	  Array<unsigned char>^ b = ref new Array<unsigned char>(BS);
+	  for (int i = 0; i < BS; i++) b[i] = curblock[i];
+	  DataWriter^ dataWriter = ref new DataWriter(fp);
+	  dataWriter->WriteBytes(b);
+	  co_await dataWriter->StoreAsync();
+	  dataWriter->DetachStream();
+	  delete dataWriter;
+      /*if (nw != BS) {
         trashMemory(curblock, BS);
         throw(EIO);
-      }
+      }*/
       numWritten += nw;
     }
   }
   trashMemory(curblock, BS);
-  return numWritten;
+  co_return numWritten;
 }
 
 /*
@@ -301,8 +317,11 @@ task<size_t> _readcbc(IRandomAccessStream^ fp,
   }
 
   if (TERMINAL_BLOCK != NULL &&
-    memcmp(lengthblock, TERMINAL_BLOCK, BS) == 0)
-    return static_cast<size_t>(-1);
+	  memcmp(lengthblock, TERMINAL_BLOCK, BS) == 0)
+  {
+	  dataReader->DetachStream();
+	  return static_cast<size_t>(-1);
+  }
 
   unsigned char *lcpy = block2;
   memcpy(lcpy, lengthblock, BS);

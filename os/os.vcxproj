@@ -196,6 +196,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="file.h" />
+    <ClInclude Include="funcwrap.h" />
     <ClInclude Include="rand.h" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="utf8conv.h" />

@@ -18,8 +18,8 @@
 //#include "Report.h"
 #include "Proxy.h"
 #include "UIinterface.h"
-//#include "Command.h"
-//#include "CommandInterface.h"
+#include "Command.h"
+#include "CommandInterface.h"
 //#include "DBCompareData.h"
 #include "ExpiredList.h"
 
@@ -58,7 +58,7 @@ struct st_DBProperties {
 
 struct st_ValidateResults;
 
-class PWScore
+class PWScore : public CommandInterface
 {
 public:
   enum {
@@ -96,19 +96,57 @@ public:
   bool SetUIInterFace(UIInterFace *pUIIF, size_t num_supported,
                       std::bitset<UIInterFace::NUM_SUPPORTED> bsSupportedFunctions);
 
+  // Set following to a Reporter-derived object
+  // so that we can inform user of events of interest
+  static void SetReporter(Reporter *pReporter) {m_pReporter = pReporter;}
+  static void SetAsker(Asker *pAsker) {m_pAsker = pAsker;}
+  static bool IsAskerSet() {return m_pAsker != NULL;}
+  static bool IsReporterSet() {return m_pReporter != NULL;}
+
+  // Get/Set File UUIDs
+  void ClearFileUUID() { m_hdr.m_file_uuid = pws_os::CUUID::NullUUID(); }
+  void SetFileUUID(const pws_os::CUUID &fu) { m_hdr.m_file_uuid = fu; }
+  const pws_os::CUUID &GetFileUUID() const { return m_hdr.m_file_uuid; }
+
+  // Get/Set Unknown Fields info
+  bool HasHeaderUnknownFields() const
+  {return !m_UHFL.empty();}
+  int GetNumRecordsWithUnknownFields() const
+  {return m_nRecordsWithUnknownFields;}
+  void DecrementNumRecordsWithUnknownFields()
+  {m_nRecordsWithUnknownFields--;}
+  void IncrementNumRecordsWithUnknownFields()
+  {m_nRecordsWithUnknownFields++;}
+
   // Clear out database structures and associated fields
   void ClearData();
-  //void ReInit(bool bNewfile = false);
+  void ReInit(bool bNewfile = false);
 
   // Following used to read/write databases and Get/Set file name
   StringX GetCurFile() const {return m_currfile;}
   void SetCurFile(const StringX &file) {m_currfile = file;}
 
   task<int> ReadCurFile(const StringX &passkey, const bool bValidate = false,
-                        const size_t iMAXCHARS = 0)
+				  const size_t iMAXCHARS = 0)
   {return co_await ReadFile(m_currfile, passkey, bValidate, iMAXCHARS);}
   task<int> ReadFile(const StringX &filename, const StringX &passkey,
-		const bool bValidate = false, const size_t iMAXCHARS = 0);
+	                 const bool bValidate = false, const size_t iMAXCHARS = 0);
+  PWSfile::VERSION GetReadFileVersion() const {return m_ReadFileVersion;}
+  /*bool BackupCurFile(int maxNumIncBackups, int backupSuffix,
+					const stringT &userBackupPrefix,
+					const stringT &userBackupDir, stringT &bu_fname);*/
+
+  void NewFile(const StringX &passkey);
+  task<int> WriteCurFile() {return co_await WriteFile(m_currfile, m_ReadFileVersion);}
+  task<int> WriteFile(const StringX &filename, PWSfile::VERSION version,
+                bool bUpdateSig = true);
+  /*int WriteExportFile(const StringX &filename, OrderedItemList *pOIL,
+                      PWScore *pINcore, PWSfile::VERSION version,
+                      std::vector<StringX> &vEmptyGroups, CReport *pRpt = NULL);*/
+  task<int> WriteV17File(const StringX &filename)
+  {return co_await WriteFile(filename, PWSfile::V17, false);}
+  task<int> WriteV2File(const StringX &filename)
+  {return co_await WriteFile(filename, PWSfile::V20, false);}
 
   // R/O file status
   void SetReadOnly(bool state) {m_IsReadOnly = state;}
@@ -116,11 +154,31 @@ public:
 
   // Check/Change master passphrase
   task<int> CheckPasskey(const StringX &filename, const StringX &passkey);
-  //void ChangePasskey(const StringX &newPasskey);
+  void ChangePasskey(const StringX &newPasskey);
   void SetPassKey(const StringX &new_passkey);
 
   // Set application data
   void SetApplicationNameAndVersion(const stringT &appName, DWORD dwMajorMinor);
+
+  // Return list of unique groups
+  void GetUniqueGroups(std::vector<stringT> &vUniqueGroups) const;
+  // Construct unique title
+  StringX GetUniqueTitle(const StringX &group, const StringX &title,
+                         const StringX &user, const int IDS_MESSAGE);
+
+  // Populate setGTU & setUUID from m_pwlist. Returns false & empty set if
+  // m_pwlist had one or more entries with same GTU/UUID respectively.
+  bool InitialiseGTU(GTUSet &setGTU);
+  bool InitialiseGTU(GTUSet &setGTU, const StringX &sxPolicyName);
+  bool InitialiseUUID(UUIDSet &setUUID);
+  // Adds an st_GroupTitleUser to setGTU, possible modifying title
+  // to ensure uniqueness. Returns false if title was modified.
+  bool MakeEntryUnique(GTUSet &setGTU, const StringX &group, StringX &title,
+                       const StringX &user, const int IDS_MESSAGE);
+  void SetUniqueGTUValidated(bool bState)
+  {m_bUniqueGTUValidated = bState;}
+  bool GetUniqueGTUValidated() const
+  {return m_bUniqueGTUValidated;}
 
   // Access to individual entries in database
   ItemListIter GetEntryIter()
@@ -136,6 +194,19 @@ public:
   const CItemData &GetEntry(ItemListConstIter iter) const
   {return iter->second;}
   ItemList::size_type GetNumEntries() const {return m_pwlist.size();}
+ 
+  // Command functions
+  int Execute(Command *pcmd);
+  void Undo();
+  void Redo();
+  void ClearCommands();
+  void ResetStateAfterSave();
+  bool AnyToUndo() const;
+  bool AnyToRedo() const;
+
+  // Related to above
+  void ResetOriginalGroupDisplayAfterSave()
+  {m_OrigDisplayStatus = m_hdr.m_displaystatus;}
 
   // Find in m_pwlist by group, title and user name, exact match
   ItemListIter Find(const StringX &a_group,
@@ -144,6 +215,30 @@ public:
   {return m_pwlist.find(entry_uuid);}
   ItemListConstIter Find(const pws_os::CUUID &entry_uuid) const
   {return m_pwlist.find(entry_uuid);}
+
+  bool ConfirmDelete(const CItemData *pci); // ask user when about to delete a base,
+  //                                           otherwise just return true
+
+  // General routines for aliases and shortcuts
+  void GetAllDependentEntries(const pws_os::CUUID &base_uuid,
+                              UUIDVector &dependentslist, 
+                              const CItemData::EntryType type);
+  // Takes apart a 'special' password into its components:
+  bool ParseBaseEntryPWD(const StringX &passwd, BaseEntryParms &pl);
+
+  const CItemData *GetBaseEntry(const CItemData *pAliasOrSC) const;
+  CItemData *GetBaseEntry(const CItemData *pAliasOrSC);
+
+  // alias/base and shortcut/base handling
+  void SortDependents(UUIDVector &dlist, StringX &csDependents);
+  size_t NumAliases(const pws_os::CUUID &base_uuid) const
+  {return m_base2aliases_mmap.count(base_uuid);}
+  size_t NumShortcuts(const pws_os::CUUID &base_uuid) const
+  {return m_base2shortcuts_mmap.count(base_uuid);}
+
+  ItemListIter GetUniqueBase(const StringX &title, bool &bMultiple);
+  ItemListIter GetUniqueBase(const StringX &grouptitle, 
+                             const StringX &titleuser, bool &bMultiple);
 
   // Use following calls to 'SetChanged' & 'SetDBChanged' sparingly
   // outside of core
@@ -154,21 +249,49 @@ public:
   void SetDBChanged(bool bDBChanged, bool bNotify = true)
   {m_bDBChanged = bDBChanged;
     if (bNotify) NotifyDBModified();}
+  void SetDBPrefsChanged(bool bDBprefschanged)
+  {m_bDBPrefsChanged = bDBprefschanged;
+   NotifyDBModified();}
+
+  //bool ChangeMode(stringT &locker, int &iErrorCode);
+  PWSFileSig& GetCurrentFileSig() {return *m_pFileSig;}
+
+  bool IsChanged() const {return m_bDBChanged;}
+  bool HaveDBPrefsChanged() const {return m_bDBPrefsChanged;}
+  bool HaveHeaderPreferencesChanged(const StringX &prefString)
+  {return _tcscmp(prefString.c_str(), m_hdr.m_prefString.c_str()) != 0;}
 
   // Callback to be notified if the database changes
   void NotifyDBModified();
+  void SuspendOnDBNotification()
+  {m_bNotifyDB = false;}
+  void ResumeOnDBNotification()
+  {m_bNotifyDB = true;}
 
-  /*void GUISetupDisplayInfo(CItemData &ci);
+  void GUISetupDisplayInfo(CItemData &ci);
   void GUIRefreshEntry(const CItemData &ci);
-  void UpdateWizard(const stringT &s);*/
+  void UpdateWizard(const stringT &s);
 
   // Get/Set Display information from/to database
-  /*void SetDisplayStatus(const std::vector<bool> &s);
+  void SetDisplayStatus(const std::vector<bool> &s);
   const std::vector<bool> &GetDisplayStatus() const;
-  bool WasDisplayStatusChanged() const;*/
+  bool WasDisplayStatusChanged() const;
 
   const PWSfileHeader &GetHeader() const {return m_hdr;}
   void SetHeader(const PWSfileHeader &hdr) { m_hdr = hdr; }
+
+  void GetDBProperties(st_DBProperties &st_dbp);
+  void SetHeaderUserFields(st_DBProperties &st_dbp);
+
+  StringX &GetDBPreferences() {return m_hdr.m_prefString;}
+
+  // Filters
+  //PWSFilters m_MapFilters;
+
+  // Changed nodes
+  void ClearChangedNodes()
+  {m_vnodes_modified.clear();}
+  bool IsNodeModified(StringX &path) const;
 
   void GetRUEList(UUIDList &RUElist)
   {RUElist = m_RUEList;}
@@ -178,6 +301,13 @@ public:
   size_t GetExpirySize() {return m_ExpireCandidates.size();}
   ExpiredList GetExpired(int idays) {return m_ExpireCandidates.GetExpired(idays);}
 
+
+  // Empty Groups
+  void SetEmptyGroups(const std::vector<StringX> &vEmptyGroups)
+  {m_vEmptyGroups = vEmptyGroups; SetDBChanged(true);}
+  const std::vector<StringX> &GetEmptyGroups() const {return m_vEmptyGroups;}
+  bool IsEmptyGroup(const StringX &sxEmptyGroup) const;
+
   // Keyboard shortcuts
   /*bool AddKBShortcut(const int32 &iKBShortcut, const pws_os::CUUID &uuid);
   bool DelKBShortcut(const int32 &iKBShortcut, const pws_os::CUUID &uuid);
@@ -186,25 +316,62 @@ public:
   void SetAppHotKey(const int32 &iAppHotKey) {m_iAppHotKey = iAppHotKey;}
   int32 GetAppHotKey() const {return m_iAppHotKey;}
 
-  /*uint32 GetHashIters() const;
+  uint32 GetHashIters() const;
   void SetHashIters(uint32 value);
 
   const CItemAtt &GetAtt(const pws_os::CUUID &attuuid) const {return m_attlist.find(attuuid)->second;}
   CItemAtt &GetAtt(const pws_os::CUUID &attuuid) {return m_attlist[attuuid];}
   void PutAtt(const CItemAtt &att) {m_attlist[att.GetUUID()] = att;}
-  void RemoveAtt(const pws_os::CUUID &attuuid);*/
+  void RemoveAtt(const pws_os::CUUID &attuuid);
   bool HasAtt(const pws_os::CUUID &attuuid) const {return m_attlist.find(attuuid) != m_attlist.end();}
-  /*AttList::size_type GetNumAtts() const {return m_attlist.size();}
-  std::set<StringX> GetAllMediaTypes() const;*/
+  AttList::size_type GetNumAtts() const {return m_attlist.size();}
+  std::set<StringX> GetAllMediaTypes() const;
   
 protected:
 
 private:
-  virtual int DoAddDependentEntries(UUIDVector &dependentslist,
-		const CItemData::EntryType type,
-		const int &iVia,
-		ItemList *pmapDeletedItems = NULL,
-		SaveTypePWMap *pmapSaveTypePW = NULL);
+  // Database update routines
+
+  // NOTE: Member functions starting with 'Do' or 'Undo' are meant to
+  // be executed ONLY via Command subclasses. These are implementations of
+  // the CommandInterface mixin, where they're declared public.
+  virtual void DoAddEntry(const CItemData &item, const CItemAtt *att);
+  virtual void DoDeleteEntry(const CItemData &item);
+  virtual void DoReplaceEntry(const CItemData &old_ci, const CItemData &new_ci);
+
+  // General routines for aliases and shortcuts
+  virtual void DoAddDependentEntry(const pws_os::CUUID &base_uuid,
+                                   const pws_os::CUUID &entry_uuid,
+                                   const CItemData::EntryType type);
+  virtual void DoRemoveDependentEntry(const pws_os::CUUID &base_uuid,
+                                      const pws_os::CUUID &entry_uuid, 
+                                      const CItemData::EntryType type);
+  virtual void DoRemoveAllDependentEntries(const pws_os::CUUID &base_uuid, 
+                                           const CItemData::EntryType type);
+  virtual int DoAddDependentEntries(UUIDVector &dependentslist, 
+                                    const CItemData::EntryType type, 
+                                    const int &iVia,
+                                    ItemList *pmapDeletedItems = NULL,
+                                    SaveTypePWMap *pmapSaveTypePW = NULL);
+  virtual void UndoAddDependentEntries(ItemList *pmapDeletedItems,
+                                       SaveTypePWMap *pmapSaveTypePW);
+  virtual void DoMoveDependentEntries(const pws_os::CUUID &from_baseuuid, 
+                                      const pws_os::CUUID &to_baseuuid, 
+                                      const CItemData::EntryType type);
+
+  virtual int DoUpdatePasswordHistory(int iAction, int new_default_max,
+                                      SavePWHistoryMap &mapSavedHistory);
+  virtual void UndoUpdatePasswordHistory(SavePWHistoryMap &mapSavedHistory);
+
+  virtual int DoRenameGroup(const StringX &sxOldPath, const StringX &sxNewPath);
+  virtual void UndoRenameGroup(const StringX &sxOldPath, const StringX &sxNewPath);
+
+  virtual bool AddEmptyGroup(const StringX &sxEmptyGroup);
+  virtual bool RemoveEmptyGroup(const StringX &sxEmptyGroup);
+  virtual void RenameEmptyGroup(const StringX &sxOldGroup, const StringX &sxNewGroup);
+  virtual void RenameEmptyGroupPaths(const StringX &sxOldPath, const StringX &sxNewPath);
+
+  // End of Command Interface implementations
 
   void ProcessReadEntry(CItemData &ci_temp,
                         std::vector<st_GroupTitleUser> &vGTU_INVALID_UUID,
@@ -214,7 +381,7 @@ private:
   bool Validate(const size_t iMAXCHARS, st_ValidateResults &st_vr);
 
   void ParseDependants(); // populate data structures as needed - called in ReadFile()
-  //void ResetAllAliasPasswords(const pws_os::CUUID &base_uuid);
+  void ResetAllAliasPasswords(const pws_os::CUUID &base_uuid);
   
   StringX GetPassKey() const; // returns cleartext - USE WITH CARE
   // Following used by SetPassKey
@@ -266,13 +433,23 @@ private:
   ItemMMap m_base2shortcuts_mmap;
 
   // Following are private in PWScore, public in CommandInterface:
-  /*const ItemMMap &GetBase2AliasesMmap() const {return m_base2aliases_mmap;}
+  const ItemMMap &GetBase2AliasesMmap() const {return m_base2aliases_mmap;}
   void SetBase2AliasesMmap(ItemMMap &b2amm) {m_base2aliases_mmap = b2amm;}
   const ItemMMap &GetBase2ShortcutsMmap() const {return m_base2shortcuts_mmap;}
-  void SetBase2ShortcutsMmap(ItemMMap &b2smm) {m_base2shortcuts_mmap = b2smm;}*/
+  void SetBase2ShortcutsMmap(ItemMMap &b2smm) {m_base2shortcuts_mmap = b2smm;}
   
   // Changed groups
   std::vector<StringX> m_vnodes_modified;
+
+  // Following are private in PWScore, public in CommandInterface:
+  virtual const std::vector<StringX> &GetVnodesModified() const
+  {return m_vnodes_modified;}
+  virtual void SetVnodesModified(const std::vector<StringX> &mvm)
+  {m_vnodes_modified = mvm;}
+  void AddChangedNodes(StringX path);
+
+  // EmptyGroups
+  std::vector<StringX> m_vEmptyGroups;
 
   UnknownFieldList m_UHFL;
   int m_nRecordsWithUnknownFields;
@@ -284,6 +461,14 @@ private:
   UIInterFace *m_pUIIF; // pointer to UI interface abtraction
   std::bitset<UIInterFace::NUM_SUPPORTED> m_bsSupportedFunctions;
   
+  void NotifyGUINeedsUpdating(UpdateGUICommand::GUI_Action, const pws_os::CUUID &,
+                              CItemData::FieldType ft = CItemData::START,
+                              bool bUpdateGUI = true);
+
+  // Command list for Undo/Redo
+  std::vector<Command *> m_vpcommands;
+  std::vector<Command *>::iterator m_undo_iter;
+  std::vector<Command *>::iterator m_redo_iter;
 
   static Reporter *m_pReporter; // set as soon as possible to show errors
   static Asker *m_pAsker;
@@ -295,8 +480,8 @@ private:
   {m_ExpireCandidates.Add(ci);}
   void UpdateExpiryEntry(const CItemData &ci)
   {m_ExpireCandidates.Update(ci);}
-  /*void UpdateExpiryEntry(const pws_os::CUUID &uuid, const CItemData::FieldType ft,
-                           const StringX &value);*/
+  void UpdateExpiryEntry(const pws_os::CUUID &uuid, const CItemData::FieldType ft,
+                         const StringX &value);
   void RemoveExpiryEntry(const CItemData &ci)
   {m_ExpireCandidates.Remove(ci);}
 

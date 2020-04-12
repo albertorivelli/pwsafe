@@ -201,7 +201,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AES.h" />
     <ClInclude Include="BlowFish.h" />
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="CommandInterface.h" />
     <ClInclude Include="core.h" />
     <ClInclude Include="coredefs.h" />
     <ClInclude Include="ExpiredList.h" />
@@ -212,6 +215,7 @@
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="ItemField.h" />
     <ClInclude Include="KeyWrap.h" />
+    <ClInclude Include="Match.h" />
     <ClInclude Include="Proxy.h" />
     <ClInclude Include="PWHistory.h" />
     <ClInclude Include="PWScore.h" />
@@ -232,13 +236,16 @@
     <ClInclude Include="VerifyFormat.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AES.cpp" />
     <ClCompile Include="BlowFish.cpp" />
+    <ClCompile Include="Command.cpp" />
     <ClCompile Include="ExpiredList.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemAtt.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="ItemField.cpp" />
     <ClCompile Include="KeyWrap.cpp" />
+    <ClCompile Include="Match.cpp" />
     <ClCompile Include="PWHistory.cpp" />
     <ClCompile Include="PWScore.cpp" />
     <ClCompile Include="PWSfile.cpp" />

@@ -120,6 +120,15 @@
   <data name="btnClearClipboard.Label" xml:space="preserve">
     <value>Clear Clipboard</value>
   </data>
+  <data name="btnItemAdd.Label" xml:space="preserve">
+    <value>New Entry</value>
+  </data>
+  <data name="btnItemCancel.Label" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btnItemSave.Label" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="chkItemShowPassword.Content" xml:space="preserve">
     <value>Show</value>
   </data>

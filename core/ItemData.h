@@ -12,7 +12,7 @@
 #define __ITEMDATA_H
 
 #include "Util.h"
-//#include "Match.h"
+#include "Match.h"
 #include "Item.h"
 //#include "PWSprefs.h"
 //#include "PWPolicy.h"
@@ -75,21 +75,21 @@ public:
   ~CItemData();
 
   task<int> Read(PWSfile *in);
-  int Write(PWSfile *out) const;
-  int Write(PWSfileV4 *out) const;
-  int WriteCommon(PWSfile *out) const;
+  task<int> Write(PWSfile *out) const;
+  //int Write(PWSfileV4 *out) const;
+  task<int> WriteCommon(PWSfile *out) const;
 
-//  // Convenience: Get the name associated with FieldType
-//  static stringT FieldName(FieldType ft);
-//  // Convenience: Get the untranslated (English) name of a FieldType
-//  static stringT EngFieldName(FieldType ft);
-//
+  // Convenience: Get the name associated with FieldType
+  static stringT FieldName(FieldType ft);
+  // Convenience: Get the untranslated (English) name of a FieldType
+  static stringT EngFieldName(FieldType ft);
+
   //Data retrieval
   StringX GetName() const {return GetField(NAME);} // V17 - deprecated: replaced by GetTitle & GetUser
   StringX GetTitle() const {return GetField(TITLE);} // V20
   StringX GetUser() const  {return GetField(USER);}  // V20
   StringX GetPassword() const {return GetField(PASSWORD);}
-//  size_t GetPasswordLength() const {return GetField(PASSWORD).length();}
+  size_t GetPasswordLength() const {return GetField(PASSWORD).length();}
   StringX GetNotes(TCHAR delimiter = 0) const;
   void GetUUID(uuid_array_t &, FieldType ft = END) const; // V20
   const pws_os::CUUID GetUUID(FieldType ft = END) const; // V20 - see comment in .cpp re return type
@@ -133,18 +133,18 @@ public:
   StringX GetXTimeInt() const; // V30
   StringX GetPWHistory() const;  // V30
 //  void GetPWPolicy(PWPolicy &pwp) const;
-//  StringX GetPWPolicy() const {return GetField(POLICY);}
-//  StringX GetRunCommand() const {return GetField(RUNCMD);}
-//  int16 GetDCA(int16 &iDCA, const bool bShift = false) const;
-//  StringX GetDCA(const bool bShift = false) const;
-//  int16 GetShiftDCA(int16 &iDCA) const {return GetDCA(iDCA, true);}
-//  StringX GetShiftDCA() const {return GetDCA(true);}
+  StringX GetPWPolicy() const {return GetField(POLICY);}
+  StringX GetRunCommand() const {return GetField(RUNCMD);}
+  int16 GetDCA(int16 &iDCA, const bool bShift = false) const;
+  StringX GetDCA(const bool bShift = false) const;
+  int16 GetShiftDCA(int16 &iDCA) const {return GetDCA(iDCA, true);}
+  StringX GetShiftDCA() const {return GetDCA(true);}
   StringX GetEmail() const {return GetField(EMAIL);}
-//  StringX GetProtected() const;
-//  void GetProtected(unsigned char &ucprotected) const;
-//  bool IsProtected() const;
+  StringX GetProtected() const;
+  void GetProtected(unsigned char &ucprotected) const;
+  bool IsProtected() const;
   StringX GetSymbols() const    {return GetField(SYMBOLS);}
-//  StringX GetPolicyName() const {return GetField(POLICYNAME);}
+  StringX GetPolicyName() const {return GetField(POLICYNAME);}
 //  int32 GetKBShortcut(int32 &iKBShortcut) const;
 //  StringX GetKBShortcut() const;
 
@@ -164,11 +164,11 @@ public:
   void SetTitle(const StringX &title, TCHAR delimiter = 0);
   void SetUser(const StringX &user) {CItem::SetField(USER, user);} // V20
   void SetPassword(const StringX &password) {CItem::SetField(PASSWORD, password);}
-//  void UpdatePassword(const StringX &password); // use when password changed!
+  void UpdatePassword(const StringX &password); // use when password changed!
   void SetNotes(const StringX &notes, TCHAR delimiter = 0);
   void SetUUID(const pws_os::CUUID &uuid, FieldType ft = CItemData::UUID);
   void SetBaseUUID(const pws_os::CUUID &uuid) {SetUUID(uuid, CItemData::BASEUUID);}
-//  void SetAttUUID(const pws_os::CUUID &uuid) {SetUUID(uuid, CItemData::ATTREF);}
+  void SetAttUUID(const pws_os::CUUID &uuid) {SetUUID(uuid, CItemData::ATTREF);}
   void ClearAttUUID() {ClearField(CItemData::ATTREF);}
   void SetGroup(const StringX &group) {CItem::SetField(GROUP, group);} // V20
   void SetURL(const StringX &url) {CItem::SetField(URL, url);} // V30
@@ -193,21 +193,21 @@ public:
   void SetPWHistory(const StringX &PWHistory);  // V30
 //  void SetPWPolicy(const PWPolicy &pwp);
 //  bool SetPWPolicy(const stringT &cs_pwp);
-//  void SetRunCommand(const StringX &sx_RunCommand) {CItem::SetField(RUNCMD, sx_RunCommand);}
-//  void SetDCA(int16 iDCA, const bool bShift = false);
-//  bool SetDCA(const stringT &cs_DCA, const bool bShift = false);
-//  void SetShiftDCA(int16 iDCA) {SetDCA(iDCA, true);}
-//  bool SetShiftDCA(const stringT &cs_DCA) {return SetDCA(cs_DCA, true);}
-//  void SetEmail(const StringX &sx_email) {CItem::SetField(EMAIL, sx_email);}
-//  void SetProtected(bool bOnOff);
-//  void SetSymbols(const StringX &sx_symbols) {CItem::SetField(SYMBOLS, sx_symbols);}
-//  void SetPolicyName(const StringX &sx_PolicyName) {CItem::SetField(POLICYNAME,
-//                                                                    sx_PolicyName);}
+  void SetRunCommand(const StringX &sx_RunCommand) {CItem::SetField(RUNCMD, sx_RunCommand);}
+  void SetDCA(int16 iDCA, const bool bShift = false);
+  bool SetDCA(const stringT &cs_DCA, const bool bShift = false);
+  void SetShiftDCA(int16 iDCA) {SetDCA(iDCA, true);}
+  bool SetShiftDCA(const stringT &cs_DCA) {return SetDCA(cs_DCA, true);}
+  void SetEmail(const StringX &sx_email) {CItem::SetField(EMAIL, sx_email);}
+  void SetProtected(bool bOnOff);
+  void SetSymbols(const StringX &sx_symbols) {CItem::SetField(SYMBOLS, sx_symbols);}
+  void SetPolicyName(const StringX &sx_PolicyName) {CItem::SetField(POLICYNAME,
+                                                                    sx_PolicyName);}
 //  void SetKBShortcut(const StringX &sx_KBShortcut);
 //  void SetKBShortcut(int32 iKBShortcut);
-//
-//  void SetFieldValue(FieldType ft, const StringX &value);
-//
+
+  void SetFieldValue(FieldType ft, const StringX &value);
+
   CItemData& operator=(const CItemData& second);
 
   void Clear();
@@ -217,21 +217,21 @@ public:
 
   // Check record for correct password history
   bool ValidatePWHistory(); // return true if OK, false if there's a problem
-//
-//  bool IsExpired() const;
-//  bool WillExpire(const int numdays) const;
-//
-//  // Predicate to determine if item matches given criteria
-//  bool Matches(const stringT &stValue, int iObject, 
-//               int iFunction) const;  // string values
-//  bool Matches(int num1, int num2, int iObject,
-//               int iFunction) const;  // integer values
-//  bool Matches(time_t time1, time_t time2, int iObject,
-//               int iFunction) const;  // time values
-//  bool Matches(int16 dca, int iFunction, const bool bShift = false) const;  // DCA values
-//  bool Matches(EntryType etype, int iFunction) const;  // Entrytype values
-//  bool Matches(EntryStatus estatus, int iFunction) const;  // Entrystatus values
-//
+
+  bool IsExpired() const;
+  bool WillExpire(const int numdays) const;
+
+  // Predicate to determine if item matches given criteria
+  bool Matches(const stringT &stValue, int iObject, 
+               int iFunction) const;  // string values
+  bool Matches(int num1, int num2, int iObject,
+               int iFunction) const;  // integer values
+  bool Matches(time_t time1, time_t time2, int iObject,
+               int iFunction) const;  // time values
+  bool Matches(int16 dca, int iFunction, const bool bShift = false) const;  // DCA values
+  bool Matches(EntryType etype, int iFunction) const;  // Entrytype values
+  bool Matches(EntryStatus estatus, int iFunction) const;  // Entrystatus values
+
   bool HasUUID() const; // UUID type matches entry type and is set
   bool IsGroupSet() const                  { return IsFieldSet(GROUP);     }
   bool IsUserSet() const                   { return IsFieldSet(USER);      }
@@ -256,20 +256,20 @@ public:
   bool IsSymbolsSet() const                { return IsFieldSet(SYMBOLS);   }
   bool IsPolicyNameSet() const             { return IsFieldSet(POLICYNAME);}
   bool IsKBShortcutSet() const             { return IsFieldSet(KBSHORTCUT);}
-//    
-//  bool IsGroupEmpty() const                { return !IsGroupSet();         }
-//  bool IsUserEmpty() const                 { return !IsUserSet();          }
-//  bool IsNotesEmpty() const                { return !IsNotesSet();         }
-//  bool IsURLEmpty() const                  { return !IsURLSet();           }
-//  bool IsRunCommandEmpty() const           { return !IsRunCommandSet();    }
-//  bool IsEmailEmpty() const                { return !IsEmailSet();         }
-//  bool IsPolicyEmpty() const               { return !IsPasswordPolicySet();}
-//
+    
+  bool IsGroupEmpty() const                { return !IsGroupSet();         }
+  bool IsUserEmpty() const                 { return !IsUserSet();          }
+  bool IsNotesEmpty() const                { return !IsNotesSet();         }
+  bool IsURLEmpty() const                  { return !IsURLSet();           }
+  bool IsRunCommandEmpty() const           { return !IsRunCommandSet();    }
+  bool IsEmailEmpty() const                { return !IsEmailSet();         }
+  bool IsPolicyEmpty() const               { return !IsPasswordPolicySet();}
+
   bool HasAttRef() const                   { return IsFieldSet(ATTREF);    }
-//
-//  void SerializePlainText(std::vector<char> &v,
-//                          const CItemData *pcibase = NULL) const;
-//  bool DeSerializePlainText(const std::vector<char> &v);
+
+  void SerializePlainText(std::vector<char> &v,
+                          const CItemData *pcibase = NULL) const;
+  bool DeSerializePlainText(const std::vector<char> &v);
 
   EntryType GetEntryType() const {return m_entrytype;}
 
@@ -287,18 +287,18 @@ public:
   void SetShortcutBase() {SetEntryType(ET_SHORTCUTBASE);}
   void SetAlias() {SetEntryType(ET_ALIAS);}
   void SetShortcut() {SetEntryType(ET_SHORTCUT);}
-//
+
   EntryStatus GetStatus() const {return m_entrystatus;}
   void ClearStatus() {m_entrystatus = ES_CLEAN;}
   void SetStatus(const EntryStatus es) {m_entrystatus = es;}
 
-//  bool IsURLEmail() const
-//  {return GetURL().find(_T("mailto:")) != StringX::npos;}
-//
+  bool IsURLEmail() const
+  {return GetURL().find(_T("mailto:")) != StringX::npos;}
+
 private:
   EntryType m_entrytype;
   EntryStatus m_entrystatus;
-//
+
   // move from pre-2.0 name to post-2.0 title+user
   void SplitName(const StringX &name,
                  StringX &title, StringX &username);
@@ -313,10 +313,10 @@ private:
   void ParseSpecialPasswords();
   void SetSpecialPasswords();
 
-//  void UpdatePasswordHistory(); // used by UpdatePassword()
-//
-  int WriteUnknowns(PWSfile *out) const;
-  size_t WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
+  void UpdatePasswordHistory(); // used by UpdatePassword()
+
+  task<int> WriteUnknowns(PWSfile *out) const;
+  task<size_t> WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
 };
 
 inline bool CItemData::IsTextField(unsigned char t)

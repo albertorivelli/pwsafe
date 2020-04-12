@@ -161,11 +161,11 @@ bool CItemAtt::GetContent(unsigned char *content, size_t csize) const
   return true;
 }
 
-//int CItemAtt::Import(const stringT &fname)
-//{
-//  stringT spath, sdrive, sdir, sfname, sextn;
-//  time_t atime(0), ctime(0), mtime(0);
-//  int status = PWScore::SUCCESS;
+int CItemAtt::Import(const stringT &fname)
+{
+  stringT spath, sdrive, sdir, sfname, sextn;
+  time_t atime(0), ctime(0), mtime(0);
+  int status = PWScore::SUCCESS;
 //
 //  ASSERT(!fname.empty());
 //  if (!pws_os::FileExists(fname))
@@ -218,13 +218,13 @@ bool CItemAtt::GetContent(unsigned char *content, size_t csize) const
 // done:
 //  trashMemory(data, flen);
 //  delete[] data;
-//  return status;
-//}
-//
-//int CItemAtt::Export(const stringT &fname) const
-//{
-//  int status = PWScore::SUCCESS;
-//
+  return status;
+}
+
+int CItemAtt::Export(const stringT &fname) const
+{
+  int status = PWScore::SUCCESS;
+
 //  ASSERT(!fname.empty());
 //  ASSERT(IsFieldSet(CONTENT));
 //  // fail safely @runtime:
@@ -258,8 +258,8 @@ bool CItemAtt::GetContent(unsigned char *content, size_t csize) const
 // done:
 //  trashMemory(value, flen);
 //  delete[] value;
-//  return status;
-//}
+  return status;
+}
 
 
 bool CItemAtt::SetField(unsigned char type, const unsigned char *data,
@@ -317,32 +317,32 @@ int CItemAtt::Read(PWSfile *in)
 
  // int emergencyExit = 255; // to avoid endless loop.
  // signed long fieldLen; // <= 0 means end of file reached
-
+ //
  // bool gotIV(false), gotEK(false), gotAK(false); // pre-reqs for content
  // bool gotContent(false), gotHMAC(false); // post-requisites
  // unsigned char IV[TwoFish::BLOCKSIZE] = {0};
  // unsigned char EK[PWSfileV4::KLEN] = {0};
  // unsigned char AK[PWSfileV4::KLEN] = {0};
-
+ //
  // unsigned char *content = NULL;
  // size_t content_len = 0;
  // unsigned char expected_digest[SHA256::HASHLEN] = {0};
-
+ //
  // unsigned char *utf8 = NULL;
  // size_t utf8Len = 0;
-
+ //
  // Clear();
-
+ //
  // do {
  //   fieldLen = static_cast<signed long>(in->ReadField(type, utf8,
  //                                                     utf8Len));
-
+ //
  //   if (fieldLen > 0) {
  //     numread += fieldLen;
  //     switch (type) {
  //     case ATTIV: {
- //       //ASSERT(utf8Len == sizeof(IV));
- //       //ASSERT(!gotIV);
+ //       ASSERT(utf8Len == sizeof(IV));
+ //       ASSERT(!gotIV);
  //       if (utf8Len != sizeof(IV) || gotIV)
  //         goto exit;
  //       gotIV = true;
@@ -351,8 +351,8 @@ int CItemAtt::Read(PWSfile *in)
  //       break;
  //     }
  //     case ATTEK: {
- //       //ASSERT(utf8Len == sizeof(EK));
- //       //ASSERT(!gotEK);
+ //       ASSERT(utf8Len == sizeof(EK));
+ //       ASSERT(!gotEK);
  //       if (utf8Len != sizeof(EK) || gotEK)
  //         goto exit;
  //       gotEK = true;
@@ -361,8 +361,8 @@ int CItemAtt::Read(PWSfile *in)
  //       break;
  //     }
  //     case ATTAK: {
- //       //ASSERT(utf8Len == sizeof(AK));
- //       //ASSERT(!gotAK);
+ //       ASSERT(utf8Len == sizeof(AK));
+ //       ASSERT(!gotAK);
  //       if (utf8Len != sizeof(AK) || gotAK)
  //         goto exit;
  //       gotAK = true;
@@ -374,10 +374,10 @@ int CItemAtt::Read(PWSfile *in)
  //       // Yes, we're supposed to be able to handle this
  //       // even if IV and EK haven't been read yet.
  //       // One step at a time, though...
- //       //ASSERT(gotIV && gotEK);
- //       //ASSERT(!gotContent);
-
- //       //ASSERT(utf8Len == sizeof(uint32));
+ //       ASSERT(gotIV && gotEK);
+ //       ASSERT(!gotContent);
+ //
+ //       ASSERT(utf8Len == sizeof(uint32));
  //       if (!gotIV || !gotEK || gotContent || utf8Len != sizeof(uint32))
  //         goto exit;
  //       content_len = getInt32(utf8);
@@ -387,10 +387,10 @@ int CItemAtt::Read(PWSfile *in)
  //       const unsigned int BS = fish.GetBlockSize();
 
  //       PWSfileV4 *in4 = dynamic_cast<PWSfileV4 *>(in);
- //       //ASSERT(in4 != NULL);
+ //       ASSERT(in4 != NULL);
  //       size_t nread = in4->ReadContent(&fish, IV, content, content_len);
  //       // nread should be content_len rounded up to nearest BS:
- //       //ASSERT(nread == (content_len/BS + 1)*BS);
+ //       ASSERT(nread == (content_len/BS + 1)*BS);
  //       if (nread != (content_len/BS + 1)*BS) {
  //         status = PWSfile::READ_FAIL;
  //         goto exit;
@@ -399,8 +399,8 @@ int CItemAtt::Read(PWSfile *in)
  //       break;
  //     }
  //     case CONTENTHMAC: {
- //       //ASSERT(!gotHMAC);
- //       //ASSERT(utf8Len == SHA256::HASHLEN);
+ //       ASSERT(!gotHMAC);
+ //       ASSERT(utf8Len == SHA256::HASHLEN);
  //       if (gotHMAC || utf8Len != SHA256::HASHLEN)
  //         goto exit;
  //       gotHMAC = true;
@@ -458,7 +458,7 @@ int CItemAtt::Read(PWSfile *in)
     return PWSfile::READ_FAIL;
 }
 
-size_t CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
+task<size_t> CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
 {
   FieldConstIter fiter = m_fields.find(ft);
   size_t retval = 0;
@@ -483,125 +483,125 @@ size_t CItemAtt::WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const
       if (dstlen && !dst[dstlen-1])
         dstlen--;
 
-      retval = out->WriteField(static_cast<unsigned char>(ft), reinterpret_cast<unsigned char *>(dst), dstlen);
+      retval = co_await out->WriteField(static_cast<unsigned char>(ft), reinterpret_cast<unsigned char *>(dst), dstlen);
       trashMemory(dst, dstlen);
       delete[] dst;
     } else {
-      retval = out->WriteField(static_cast<unsigned char>(ft), pdata, field.GetLength());
+      retval = co_await out->WriteField(static_cast<unsigned char>(ft), pdata, field.GetLength());
     }
     trashMemory(pdata, flength);
     delete[] pdata;
   }
-  return retval;
+  co_return retval;
 }
 
-int CItemAtt::Write(PWSfile *out) const
+task<int> CItemAtt::Write(PWSfile *out) const
 {
   int status = PWSfile::SUCCESS;
   uuid_array_t att_uuid;
 
-  //ASSERT(HasUUID());
-  //GetUUID(att_uuid);
+  ASSERT(HasUUID());
+  GetUUID(att_uuid);
 
-  //out->WriteField(static_cast<unsigned char>(ATTUUID), att_uuid,
-  //                sizeof(uuid_array_t));
+  co_await out->WriteField(static_cast<unsigned char>(ATTUUID), att_uuid,
+                  sizeof(uuid_array_t));
 
-  //WriteIfSet(ATTTITLE, out, true);
-  //WriteIfSet(ATTCTIME, out, false);
-  //WriteIfSet(MEDIATYPE, out, true);
-  //WriteIfSet(FILENAME, out, true);
-  //WriteIfSet(FILEPATH, out, true);
-  //WriteIfSet(FILECTIME, out, false);
-  //WriteIfSet(FILEMTIME, out, false);
-  //WriteIfSet(FILEATIME, out, false);
+  co_await WriteIfSet(ATTTITLE, out, true);
+  co_await WriteIfSet(ATTCTIME, out, false);
+  co_await WriteIfSet(MEDIATYPE, out, true);
+  co_await WriteIfSet(FILENAME, out, true);
+  co_await WriteIfSet(FILEPATH, out, true);
+  co_await WriteIfSet(FILECTIME, out, false);
+  co_await WriteIfSet(FILEMTIME, out, false);
+  co_await WriteIfSet(FILEATIME, out, false);
 
-  //FieldConstIter fiter = m_fields.find(CONTENT);
-  //// XXX TBD - fail if no content, as this is a mandatory field
-  //if (fiter != m_fields.end()) {
-  //  PWSfileV4 *out4 = dynamic_cast<PWSfileV4 *>(out);
-  //  //ASSERT(out4 != NULL);
+  FieldConstIter fiter = m_fields.find(CONTENT);
+  // XXX TBD - fail if no content, as this is a mandatory field
+  if (fiter != m_fields.end()) {
+    /*PWSfileV4 *out4 = dynamic_cast<PWSfileV4 *>(out);
+    ASSERT(out4 != NULL);
 
-  //  size_t clength = fiter->second.GetLength() + BlowFish::BLOCKSIZE;
-  //  unsigned char *content = new unsigned char[clength];
-  //  CItem::GetField(fiter->second, content, clength);
-  //  out4->WriteContentFields(content, clength);
-  //  trashMemory(content, clength);
-  //  delete[] content;
-  //}
+    size_t clength = fiter->second.GetLength() + BlowFish::BLOCKSIZE;
+    unsigned char *content = new unsigned char[clength];
+    CItem::GetField(fiter->second, content, clength);
+    out4->WriteContentFields(content, clength);
+    trashMemory(content, clength);
+    delete[] content;*/
+  }
 
-  if (out->WriteField(END, _T("")) > 0) {
+  if (co_await out->WriteField(END, _T("")) > 0) {
     status = PWSfile::SUCCESS;
   } else {
     status = PWSfile::FAILURE;
   }
-  return status;
+  co_return status;
 }
 
-//bool CItemAtt::Matches(const stringT &stValue, int iObject,
-//  int iFunction) const
-//{
-//  ASSERT(iFunction != 0); // must be positive or negative!
-//
-//  StringX sx_Object;
-//  FieldType ft = static_cast<FieldType>(iObject);
-//  switch (ft) {
-//    case AT_TITLE:
-//    case AT_FILENAME:
-//    case AT_FILEPATH:
-//    case AT_MEDIATYPE:
-//      sx_Object = GetField(ft);
-//      break;
-//    default:
-//      ASSERT(0);
-//  }
-//
-//  const bool bValue = !sx_Object.empty();
-//  if (iFunction == PWSMatch::MR_PRESENT || iFunction == PWSMatch::MR_NOTPRESENT) {
-//    return PWSMatch::Match(bValue, iFunction);
-//  }
-//
-//  return PWSMatch::Match(stValue.c_str(), sx_Object, iFunction);
-//}
-//
-//bool CItemAtt::Matches(time_t time1, time_t time2, int iObject,
-//  int iFunction) const
-//{
-//  //   Check time values are selected
-//  time_t tValue;
-//
-//  switch (iObject) {
-//    case AT_CTIME:
-//    case AT_FILECTIME:
-//    case AT_FILEMTIME:
-//    case AT_FILEATIME:
-//      CItem::GetTime(iObject, tValue);
-//      break;
-//    default:
-//      ASSERT(0);
-//      return false;
-//  }
-//
-//  const bool bValue = (tValue != time_t(0));
-//  if (iFunction == PWSMatch::MR_PRESENT || iFunction == PWSMatch::MR_NOTPRESENT) {
-//    return PWSMatch::Match(bValue, iFunction);
-//  }
-//
-//  if (!bValue)  // date empty - always return false for other comparisons
-//    return false;
-//  else {
-//    time_t testtime = time_t(0);
-//    if (tValue) {
-//      struct tm st;
-//      errno_t err;
-//      err = localtime_s(&st, &tValue);
-//      ASSERT(err == 0);
-//      if (!err) {
-//        st.tm_hour = 0;
-//        st.tm_min = 0;
-//        st.tm_sec = 0;
-//        testtime = mktime(&st);
-//      }
-//    }
-//    return PWSMatch::Match(time1, time2, testtime, iFunction);
-//  }
-//}
+bool CItemAtt::Matches(const stringT &stValue, int iObject,
+  int iFunction) const
+{
+  ASSERT(iFunction != 0); // must be positive or negative!
+
+  StringX sx_Object;
+  FieldType ft = static_cast<FieldType>(iObject);
+  switch (ft) {
+    case CItemAtt::ATTTITLE:
+    case CItemAtt::FILENAME:
+    case CItemAtt::FILEPATH:
+    case CItemAtt::MEDIATYPE:
+      sx_Object = GetField(ft);
+      break;
+    default:
+      ASSERT(0);
+  }
+
+  const bool bValue = !sx_Object.empty();
+  if (iFunction == PWSMatch::MR_PRESENT || iFunction == PWSMatch::MR_NOTPRESENT) {
+    return PWSMatch::Match(bValue, iFunction);
+  }
+
+  return PWSMatch::Match(stValue.c_str(), sx_Object, iFunction);
+}
+
+bool CItemAtt::Matches(time_t time1, time_t time2, int iObject,
+  int iFunction) const
+{
+  //   Check time values are selected
+  time_t tValue;
+
+  switch (iObject) {
+    case CItemAtt::ATTCTIME:
+    case CItemAtt::FILECTIME:
+    case CItemAtt::FILEMTIME:
+    case CItemAtt::FILEATIME:
+      CItem::GetTime(iObject, tValue);
+      break;
+    default:
+      ASSERT(0);
+      return false;
+  }
+
+  const bool bValue = (tValue != time_t(0));
+  if (iFunction == PWSMatch::MR_PRESENT || iFunction == PWSMatch::MR_NOTPRESENT) {
+    return PWSMatch::Match(bValue, iFunction);
+  }
+
+  if (!bValue)  // date empty - always return false for other comparisons
+    return false;
+  else {
+    time_t testtime = time_t(0);
+    if (tValue) {
+      struct tm st;
+      errno_t err;
+      err = localtime_s(&st, &tValue);
+      ASSERT(err == 0);
+      if (!err) {
+        st.tm_hour = 0;
+        st.tm_min = 0;
+        st.tm_sec = 0;
+        testtime = mktime(&st);
+      }
+    }
+    return PWSMatch::Match(time1, time2, testtime, iFunction);
+  }
+}

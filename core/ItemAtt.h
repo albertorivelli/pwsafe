@@ -12,7 +12,7 @@
 #define __ITEMATT_H
 
 #include "Util.h"
-//#include "Match.h"
+#include "Match.h"
 #include "Item.h"
 #include "os/UUID.h"
 #include "StringX.h"
@@ -39,7 +39,7 @@ class CItemAtt : public CItem
 {
 public:
   // a bitset for indicating a subset of an item's fields: 
-  //typedef std::bitset<LAST_SEARCHABLE - START + 1> AttFieldBits;
+  typedef std::bitset<LAST_SEARCHABLE - START + 1> AttFieldBits;
 
   //Construction
   CItemAtt();
@@ -48,17 +48,17 @@ public:
   ~CItemAtt();
 
   int Read(PWSfile *in);
-  int Write(PWSfile *out) const;
+  task<int> Write(PWSfile *out) const;
 
-  /*int Import(const stringT &fname);
-  int Export(const stringT &fname) const;*/
+  int Import(const stringT &fname);
+  int Export(const stringT &fname) const;
 
   bool HasContent() const {return IsFieldSet(CONTENT);}
 
-  //// Convenience: Get the name associated with FieldType
-  //static stringT FieldName(FieldType ft);
-  //// Convenience: Get the untranslated (English) name of a FieldType
-  //static stringT EngFieldName(FieldType ft);
+  // Convenience: Get the name associated with FieldType
+  static stringT FieldName(FieldType ft);
+  // Convenience: Get the untranslated (English) name of a FieldType
+  static stringT EngFieldName(FieldType ft);
 
   // Setters and Getters
   void CreateUUID(); // for new
@@ -80,8 +80,8 @@ public:
   time_t GetCTime(time_t &t) const;
 
   StringX GetTime(int whichtime, PWSUtil::TMC result_format) const;
-  //void SetTime(const int whichtime); // V30
-  //bool SetTime(const int whichtime, const stringT &time_str); // V30
+  void SetTime(const int whichtime); // V30
+  bool SetTime(const int whichtime, const stringT &time_str); // V30
 
   StringX GetFileCTime() const { return GetTime(FILECTIME, PWSUtil::TMC_LOCALE); }
   StringX GetFileMTime() const { return GetTime(FILEMTIME, PWSUtil::TMC_LOCALE); }
@@ -92,7 +92,7 @@ public:
   time_t GetFileMTime(time_t &t) const { CItem::GetTime(FILEMTIME, t); return t; }
   time_t GetFileATime(time_t &t) const { CItem::GetTime(FILEATIME, t); return t; }
 
-  /*void SetFileCTime() { SetTime(FILECTIME); }
+  void SetFileCTime() { SetTime(FILECTIME); }
   void SetFileCTime(time_t t) { CItem::SetTime(FILECTIME, t); }
   bool SetFileCTime(const stringT &time_str) { return SetTime(FILECTIME, time_str); }
   void SetFileMTime() { SetTime(FILEMTIME); }
@@ -100,7 +100,7 @@ public:
   bool SetFileMTime(const stringT &time_str) { return SetTime(FILEMTIME, time_str); }
   void SetFileATime() { SetTime(FILEATIME); }
   void SetFileATime(time_t t) { CItem::SetTime(FILEATIME, t); }
-  bool SetFileATime(const stringT &time_str) { return SetTime(FILEATIME, time_str); }*/
+  bool SetFileATime(const stringT &time_str) { return SetTime(FILEATIME, time_str); }
 
   EntryStatus GetStatus() const {return m_entrystatus;}
   void ClearStatus() {m_entrystatus = ES_CLEAN;}
@@ -118,10 +118,10 @@ public:
   bool operator!=(const CItemAtt &that) const {return !operator==(that);}
 
   // Predicate to determine if item matches given criteria
-  //bool Matches(const stringT &stValue, int iObject,
-  //  int iFunction) const;  // string values
-  //bool Matches(time_t time1, time_t time2, int iObject,
-  //  int iFunction) const;  // time values
+  bool Matches(const stringT &stValue, int iObject,
+    int iFunction) const;  // string values
+  bool Matches(time_t time1, time_t time2, int iObject,
+    int iFunction) const;  // time values
 
 
   bool HasUUID() const                     { return IsFieldSet(ATTUUID);   }
@@ -130,7 +130,7 @@ public:
 
 private:
   bool SetField(unsigned char type, const unsigned char *data, size_t len);
-  size_t WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
+  task<size_t> WriteIfSet(FieldType ft, PWSfile *out, bool isUTF8) const;
 
   EntryStatus m_entrystatus;
   long m_offset; // location on file, for lazy evaluation

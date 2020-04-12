@@ -44,5 +44,8 @@
     <ClInclude Include="UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="funcwrap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

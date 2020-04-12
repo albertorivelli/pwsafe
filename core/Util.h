@@ -70,12 +70,12 @@ extern task<size_t> _readcbc(IRandomAccessStream^ fp, unsigned char *buffer,
                        unsigned char *cbcbuffer);
 
 // _writecbc will throw(EIO) iff a write fail occurs!
-extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
+extern task<size_t> _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
                         unsigned char type, Fish *Algorithm,
                         unsigned char *cbcbuffer);
 
 // typeless version for V4 content:
-extern size_t _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
+extern task<size_t> _writecbc(IRandomAccessStream^ fp, const unsigned char *buffer, size_t length,
                         Fish *Algorithm, unsigned char *cbcbuffer);
 
 

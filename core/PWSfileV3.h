@@ -26,15 +26,15 @@ public:
                           const StringX &passkey,
                           IRandomAccessStream^ a_fd = nullptr,
                           unsigned char *aPtag = NULL, uint32 *nIter = NULL);
-  //static bool IsV3x(const StringX &filename, VERSION &v);
+  static task<bool> IsV3x(const StringX &filename, VERSION &v);
 
   PWSfileV3(const StringX &filename, RWmode mode, VERSION version);
   ~PWSfileV3();
 
   virtual task<int> Open(const StringX &passkey);
-  virtual int Close();
+  virtual task<int> Close();
 
-  virtual int WriteRecord(const CItemData &item);
+  virtual task<int> WriteRecord(const CItemData &item);
   virtual task<int> ReadRecord(CItemData &item);
 
   virtual uint32 GetNHashIters() const {return m_nHashIters;}
@@ -47,13 +47,13 @@ public:
   unsigned char m_key[32];
   HMAC<SHA256, SHA256::HASHLEN, SHA256::BLOCKSIZE> m_hmac;
   CUTF8Conv m_utf8conv;
-  virtual size_t WriteCBC(unsigned char type, const StringX &data);
-  virtual size_t WriteCBC(unsigned char type, const unsigned char *data,
+  virtual task<size_t> WriteCBC(unsigned char type, const StringX &data);
+  virtual task<size_t> WriteCBC(unsigned char type, const unsigned char *data,
                           size_t length);
 
   virtual task<size_t> ReadCBC(unsigned char &type, unsigned char* &data,
                          size_t &length);
-  //int WriteHeader();
+  task<int> WriteHeader();
   task<int> ReadHeader();
 
   static int SanityCheck(FILE *stream); // Check for TAG and EOF marker

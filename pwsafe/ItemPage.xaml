@@ -8,7 +8,22 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" IsTabStop="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Uid="lblItemPageTitle" Style="{ThemeResource HeaderTextBlockStyle}" VerticalAlignment="Center" TextWrapping="NoWrap" />
+            <CommandBar Grid.Column="1" Background="Transparent">
+                <AppBarButton x:Uid="btnItemSave" Icon="Save" Click="btnItemSave_Click" />
+                <AppBarButton x:Uid="btnItemCancel" Icon="Cancel" Click="btnItemCancel_Click" />
+            </CommandBar>
+        </Grid>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsTabStop="True">
             <Grid Margin="24">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -25,29 +40,29 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1">
                     <TextBlock x:Uid="txbItemHeaderTitle" FontSize="20" />
-                    <TextBox Text="{Binding Title}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
+                    <TextBox Text="{Binding Title, Mode=TwoWay}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
                 </StackPanel>
                 <StackPanel Grid.Row="2">
                     <TextBlock x:Uid="txbItemHeaderUser" FontSize="20" />
-                    <TextBox Text="{Binding User}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
+                    <TextBox Text="{Binding User, Mode=TwoWay}" Height="38" FontSize="20" Margin="0,7,0,24" ScrollViewer.VerticalScrollMode="Disabled" />
                 </StackPanel>
                 <StackPanel Grid.Row="3">
                     <TextBlock x:Uid="txbItemHeaderPassword" FontSize="20" />
-                    <PasswordBox x:Name="txtItemPassword" Password="{Binding Password}" Height="38" FontSize="20" Margin="0,7" PasswordRevealMode="Hidden" ScrollViewer.VerticalScrollMode="Disabled" />
+                    <PasswordBox x:Name="txtItemPassword" Password="{Binding Password, Mode=TwoWay}" Height="38" FontSize="20" Margin="0,7" PasswordRevealMode="Hidden" ScrollViewer.VerticalScrollMode="Disabled" />
                     <PasswordBox x:Name="txtItemPasswordConfirm" Password="{Binding Password}" Height="38" FontSize="20" Margin="0,7" ScrollViewer.VerticalScrollMode="Disabled" />
                     <CheckBox x:Uid="chkItemShowPassword" Margin="0,7,0,24" Checked="chkItemShowPassword_Checked" Unchecked="chkItemShowPassword_Unchecked" />
                 </StackPanel>
                 <StackPanel Grid.Row="4">
                     <TextBlock x:Uid="txbItemHeaderUrl" FontSize="20" />
-                    <HyperlinkButton x:Name="hlkItemUrl" Content="{Binding Url}" FontSize="20" Margin="0,0,0,24" Click="hlkItemUrl_Click" />
+                    <HyperlinkButton x:Name="hlkItemUrl" Content="{Binding Url, Mode=TwoWay}" FontSize="20" Margin="0,0,0,24" Click="hlkItemUrl_Click" />
                 </StackPanel>
                 <StackPanel Grid.Row="5">
                     <TextBlock x:Uid="txbItemHeaderEmail" FontSize="20" />
-                    <HyperlinkButton x:Name="hlkItemEmail" Content="{Binding Email}" FontSize="20" Margin="0,0,0,24" Click="hlkItemEmail_Click" />
+                    <HyperlinkButton x:Name="hlkItemEmail" Content="{Binding Email, Mode=TwoWay}" FontSize="20" Margin="0,0,0,24" Click="hlkItemEmail_Click" />
                 </StackPanel>
                 <StackPanel Grid.Row="6">
                     <TextBlock x:Uid="txbItemHeaderNotes" FontSize="20" />
-                    <TextBox Text="{Binding Notes}" Height="300" FontSize="20" Margin="0,7,0,24" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    <TextBox Text="{Binding Notes, Mode=TwoWay}" Height="300" FontSize="20" Margin="0,7,0,24" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" />
                 </StackPanel>
             </Grid>
         </ScrollViewer>

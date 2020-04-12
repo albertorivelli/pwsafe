@@ -46,30 +46,30 @@ task<PWSfile *> PWSfile::MakePWSfile(const StringX &a_filename, const StringX &p
     //  status = SUCCESS;
     //  retval = new PWSfileV4(a_filename, mode, version);
     //  break;
-    //case UNKNOWN_VERSION:
-    //  //ASSERT(mode == Read);
-    //  version = PWSfile::ReadVersion(a_filename, passkey);
-    //  switch (version) {
-    //  case V40:
-    //    status = SUCCESS;
-    //    retval = new PWSfileV4(a_filename, mode, version);
-    //    break;
-    //  case V30:
-    //    status = SUCCESS;
-    //    retval = new PWSfileV3(a_filename, mode, version);
-    //    break;
-    //  case V17:  // never actually returned
-    //  case V20:  // may be inaccurate (V17)
-    //    status = SUCCESS;
-    //    retval = new PWSfileV1V2(a_filename, mode, version);
-    //    break;
-    //  case NEWFILE:
-    //    //ASSERT(0);
-    //    // deliberate fallthrough
-    //  case UNKNOWN_VERSION:
-    //    status = FAILURE;
-    //  } // inner switch
-    //  break;
+    case UNKNOWN_VERSION:
+      ASSERT(mode == Read);
+      version = co_await PWSfile::ReadVersion(a_filename, passkey);
+      switch (version) {
+      /*case V40:
+        status = SUCCESS;
+        retval = new PWSfileV4(a_filename, mode, version);
+        break;*/
+      case V30:
+        status = SUCCESS;
+        retval = new PWSfileV3(a_filename, mode, version);
+        break;
+      /*case V17:  // never actually returned
+      case V20:  // may be inaccurate (V17)
+        status = SUCCESS;
+        retval = new PWSfileV1V2(a_filename, mode, version);
+        break;*/
+      case NEWFILE:
+        ASSERT(0);
+        // deliberate fallthrough
+      case UNKNOWN_VERSION:
+        status = FAILURE;
+      } // inner switch
+      break;
   case NEWFILE: // should never happen
     status = FAILURE;
     ASSERT(0);
@@ -82,19 +82,19 @@ task<PWSfile *> PWSfile::MakePWSfile(const StringX &a_filename, const StringX &p
 }
 
 
-PWSfile::VERSION PWSfile::ReadVersion(const StringX &filename, const StringX &passkey)
+task<PWSfile::VERSION> PWSfile::ReadVersion(const StringX &filename, const StringX &passkey)
 {
- /* if (pws_os::FileExists(filename.c_str())) {
+  if (co_await pws_os::FileExists(filename.c_str())) {
     VERSION v;
-    if (PWSfileV3::IsV3x(filename, v))
+    if (co_await PWSfileV3::IsV3x(filename, v))
       return v;
-    else if (PWSfileV4::IsV4x(filename, passkey, v))
+    /*else if (PWSfileV4::IsV4x(filename, passkey, v))
       return v;
     else if (PWSfileV1V2::CheckPasskey(filename, passkey) == SUCCESS)
-      return V20;
+      return V20;*/
     else
       return UNKNOWN_VERSION;
-  } else*/
+  } else
     return UNKNOWN_VERSION;
 }
 
@@ -139,23 +139,24 @@ task<void> PWSfile::FOpen()
   m_fileLength = pws_os::fileLength(m_fd);
 }
 
-int PWSfile::Close()
+task<int> PWSfile::Close()
 {
   delete m_fish;
   m_fish = NULL;
   if (m_fd != nullptr) {
 	//m_fd->FlushAsync();
 	//m_fd->Dispose();
+    delete m_fd;
     m_fd = nullptr;
   }
-  return SUCCESS;
+  co_return SUCCESS;
 }
 
-size_t PWSfile::WriteCBC(unsigned char type, const unsigned char *data,
+task<size_t> PWSfile::WriteCBC(unsigned char type, const unsigned char *data,
                          size_t length)
 {
   ASSERT(m_fish != NULL && m_IV != NULL);
-  return _writecbc(m_fd, data, length, type, m_fish, m_IV);
+  return co_await _writecbc(m_fd, data, length, type, m_fish, m_IV);
 }
 
 task<size_t> PWSfile::ReadCBC(unsigned char &type, unsigned char* &data,

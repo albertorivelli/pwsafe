@@ -21,5 +21,7 @@ namespace pwsafe
 		void chkItemShowPassword_Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void hlkItemUrl_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void hlkItemEmail_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void btnItemSave_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void btnItemCancel_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

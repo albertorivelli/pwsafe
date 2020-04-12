@@ -294,6 +294,8 @@
                     <FontIcon Glyph="&#xE75C;" />
                 </AppBarButton.Icon>
             </AppBarButton>
+            <AppBarSeparator />
+            <AppBarButton x:Name="btnItemAdd" x:Uid="btnItemAdd" Icon="Add" Click="btnItemAdd_Click" />
         </CommandBar>
     </Grid>
 </Page>

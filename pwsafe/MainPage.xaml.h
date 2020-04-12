@@ -21,6 +21,8 @@ namespace pwsafe
 	public ref class ItemEntry sealed : Windows::UI::Xaml::Data::INotifyPropertyChanged
 	{
 	private:
+		Platform::Boolean changed;
+		Platform::Boolean isnew;
 		Platform::String^ group;
 		Platform::String^ title;
 		Platform::String^ user;
@@ -29,9 +31,13 @@ namespace pwsafe
 		Platform::String^ url;
 		Platform::String^ email;
 		Platform::String^ symbols;
+		CItemData *original;
 	internal:
 		ItemEntry(CItemData *ci) {
 			if (ci != NULL) {
+				original = ci;
+				changed = false;
+				isnew = false;
 				group = ref new String(ci->GetGroup().data());
 				title = ref new String(ci->GetTitle().data());
 				user = ref new String(ci->GetUser().data());
@@ -42,8 +48,41 @@ namespace pwsafe
 				symbols = ref new String(ci->GetSymbols().data());
 			}
 		}
+
+		ItemEntry(ItemEntry^ ie) {
+			if (ie != nullptr) {
+				original = ie->original;
+				changed = ie->changed;
+				isnew = ie->isnew;
+				group = ie->group;
+				title = ie->title;
+				user = ie->user;
+				password = ie->password;
+				notes = ie->notes;
+				url = ie->url;
+				email = ie->email;
+				symbols = ie->symbols;
+			}
+		}
 	public:
 		virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler^ PropertyChanged;
+
+		property Platform::Boolean HasChanged
+		{
+			Platform::Boolean get() { return this->changed; };
+			void set(Platform::Boolean value) { this->changed = value; };
+		}
+
+		property Platform::Boolean IsNew
+		{
+			Platform::Boolean get() { return this->isnew; };
+			void set(Platform::Boolean value) { this->isnew = value; };
+		}
+
+		property int GetOriginalCI
+		{
+			int get() { return (int)this->original; };
+		}
 
 		property Platform::String^ Group
 		{
@@ -52,6 +91,8 @@ namespace pwsafe
 				if (group != value)
 				{
 					group = value;
+					original->SetGroup(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Group");
 				}
 			}
@@ -63,6 +104,8 @@ namespace pwsafe
 				if (title != value)
 				{
 					title = value;
+					original->SetTitle(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Title");
 				}
 			}
@@ -74,6 +117,8 @@ namespace pwsafe
 				if (user != value)
 				{
 					user = value;
+					original->SetUser(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("User");
 				}
 			}
@@ -85,6 +130,8 @@ namespace pwsafe
 				if (password != value)
 				{
 					password = value;
+					original->SetPassword(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Password");
 				}
 			}
@@ -96,6 +143,8 @@ namespace pwsafe
 				if (notes != value)
 				{
 					notes = value;
+					original->SetNotes(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Notes");
 				}
 			}
@@ -107,6 +156,8 @@ namespace pwsafe
 				if (url != value)
 				{
 					url = value;
+					original->SetURL(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Url");
 				}
 			}
@@ -118,6 +169,8 @@ namespace pwsafe
 				if (email != value)
 				{
 					email = value;
+					original->SetEmail(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Email");
 				}
 			}
@@ -129,6 +182,8 @@ namespace pwsafe
 				if (symbols != value)
 				{
 					symbols = value;
+					original->SetSymbols(StringX(value->Data()));
+					changed = true;
 					OnPropertyChanged("Symbols");
 				}
 			}
@@ -181,6 +236,7 @@ namespace pwsafe
 	private:
 		task<void> NavigatedToHandler(String^ e);
 		IVector<ItemEntryGroup^>^ m_pwcollection;
+		ItemEntry ^ci_original, ^ci_edit;
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 	private:
@@ -190,6 +246,17 @@ namespace pwsafe
 		void btnCopyUsername_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void btnCopyPassword_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void btnClearClipboard_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void btnItemAdd_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void lvItems_ItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
+		void AddEntry();
+		void UpdateEntry();
+		enum ChangeType { Clear, Data, TimeStamp, DBPrefs, ClearDBPrefs };
+		void SetChanged(ChangeType changed);
+		enum SaveType {
+			ST_INVALID = -1, ST_NORMALEXIT = 0,
+			ST_ENDSESSIONEXIT, ST_WTSLOGOFFEXIT, ST_FAILSAFESAVE
+		};
+		task<int> Save(const SaveType savetype = ST_INVALID);
+		task<int> SaveAs();
 	};
 }

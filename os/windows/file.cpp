@@ -408,7 +408,7 @@ task<IRandomAccessStream^> pws_os::FOpen(const stringT &filename, const TCHAR *m
 	try
 	{
 		FileAccessMode m = FileAccessMode::Read;
-		/*switch (mode)
+		switch (mode[0])
 		{
 		case 'r':
 		m = FileAccessMode::Read;
@@ -416,7 +416,7 @@ task<IRandomAccessStream^> pws_os::FOpen(const stringT &filename, const TCHAR *m
 		case 'w':
 		m = FileAccessMode::ReadWrite;
 		break;
-		}*/
+		}
 
 		ret = co_await file->OpenAsync(m);
 	}

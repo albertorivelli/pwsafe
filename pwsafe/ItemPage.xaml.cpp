@@ -41,8 +41,6 @@ void ItemPage::OnNavigatedTo(NavigationEventArgs^ e)
 			Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
 	}
 
-	this->DataContext = nullptr;
-
 	ItemEntry^ s = (ItemEntry^)e->Parameter;
 	this->DataContext = s;
 }
@@ -69,4 +67,28 @@ void pwsafe::ItemPage::hlkItemUrl_Click(Platform::Object^ sender, Windows::UI::X
 void pwsafe::ItemPage::hlkItemEmail_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	Windows::System::Launcher::LaunchUriAsync(ref new Uri("mailto:" + hlkItemEmail->Content->ToString()));
+}
+
+void pwsafe::ItemPage::btnItemSave_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	this->DataContext = nullptr;
+
+	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
+	if (rootFrame != nullptr)
+	{
+		rootFrame->GoBack();
+	}
+}
+
+void pwsafe::ItemPage::btnItemCancel_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	ItemEntry^ s = (ItemEntry^)this->DataContext;
+	s->HasChanged = false;
+	this->DataContext = nullptr;
+
+	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);
+	if (rootFrame != nullptr)
+	{
+		rootFrame->GoBack();
+	}
 }
