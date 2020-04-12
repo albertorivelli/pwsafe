@@ -71,6 +71,13 @@ void pwsafe::ItemPage::hlkItemEmail_Click(Platform::Object^ sender, Windows::UI:
 
 void pwsafe::ItemPage::btnItemSave_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	ItemEntry^ s = (ItemEntry^)this->DataContext;
+	if (s->HasChanged && !chkItemShowPassword->IsChecked->Value && (txtItemPassword->Password != txtItemPasswordConfirm->Password))
+	{
+		txtItemPassword->Background = ref new Windows::UI::Xaml::Media::SolidColorBrush(Windows::UI::Colors::LightPink);
+		return;
+	}
+
 	this->DataContext = nullptr;
 
 	auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame ^>(Window::Current->Content);

@@ -49,8 +49,8 @@
                 <StackPanel Grid.Row="3">
                     <TextBlock x:Uid="txbItemHeaderPassword" FontSize="20" />
                     <PasswordBox x:Name="txtItemPassword" Password="{Binding Password, Mode=TwoWay}" Height="38" FontSize="20" Margin="0,7" PasswordRevealMode="Hidden" ScrollViewer.VerticalScrollMode="Disabled" />
-                    <PasswordBox x:Name="txtItemPasswordConfirm" Password="{Binding Password}" Height="38" FontSize="20" Margin="0,7" ScrollViewer.VerticalScrollMode="Disabled" />
-                    <CheckBox x:Uid="chkItemShowPassword" Margin="0,7,0,24" Checked="chkItemShowPassword_Checked" Unchecked="chkItemShowPassword_Unchecked" />
+                    <PasswordBox x:Name="txtItemPasswordConfirm" Password="{Binding Password, Mode=OneTime}" Height="38" FontSize="20" Margin="0,7" ScrollViewer.VerticalScrollMode="Disabled" />
+                    <CheckBox x:Name="chkItemShowPassword" x:Uid="chkItemShowPassword" Margin="0,7,0,24" Checked="chkItemShowPassword_Checked" Unchecked="chkItemShowPassword_Unchecked" />
                 </StackPanel>
                 <StackPanel Grid.Row="4">
                     <TextBlock x:Uid="txbItemHeaderUrl" FontSize="20" />
